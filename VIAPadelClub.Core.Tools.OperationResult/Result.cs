@@ -11,8 +11,8 @@ public class Result
         _error = error;
     }
 
-    public static Result Success() => new Result(true);
-    public static Result Fail(Error error) => new Result(false, error);
+    public static Result Success() => new(true);
+    public static Result Fail(Error error) => new(false, error);
 }
 
 public class Result<T> : Result
@@ -25,8 +25,7 @@ public class Result<T> : Result
         _data = data;
     }
 
-    public static Result<T> Success(T data) => new Result<T>(true, data, null);
-    public static Result<T> Fail(Error error) => new Result<T>(false, default, error);
+    public static Result<T> Success(T data) => new(true, data, null);
+    public static Result<T> Fail(Error error) => new(false, default, error);
 }
 
-// public class None { }
