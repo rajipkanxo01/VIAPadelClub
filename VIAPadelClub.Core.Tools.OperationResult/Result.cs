@@ -1,31 +1,58 @@
 ﻿namespace VIAPadelClub.Core.Tools.OperationResult;
 
+public class Result<T>
+{
+    public bool Success { get; }
+    public string ErrorMessage { get; private set; } = null!;
+    public T? Data { get; }
+
+    private Result(bool success, string errorMessage, T? data)
+    {
+        Success = success;
+        ErrorMessage = errorMessage;
+        Data = data;
+    }
+
+    private Result(bool success, T data)
+    {
+        Success = success;
+        Data = data;
+    }
+
+    public static Result<T> Ok(T data)
+    {
+        return new Result<T>(true, data);
+    }
+    
+    public static Result<T> Fail(string message)
+    {
+        return new Result<T>(false, message, default);
+    }
+}
+
 public class Result
 {
-    public bool _success { get; }
-    public Error? _error { get; }
+    public bool Success { get; }
+    public string ErrorMessage { get; private set; } = null!;
 
-    protected Result(bool success, Error? error = null)
+    private Result(bool success, string errorMessage)
     {
-        _success = success;
-        _error = error;
+        Success = success;
+        ErrorMessage = errorMessage;
     }
 
-    public static Result Success() => new(true);
-    public static Result Fail(Error error) => new(false, error);
-}
-
-public class Result<T> : Result
-{
-    public T? _data { get; }
-
-    private Result(bool success, T? data, Error? error)
-        : base(success, error)
+    private Result(bool success)
     {
-        _data = data;
+        Success = success;
     }
 
-    public static Result<T> Success(T data) => new(true, data, null);
-    public static Result<T> Fail(Error error) => new(false, default, error);
-}
+    public static Result Ok()
+    {
+        return new Result(true);
+    }
 
+    public static Result Fail(string message)
+    {
+        return new Result(false, message);
+    }
+}

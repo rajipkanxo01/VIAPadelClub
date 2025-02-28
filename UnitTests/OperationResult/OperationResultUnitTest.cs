@@ -10,25 +10,24 @@ public class OperationResultUnitTest
     public void Success_ShouldReturnSuccessfulResult()
     {
         // Act
-        var result = Result.Success();
+        var result = Result.Ok();
 
         // Assert
-        result._success.Should().BeTrue();
-        result._error.Should().BeNull();
+        result.Success.Should().Be(true);
     }
 
     [Fact]
     public void Result_Fail_ReturnsFailureResult()
     {
         // Arrange
-        var error = new Error(1, "Something went wrong!");
+        var errorMessage = "Something went wrong!";
 
         // Act
-        var result = Result.Fail(error);
+        var result = Result.Fail(errorMessage);
 
         // Assert
-        Assert.False(result._success);
-        Assert.Equal(error, result._error);
+        Assert.False(result.Success);
+        Assert.Equal(errorMessage, result.ErrorMessage);
     }
     
     [Fact]
@@ -38,27 +37,26 @@ public class OperationResultUnitTest
         var expectedData = 42;
 
         // Act
-        var result = Result<int>.Success(expectedData);
+        var result = Result<int>.Ok(expectedData);
 
         // Assert
-        Assert.True(result._success);
-        Assert.Null(result._error);
-        Assert.Equal(expectedData, result._data);
+        Assert.True(result.Success);
+        Assert.Null(result.ErrorMessage);
+        Assert.Equal(expectedData, result.Data);
     }
 
     [Fact]
     public void FailT_ShouldCreateFailedResultWithError()
     {
         // Arrange
-        var error = new Error(2, "Failed to retrieve data");
+        var errorMessage = "Failed to retrieve data!";
 
         // Act
-        var result = Result<int>.Fail(error);
+        var result = Result<int>.Fail(errorMessage);
 
         // Assert
-        Assert.False(result._success);
-        Assert.Equal(error, result._error);
-        result._data.Should().Be(0);
+        Assert.False(result.Success);
+        Assert.Equal(errorMessage, result.ErrorMessage);
     }
 
 }
