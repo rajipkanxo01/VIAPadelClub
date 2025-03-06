@@ -3,56 +3,58 @@
 public class Result<T>
 {
     public bool Success { get; }
-    public string ErrorMessage { get; private set; } = null!;
-    public T? Data { get; }
+    public string ErrorMessage { get; } = string.Empty;
+    public T Data { get; }
 
-    private Result(bool success, string errorMessage, T? data)
+    // used for success
+    private Result(T data)
     {
-        Success = success;
-        ErrorMessage = errorMessage;
+        Success = true;
         Data = data;
     }
 
-    private Result(bool success, T data)
+    // used for failure
+    private Result(string errorMessage)
     {
-        Success = success;
-        Data = data;
+        Success = false;
+        ErrorMessage = errorMessage;
+        Data = default!;
     }
 
     public static Result<T> Ok(T data)
     {
-        return new Result<T>(true, data);
+        return new Result<T>(data);
     }
-    
+
     public static Result<T> Fail(string message)
     {
-        return new Result<T>(false, message, default);
+        return new Result<T>(message);
     }
 }
 
 public class Result
 {
     public bool Success { get; }
-    public string ErrorMessage { get; private set; } = null!;
+    public string ErrorMessage { get; } = string.Empty;
 
-    private Result(bool success, string errorMessage)
+    private Result()
     {
-        Success = success;
-        ErrorMessage = errorMessage;
+        Success = true;
     }
 
-    private Result(bool success)
+    private Result(string errorMessage)
     {
-        Success = success;
+        Success = false;
+        ErrorMessage = errorMessage;
     }
 
     public static Result Ok()
     {
-        return new Result(true);
+        return new Result();
     }
 
     public static Result Fail(string message)
     {
-        return new Result(false, message);
+        return new Result(message);
     }
 }

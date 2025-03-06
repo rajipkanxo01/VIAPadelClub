@@ -34,7 +34,8 @@ public class Player : AggregateRoot
 
         var profileUriResult = ProfileUri.Create(profileUri);
         if (!profileUriResult.Success) return Result<Player>.Fail(profileUriResult.ErrorMessage);
-        
-        return Result<Player>.Ok(new Player(emailResult.Data!, fullNameResult.Data!, profileUriResult.Data!));
+    
+        return Result<Player>.Ok(new Player(emailResult.Data, fullNameResult.Data, profileUriResult.Data));
     }
+
 }
