@@ -10,12 +10,13 @@ public class Player : AggregateRoot
     internal Email email;
     internal FullName fullName;
     internal ProfileUri url;
-    internal VIPMemberShip vipMemberShip;
-    internal bool isQuarantined;
-    internal int quarantineId;
-    internal ActiveBooking activeBooking;
-    internal bool isBlackListed;
-    internal List<Quarantine> quarantines;
+    internal VIPMemberShip vipMemberShip = new();
+    internal bool isQuarantined = false;
+    internal Quarantine? quarantine = new ();
+    internal int quarantineId = 0;
+    internal ActiveBooking activeBooking = new();
+    internal bool isBlackListed = false;
+    internal List<Quarantine> quarantines = new();
 
     private Player(Email email, FullName fullName, ProfileUri url)
     {
@@ -38,4 +39,18 @@ public class Player : AggregateRoot
         return Result<Player>.Ok(new Player(emailResult.Data, fullNameResult.Data, profileUriResult.Data));
     }
 
+    public Result Blacklist()
+    {
+        if (isBlackListed) return Result.Fail("Player Already Blacklisted.");
+        
+        isBlackListed = true;
+        if (quarantine is not null) quarantine = null;
+
+        return Result.Ok();
+    }
+
+    public Result<Quarantine> Quarantine(DateTime startDate, TimeSpan duration)
+    {
+        throw new NotImplementedException();
+    }
 }
