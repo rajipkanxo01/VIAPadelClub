@@ -24,7 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\VIAPadelClub.Core.Domain\VIAPadelClub.Core.Domain.csproj" />
       <ProjectReference Include="..\VIAPadelClub.Core.Tools.OperationResult\VIAPadelClub.Core.Tools.OperationResult.csproj" />
     </ItemGroup>
 
