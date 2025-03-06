@@ -1,6 +1,7 @@
 ﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
+using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 
@@ -29,8 +30,9 @@ public class DailySchedule : AggregateRoot
 
     }
 
-    public static DailySchedule CreateSchedule()
+    public static Result<DailySchedule> CreateSchedule()
     {
-        return new DailySchedule();
+        var dailySchedule = new DailySchedule();
+        return Result<DailySchedule>.Ok(dailySchedule);
     }
 }

@@ -1,11 +1,10 @@
-﻿using VIAPadelClub.Core.Domain.Aggregates.Players.Entities;
+﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+using VIAPadelClub.Core.Domain.Aggregates.Players.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
 using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Domain.Aggregates.Players;
-
-using DailySchedules;
 
 public class Player : AggregateRoot
 {
@@ -37,8 +36,8 @@ public class Player : AggregateRoot
 
         var profileUriResult = ProfileUri.Create(profileUri);
         if (!profileUriResult.Success) return Result<Player>.Fail(profileUriResult.ErrorMessage);
-        
-        return Result<Player>.Ok(new Player(emailResult.Data!, fullNameResult.Data!, profileUriResult.Data!));
+    
+        return Result<Player>.Ok(new Player(emailResult.Data, fullNameResult.Data, profileUriResult.Data));
     }
 
     public Result<Quarantine> Quarantine(DateOnly startDate, List<DailySchedule> schedules)
@@ -78,4 +77,5 @@ public class Player : AggregateRoot
     //         }
     //     }
     // }
+
 }
