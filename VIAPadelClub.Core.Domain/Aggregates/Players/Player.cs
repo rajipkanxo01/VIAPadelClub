@@ -5,6 +5,8 @@ using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Domain.Aggregates.Players;
 
+using DailySchedules;
+
 public class Player : AggregateRoot
 {
     internal Email email;
@@ -22,6 +24,7 @@ public class Player : AggregateRoot
         this.email = email;
         this.fullName = fullName;
         this.url = url;
+        quarantines = new List<Quarantine>();
     }
     
     public static Result<Player> Register(string email, string firstName, string lastName, string profileUri)
@@ -37,4 +40,42 @@ public class Player : AggregateRoot
         
         return Result<Player>.Ok(new Player(emailResult.Data!, fullNameResult.Data!, profileUriResult.Data!));
     }
+
+    public Result<Quarantine> Quarantine(DateOnly startDate, List<DailySchedule> schedules)
+    {
+        if (isBlackListed)
+            return Result<Quarantine>.Fail("Player is already blacklisted and cannot be quarantined.");
+
+        var quarantine = Entities.Quarantine.CreateOrExtend(quarantines, startDate);
+    
+        if (!quarantines.Contains(quarantine))
+        {
+            quarantines.Add(quarantine);
+            isQuarantined = true;
+        }
+        
+        //TODO: Uncomment below once Booking entity is available
+        //CancelBookingsDuringQuarantine(schedules, quarantine);
+        
+        return Result<Quarantine>.Ok(quarantine);
+    }
+    
+    //TODO: TODO: Uncomment below once Cancellation of booking and Booking entity is available 
+    // private void CancelBookingsDuringQuarantine(List<DailySchedule> schedules, Quarantine quarantine)
+    // {
+    //     foreach (var schedule in schedules)
+    //     {
+    //         var bookingsToCancel = schedule.listOfBookings
+    //             .Where(b => b.bookedBy.email == this.email && 
+    //                         b.startTime.Date >= quarantine.StartDate && 
+    //                         b.startTime.Date <= quarantine.EndDate)
+    //             .ToList();
+    //
+    //         foreach (var booking in bookingsToCancel)
+    //         {
+    //             Console.WriteLine($"Booking for {booking.court.courtName.Value} on {booking.startTime} canceled due to quarantine.");
+    //             schedule.cancelBooking(booking.bookingId);
+    //         }
+    //     }
+    // }
 }
