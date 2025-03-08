@@ -10,7 +10,7 @@ public class ManagerBlacklistPlayerAggregateTest
     public void Should_Blacklist_Player_When_Selected()
     {
         // Arrange
-        var newPlayer = CreateNewPlayer();
+        var newPlayer = Player.Register("111111@via.dk", "Player", "First", "https://player1profile.com").Data;
         var dailySchedules = new List<DailySchedule>();
 
         // Act
@@ -29,7 +29,7 @@ public class ManagerBlacklistPlayerAggregateTest
     public void Should_Remove_Quarantine_When_Player_Is_Blacklisted(string startDate)
     {
         // Arrange
-        var newPlayer = CreateNewPlayer();
+        var newPlayer = Player.Register("111111@via.dk", "Player", "First", "https://player1profile.com").Data;
         var dailySchedules = new List<DailySchedule>();
 
 
@@ -48,7 +48,7 @@ public class ManagerBlacklistPlayerAggregateTest
     public void Should_Fail_If_Player_Is_Already_Blacklisted()
     {
         // Arrange
-        var newPlayer = CreateNewPlayer();
+        var newPlayer = Player.Register("111111@via.dk", "Player", "First", "https://player1profile.com").Data;
         var dailySchedules = new List<DailySchedule>();
 
         newPlayer.Blacklist(dailySchedules);
@@ -68,12 +68,5 @@ public class ManagerBlacklistPlayerAggregateTest
     public void Should_Cancel_Booked_Courts_When_Player_Is_Blacklisted(int numberOfBookings)
     {
         //TODO: need to implement this after booking is done!!
-    }
-
-
-    private Player CreateNewPlayer()
-    {
-        var result = Player.Register("111111@via.dk", "Player", "First", "https://player1profile.com");
-        return result.Data;
     }
 }
