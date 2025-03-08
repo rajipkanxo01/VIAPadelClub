@@ -1,5 +1,5 @@
 ﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
-using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+
 using VIAPadelClub.Core.Domain.Aggregates.Players.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
@@ -18,7 +18,7 @@ public class Player : AggregateRoot
     internal int quarantineId = 0;
     internal ActiveBooking activeBooking = new();
     internal bool isBlackListed = false;
-    internal List<Quarantine> quarantines = new();
+    internal List<Quarantine> quarantines;
 
     private Player(Email email, FullName fullName, ProfileUri url)
     {
@@ -88,10 +88,5 @@ public class Player : AggregateRoot
         if (quarantine is not null) quarantine = null;
 
         return Result.Ok();
-    }
-
-    public Result<Quarantine> Quarantine(DateTime startDate, TimeSpan duration)
-    {
-        throw new NotImplementedException();
     }
 }
