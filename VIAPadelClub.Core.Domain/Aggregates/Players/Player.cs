@@ -89,4 +89,12 @@ public class Player : AggregateRoot
 
         return Result.Ok();
     }
+
+    public Result LiftBlacklist()
+    {
+        if (!isBlackListed) return Result.Fail("Player is not blacklisted.");
+
+        isBlackListed = false;
+        return Result.Ok();
+    }
 }
