@@ -41,7 +41,7 @@ public class OperationResultUnitTest
 
         // Assert
         Assert.True(result.Success);
-        Assert.Null(result.ErrorMessage);
+        Assert.Empty(result.ErrorMessage);
         Assert.Equal(expectedData, result.Data);
     }
 

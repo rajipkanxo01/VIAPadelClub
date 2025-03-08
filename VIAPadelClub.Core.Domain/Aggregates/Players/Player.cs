@@ -14,7 +14,7 @@ public class Player : AggregateRoot
     internal ProfileUri url;
     internal VIPMemberShip vipMemberShip = new();
     internal bool isQuarantined = false;
-    internal Quarantine? quarantine;
+    internal Quarantine? activeQuarantine;
     internal int quarantineId = 0;
     internal ActiveBooking activeBooking = new();
     internal bool isBlackListed = false;
@@ -80,12 +80,12 @@ public class Player : AggregateRoot
     //     }
     // }
 
-    public Result Blacklist()
+    public Result Blacklist(List<DailySchedule> dailySchedules)
     {
-        if (isBlackListed) return Result.Fail("Player Already Blacklisted.");
+        if (isBlackListed) return Result.Fail("Player Already Blacklisted. Cannot blacklist same player twice!!");
         
         isBlackListed = true;
-        if (quarantine is not null) quarantine = null;
+        if (activeQuarantine is not null) activeQuarantine = null;
 
         return Result.Ok();
     }

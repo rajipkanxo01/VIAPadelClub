@@ -51,8 +51,8 @@ public class PlayerQuarantineTest {
         Assert.True(result.Success);
         Assert.NotNull(result.Data);
         Assert.Single(player.quarantines); // No new quarantine, now we extended
-        Assert.Equal(startDate, result.Data!.StartDate);
-        Assert.Equal(startDate.AddDays(6), result.Data!.EndDate); // Extended by another 3 days
+        Assert.Equal(startDate, result.Data.StartDate);
+        Assert.Equal(startDate.AddDays(6), result.Data.EndDate); // Extended by another 3 days
     }
     
     [Theory]
