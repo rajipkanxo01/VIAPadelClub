@@ -10,14 +10,14 @@ public class ManagerBlacklistPlayerAggregateTest
     public void Should_Blacklist_Player_When_Selected()
     {
         // Arrange
-        var newPlayer = CreateNewPlayer();
+        var player = Player.Register("111111@via.dk", "Player", "First", "https://player1profile.com").Data;
         var dailySchedules = new List<DailySchedule>();
 
         // Act
-        var result = newPlayer.Blacklist(dailySchedules);
+        var result = player.Blacklist(dailySchedules);
 
         // Assert
-        Assert.True(newPlayer.isBlackListed);
+        Assert.True(player.isBlackListed);
         Assert.True(result.Success);
     }
 
@@ -29,32 +29,32 @@ public class ManagerBlacklistPlayerAggregateTest
     public void Should_Remove_Quarantine_When_Player_Is_Blacklisted(string startDate)
     {
         // Arrange
-        var newPlayer = CreateNewPlayer();
+        var player = Player.Register("111111@via.dk", "Player", "First", "https://player1profile.com").Data;
         var dailySchedules = new List<DailySchedule>();
 
 
-        newPlayer.Quarantine(DateOnly.Parse(startDate), dailySchedules);
+        player.Quarantine(DateOnly.Parse(startDate), dailySchedules);
 
         // Act
-        var result = newPlayer.Blacklist(dailySchedules);
+        var result = player.Blacklist(dailySchedules);
 
         // Assert
         Assert.True(result.Success);
-        Assert.True(newPlayer.isBlackListed);
-        Assert.Null(newPlayer.activeQuarantine);
+        Assert.True(player.isBlackListed);
+        Assert.Null(player.activeQuarantine);
     }
 
     [Fact]
     public void Should_Fail_If_Player_Is_Already_Blacklisted()
     {
         // Arrange
-        var newPlayer = CreateNewPlayer();
+        var player = Player.Register("111111@via.dk", "Player", "First", "https://player1profile.com").Data;
         var dailySchedules = new List<DailySchedule>();
 
-        newPlayer.Blacklist(dailySchedules);
+        player.Blacklist(dailySchedules);
 
         // Act
-        var result = newPlayer.Blacklist(dailySchedules);
+        var result = player.Blacklist(dailySchedules);
 
         // Assert
         Assert.False(result.Success);
@@ -69,11 +69,5 @@ public class ManagerBlacklistPlayerAggregateTest
     {
         //TODO: need to implement this after booking is done!!
     }
-
-
-    private Player CreateNewPlayer()
-    {
-        var result = Player.Register("111111@via.dk", "Player", "First", "https://player1profile.com");
-        return result.Data;
-    }
+    
 }
