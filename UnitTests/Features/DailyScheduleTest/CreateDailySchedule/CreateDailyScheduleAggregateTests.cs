@@ -11,13 +11,14 @@ public class CreateDailyScheduleAggregateTests
     {
         // Act
         var dailySchedule = DailySchedule.CreateSchedule();
+        var data = dailySchedule.Data;
 
         // Assert
-        Assert.NotNull(dailySchedule.scheduleId);
-        Assert.Equal(ScheduleStatus.Draft, dailySchedule.status);
-        Assert.Empty(dailySchedule.listOfAvailableCourts);
-        Assert.Equal(new TimeSpan(15, 0, 0), dailySchedule.availableFrom);
-        Assert.Equal(new TimeSpan(22, 0, 0), dailySchedule.availableUntil);
-        Assert.Equal(DateTime.Today, dailySchedule.scheduleDate);
+        Assert.NotNull(data.scheduleId);
+        Assert.Equal(ScheduleStatus.Draft, data.status);
+        Assert.Empty(data.listOfAvailableCourts);
+        Assert.Equal(new TimeSpan(15, 0, 0), data.availableFrom);
+        Assert.Equal(new TimeSpan(22, 0, 0), data.availableUntil);
+        Assert.Equal(DateTime.Today, data.scheduleDate);
     }
 }

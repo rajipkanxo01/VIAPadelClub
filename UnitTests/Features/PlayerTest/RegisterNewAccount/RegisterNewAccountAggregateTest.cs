@@ -56,7 +56,7 @@ public class RegisterNewAccountAggregateTest
     {
         var result = Email.Create(email);
         Assert.True(result.Success);
-        Assert.Equal(email.ToLower(),result.Data!.Value);
+        Assert.Equal(email.ToLower(),result.Data.Value);
     }
     
     [Theory]
@@ -66,8 +66,8 @@ public class RegisterNewAccountAggregateTest
     {
         var result = FullName.Create(firstName, lastName);
         Assert.True(result.Success);
-        Assert.Equal(firstName, result.Data!.FirstName, ignoreCase: true);
-        Assert.Equal(lastName, result.Data!.LastName, ignoreCase: true);
+        Assert.Equal(firstName, result.Data.FirstName, ignoreCase: true);
+        Assert.Equal(lastName, result.Data.LastName, ignoreCase: true);
     }
     
     [Theory]
@@ -87,7 +87,7 @@ public class RegisterNewAccountAggregateTest
     {
         var result = ProfileUri.Create("https://example.com");
         Assert.True(result.Success);
-        Assert.Equal("https://example.com", result.Data!.Value);
+        Assert.Equal("https://example.com", result.Data.Value);
     }
 
     [Theory]

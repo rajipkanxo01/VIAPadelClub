@@ -1,22 +1,23 @@
-﻿using VIAPadelClub.Core.Domain.Aggregates.Players.Entities;
+﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+
+using VIAPadelClub.Core.Domain.Aggregates.Players.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
 using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Domain.Aggregates.Players;
 
-using DailySchedules;
-
 public class Player : AggregateRoot
 {
     internal Email email;
     internal FullName fullName;
     internal ProfileUri url;
-    internal VIPMemberShip vipMemberShip;
-    internal bool isQuarantined;
-    internal int quarantineId;
-    internal ActiveBooking activeBooking;
-    internal bool isBlackListed;
+    internal VIPMemberShip vipMemberShip = new();
+    internal bool isQuarantined = false;
+    internal Quarantine? activeQuarantine;
+    internal int quarantineId = 0;
+    internal ActiveBooking activeBooking = new();
+    internal bool isBlackListed = false;
     internal List<Quarantine> quarantines;
 
     private Player(Email email, FullName fullName, ProfileUri url)
@@ -37,8 +38,8 @@ public class Player : AggregateRoot
 
         var profileUriResult = ProfileUri.Create(profileUri);
         if (!profileUriResult.Success) return Result<Player>.Fail(profileUriResult.ErrorMessage);
-        
-        return Result<Player>.Ok(new Player(emailResult.Data!, fullNameResult.Data!, profileUriResult.Data!));
+    
+        return Result<Player>.Ok(new Player(emailResult.Data, fullNameResult.Data, profileUriResult.Data));
     }
 
     public Result<Quarantine> Quarantine(DateOnly startDate, List<DailySchedule> schedules)
@@ -78,4 +79,14 @@ public class Player : AggregateRoot
     //         }
     //     }
     // }
+
+    public Result Blacklist(List<DailySchedule> dailySchedules)
+    {
+        if (isBlackListed) return Result.Fail("Player Already Blacklisted. Cannot blacklist same player twice!!");
+        
+        isBlackListed = true;
+        if (activeQuarantine is not null) activeQuarantine = null;
+
+        return Result.Ok();
+    }
 }
