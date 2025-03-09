@@ -29,10 +29,76 @@ public class DailySchedule : AggregateRoot
         listOfBookings = [];
 
     }
+    
+    
 
     public static Result<DailySchedule> CreateSchedule()
     {
         var dailySchedule = new DailySchedule();
         return Result<DailySchedule>.Ok(dailySchedule);
+    }   
+    
+    private static Result<DailySchedule> FindSchedule(Guid scheduleId, List<DailySchedule> schedules)
+    {
+        var schedule = schedules.FirstOrDefault(s => s.scheduleId == scheduleId);
+        return schedule == null
+            ? Result<DailySchedule>.Fail(ErrorMessage.ScheduleNotFound()._message)
+            : Result<DailySchedule>.Ok(schedule);
+    }
+    
+    private Result ValidateScheduleForCourtAddition()
+    {
+        if (scheduleDate < DateTime.Today)
+        {
+            return Result.Fail(ErrorMessage.PastScheduleCannotBeUpdated()._message);
+        }
+
+        if (status != ScheduleStatus.Draft && status != ScheduleStatus.Active)
+        {
+            return Result.Fail(ErrorMessage.InvalidScheduleStatus()._message);
+        }
+
+        return Result.Ok();
+    }
+    
+    public Result AddAvailableCourt(Guid scheduleId, string courtName, List<DailySchedule> schedules)
+    {
+        var scheduleResult = FindSchedule(scheduleId, schedules);
+        if (!scheduleResult.Success)
+        {
+            return Result.Fail(scheduleResult.ErrorMessage); 
+        }
+
+        var schedule = scheduleResult.Data;
+
+        var validationResult = schedule.ValidateScheduleForCourtAddition();
+        if (!validationResult.Success)
+        {
+            return validationResult;
+        }
+
+        var courtNameResult = CourtName.Create(courtName);
+        if (!courtNameResult.Success)
+        {
+            return Result.Fail(courtNameResult.ErrorMessage);
+        }
+
+        var courtCheckResult = schedule.HasCourt(courtNameResult.Data);
+        if (!courtCheckResult.Success)
+        {
+            return courtCheckResult;
+        }
+
+        schedule.listOfCourts.Add(Court.Create(courtNameResult.Data));
+        return Result.Ok();
+    }
+    
+    private Result HasCourt(CourtName name)
+    {
+        if (listOfCourts.Any(court => court.Name.Value == name.Value))
+        {
+            return Result.Fail(ErrorMessage.CourtAlreadyExists()._message);
+        }
+        return Result.Ok();
     }
 }
