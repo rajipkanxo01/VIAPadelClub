@@ -117,40 +117,34 @@ public class AddAvailableCourtAggregateTest
     
     //DailySchedule tests
     [Fact]
-    public void Should_Fail_When_Schedule_Not_Found()
-    {
-        // Arrange
-        var schedules = new List<DailySchedule>(); 
-        var scheduleId = Guid.NewGuid();
-        string courtName = "D1";
-
-        // Act
-        var result = new DailySchedule().AddAvailableCourt(scheduleId, courtName, schedules);
-
-        // Assert
-        result.Success.Should().BeFalse();
-        result.ErrorMessage.Should().Contain(ErrorMessage.ScheduleNotFound()._message);
-    }
+     public void Should_Fail_When_Schedule_Not_Found()
+     {
+         // Arrange
+         var scheduleResult = DailySchedule.CreateSchedule();
+         var schedules = new List<DailySchedule>(); 
+         var scheduleId = Guid.NewGuid();
+         string courtName = "D1";
+    
+         // Act
+         var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
+    
+         // Assert
+         result.Success.Should().BeFalse();
+         result.ErrorMessage.Should().Contain(ErrorMessage.ScheduleNotFound()._message);
+     }
 
     [Fact]
     public void Should_Fail_When_Schedule_Is_Past()
     {
         // Arrange
-        var scheduleId = Guid.NewGuid();
-        var schedules = new List<DailySchedule>
-        {
-            new DailySchedule
-            {
-                scheduleId = scheduleId,
-                scheduleDate = DateTime.Today.AddDays(-1),
-                status = ScheduleStatus.Draft,
-                listOfCourts = new List<Court>()
-            }
-        };
+        var scheduleResult = DailySchedule.CreateSchedule();
+        scheduleResult.Data.scheduleDate = DateTime.Today.AddDays(-1);
+        var schedules = new List<DailySchedule> { scheduleResult.Data };
+        var scheduleId = scheduleResult.Data.scheduleId;
         string courtName = "D1";
 
         // Act
-        var result = new DailySchedule().AddAvailableCourt(scheduleId, courtName, schedules);
+        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
 
         // Assert
         result.Success.Should().BeFalse();
@@ -161,77 +155,52 @@ public class AddAvailableCourtAggregateTest
     public void Should_Fail_When_Court_Name_Is_Invalid()
     {
         // Arrange
-        var scheduleId = Guid.NewGuid();
-        var schedules = new List<DailySchedule>
-        {
-            new DailySchedule
-            {
-                scheduleId = scheduleId,
-                scheduleDate = DateTime.Today,
-                status = ScheduleStatus.Draft,
-                listOfCourts = new List<Court>()
-            }
-        };
+        var scheduleResult = DailySchedule.CreateSchedule();
+        var schedules = new List<DailySchedule> { scheduleResult.Data };
+        var scheduleId = scheduleResult.Data.scheduleId;
         string invalidCourtName = "F1";
 
         // Act
-        var result = new DailySchedule().AddAvailableCourt(scheduleId, invalidCourtName, schedules);
+        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, invalidCourtName, schedules);
 
         // Assert
         result.Success.Should().BeFalse();
     }
 
     [Fact]
-    public void Should_Fail_When_Court_Already_Exists()
+    public void Should_Fail_When_Court_Already_Exists_In_Daily_Schedule()
     {
         // Arrange
-        var scheduleId = Guid.NewGuid();
-        var schedules = new List<DailySchedule>
-        {
-            new DailySchedule
-            {
-                scheduleId = scheduleId,
-                scheduleDate = DateTime.Today,
-                status = ScheduleStatus.Draft,
-                listOfCourts = new List<Court>
-                {
-                    new Court(new CourtName("D1")) 
-                }
-            }
-        };
-        string courtName = "D1"; 
+        var scheduleResult = DailySchedule.CreateSchedule();
+        var schedules = new List<DailySchedule> { scheduleResult.Data };
+        var scheduleId = scheduleResult.Data.scheduleId;
+        string courtName = "D1";
+
+        scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
 
         // Act
-        var result = new DailySchedule().AddAvailableCourt(scheduleId, courtName, schedules);
+        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
 
         // Assert
         result.Success.Should().BeFalse();
         result.ErrorMessage.Should().Contain(ErrorMessage.CourtAlreadyExists()._message);
     }
-
+    
     [Fact]
     public void Should_Add_Court_Successfully_When_Valid()
     {
         // Arrange
-        var scheduleId = Guid.NewGuid();
-        var schedules = new List<DailySchedule>
-        {
-            new DailySchedule
-            {
-                scheduleId = scheduleId,
-                scheduleDate = DateTime.Today,
-                status = ScheduleStatus.Draft,
-                listOfCourts = new List<Court>()
-            }
-        };
+        var scheduleResult = DailySchedule.CreateSchedule();
+        var schedules = new List<DailySchedule> { scheduleResult.Data };
+        var scheduleId = scheduleResult.Data.scheduleId;
         string courtName = "D1";
 
         // Act
-        var result = new DailySchedule().AddAvailableCourt(scheduleId, courtName, schedules);
+        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
 
         // Assert
         result.Success.Should().BeTrue();
-        schedules[0].listOfCourts.Should().Contain(c => c.Name.Value == courtName);
+        scheduleResult.Data.listOfCourts.Should().Contain(c => c.Name.Value == courtName);
     }
 
 }

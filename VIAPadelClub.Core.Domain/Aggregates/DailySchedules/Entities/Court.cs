@@ -6,8 +6,13 @@ public class Court
 {
     internal CourtName Name { get; }
 
-    public Court(CourtName name)
+    private Court(CourtName name)
     {
         Name = name;
+    }
+
+    public static Court Create(CourtName name)
+    {
+        return new Court(name);
     }
 }

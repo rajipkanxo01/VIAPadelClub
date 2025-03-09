@@ -16,7 +16,7 @@ public class DailySchedule : AggregateRoot
     internal List<Court> listOfAvailableCourts;
     internal List<Booking> listOfBookings;
 
-    public DailySchedule()
+    private DailySchedule()
     {
         scheduleId = Guid.NewGuid();
         scheduleDate = DateTime.Today;
@@ -46,24 +46,35 @@ public class DailySchedule : AggregateRoot
             : Result<DailySchedule>.Ok(schedule);
     }
     
+    private Result ValidateScheduleForCourtAddition()
+    {
+        if (scheduleDate < DateTime.Today)
+        {
+            return Result.Fail(ErrorMessage.PastScheduleCannotBeUpdated()._message);
+        }
+
+        if (status != ScheduleStatus.Draft && status != ScheduleStatus.Active)
+        {
+            return Result.Fail(ErrorMessage.InvalidScheduleStatus()._message);
+        }
+
+        return Result.Ok();
+    }
+    
     public Result AddAvailableCourt(Guid scheduleId, string courtName, List<DailySchedule> schedules)
     {
         var scheduleResult = FindSchedule(scheduleId, schedules);
         if (!scheduleResult.Success)
         {
-            return Result.Fail(scheduleResult.ErrorMessage); // F6 - Schedule not found
+            return Result.Fail(scheduleResult.ErrorMessage); 
         }
 
         var schedule = scheduleResult.Data;
 
-        if (schedule.scheduleDate < DateTime.Today)
+        var validationResult = schedule.ValidateScheduleForCourtAddition();
+        if (!validationResult.Success)
         {
-            return Result.Fail(ErrorMessage.PastScheduleCannotBeUpdated()._message); // F1 - Past schedule
-        }
-        
-        if (schedule.status != ScheduleStatus.Draft && schedule.status != ScheduleStatus.Active)
-        {
-            return Result.Fail(ErrorMessage.InvalidScheduleStatus()._message); 
+            return validationResult;
         }
 
         var courtNameResult = CourtName.Create(courtName);
@@ -72,13 +83,22 @@ public class DailySchedule : AggregateRoot
             return Result.Fail(courtNameResult.ErrorMessage);
         }
 
-        var newCourt = new Court(courtNameResult.Data);
-        if (schedule.listOfCourts.Any(c => c.Name.Value == newCourt.Name.Value))
+        var courtCheckResult = schedule.HasCourt(courtNameResult.Data);
+        if (!courtCheckResult.Success)
+        {
+            return courtCheckResult;
+        }
+
+        schedule.listOfCourts.Add(Court.Create(courtNameResult.Data));
+        return Result.Ok();
+    }
+    
+    private Result HasCourt(CourtName name)
+    {
+        if (listOfCourts.Any(court => court.Name.Value == name.Value))
         {
             return Result.Fail(ErrorMessage.CourtAlreadyExists()._message);
         }
-
-        schedule.listOfCourts.Add(newCourt);
         return Result.Ok();
     }
 }

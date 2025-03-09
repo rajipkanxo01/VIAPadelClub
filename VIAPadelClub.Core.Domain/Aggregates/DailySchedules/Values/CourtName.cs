@@ -7,7 +7,7 @@ public class CourtName
 {
     internal string Value { get; }
 
-    public CourtName(string value)
+    private CourtName(string value)
     {
         Value = value;
     }
@@ -32,7 +32,7 @@ public class CourtName
         return Result<CourtName>.Ok(new CourtName(name));
     }
     
-    public static Result ValidateStartingLetter(string name)
+    private static Result ValidateStartingLetter(string name)
     {
         if (name.Length > 0 && (name.StartsWith('s') || name.StartsWith('S') || name.StartsWith('d') || name.StartsWith('D')))
         {
@@ -42,7 +42,7 @@ public class CourtName
         return Result.Fail(ErrorMessage.InvalidStartingLetter()._message);
     }
 
-    public static Result ValidateEndingNumber(string name)
+    private static Result ValidateEndingNumber(string name)
     {
         const string pattern = @"^[a-zA-Z]*(10|[1-9])$";
     
@@ -55,7 +55,7 @@ public class CourtName
     }
 
     
-    public static Result ValidateLength(string name)
+    private static Result ValidateLength(string name)
     {
         return (name.Length == 2 || name.Length == 3)
             ? Result.Ok()
