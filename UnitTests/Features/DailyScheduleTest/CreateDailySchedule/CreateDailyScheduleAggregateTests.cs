@@ -17,8 +17,8 @@ public class CreateDailyScheduleAggregateTests
         Assert.NotNull(data.scheduleId);
         Assert.Equal(ScheduleStatus.Draft, data.status);
         Assert.Empty(data.listOfAvailableCourts);
-        Assert.Equal(new TimeSpan(15, 0, 0), data.availableFrom);
-        Assert.Equal(new TimeSpan(22, 0, 0), data.availableUntil);
+        Assert.Equal(new TimeOnly(15, 0, 0), data.availableFrom);
+        Assert.Equal(new TimeOnly(22, 0, 0), data.availableUntil);
         Assert.Equal(DateTime.Today, data.scheduleDate);
     }
 }
