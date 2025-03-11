@@ -12,7 +12,7 @@ public class Player : AggregateRoot
     internal Email email;
     internal FullName fullName;
     internal ProfileUri url;
-    internal VIPMemberShip vipMemberShip = new();
+    internal VIPMemberShip vipMemberShip;
     internal bool isQuarantined = false;
     internal Quarantine? activeQuarantine;
     internal int quarantineId = 0;
@@ -96,5 +96,35 @@ public class Player : AggregateRoot
 
         isBlackListed = false;
         return Result.Ok();
+    }
+
+    public Result ChangeToVIPStatus()
+    {
+        if (isBlackListed)
+            return Result.Fail("Blacklisted players cannot be elevated to VIP status.");
+
+        if (isQuarantined)
+            return Result.Fail("Quarantined players cannot be elevated to VIP status.");
+
+        var vipResult = VIPMemberShip.Create(vipMemberShip);
+        
+        if (!vipResult.Success)
+            return Result.Fail(vipResult.ErrorMessage);
+
+        vipMemberShip = vipResult.Data;
+        
+        Console.WriteLine($"**NOTIFICATION** Player {email.Value} has been upgraded to VIP!");
+        return Result.Ok();
+    }
+
+    public void CheckVIPStatusExpiry()
+    {
+        if (vipMemberShip == null) 
+            return;
+
+        if (vipMemberShip.HasExpired())
+        {
+            vipMemberShip.ExpireStatus();
+        }
     }
 }
