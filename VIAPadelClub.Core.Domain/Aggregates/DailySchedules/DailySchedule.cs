@@ -2,6 +2,7 @@
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
 using VIAPadelClub.Core.Tools.OperationResult;
+// ReSharper disable ParameterHidesMember
 
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
 
@@ -10,7 +11,7 @@ namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 public class DailySchedule : AggregateRoot
 {
     public Guid scheduleId;
-    internal DateTime scheduleDate;
+    internal DateOnly scheduleDate;
     internal TimeOnly availableFrom;
     internal TimeOnly availableUntil;
     internal List<(TimeOnly start, TimeOnly end)> vipTimeRanges = new();
@@ -23,7 +24,7 @@ public class DailySchedule : AggregateRoot
     private DailySchedule()
     {
         scheduleId = Guid.NewGuid();
-        scheduleDate = DateTime.Today;
+        scheduleDate = DateOnly.FromDateTime(DateTime.Today);
         availableFrom = new TimeOnly(15, 0, 0);
         availableUntil = new TimeOnly(22, 0, 0);
         status = ScheduleStatus.Draft;
@@ -47,7 +48,7 @@ public class DailySchedule : AggregateRoot
             : Result<DailySchedule>.Ok(schedule);
     }
 
-    public Result AddAvailableCourt(Guid scheduleId, string courtName, List<DailySchedule> schedules)
+    public Result AddAvailableCourt(Guid scheduleId, string courtName, List<DailySchedule> schedules, IDateProvider dateProvider)
     {
         var scheduleResult = FindSchedule(scheduleId, schedules);
         if (!scheduleResult.Success)
@@ -57,7 +58,7 @@ public class DailySchedule : AggregateRoot
 
         var schedule = scheduleResult.Data;
 
-        var validationResult = schedule.ValidateScheduleForCourtAddition();
+        var validationResult = schedule.ValidateScheduleForCourtAddition(dateProvider.Today());
         if (!validationResult.Success)
         {
             return validationResult;
@@ -89,9 +90,9 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
 
-    private Result ValidateScheduleForCourtAddition()
+    private Result ValidateScheduleForCourtAddition(DateOnly today)
     {
-        if (scheduleDate < DateTime.Today)
+        if (scheduleDate < today)
         {
             return Result.Fail(ErrorMessage.PastScheduleCannotBeUpdated()._message);
         }
@@ -152,15 +153,15 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
 
-    public Result DeleteSchedule()
+    public Result DeleteSchedule(IDateProvider dateProvider)
     {
         if (isDeleted)
             return Result.Fail("Schedule is already deleted");
 
-        if (scheduleDate < DateTime.Today)
+        if (scheduleDate < dateProvider.Today())
             return Result.Fail("Cannot delete a schedule from the past.");
         
-        if (scheduleDate == DateTime.Today && status == ScheduleStatus.Active)
+        if (scheduleDate == dateProvider.Today() && status == ScheduleStatus.Active)
             return Result.Fail("Cannot delete an active schedule on the same day.");
 
         isDeleted = true;

@@ -18,6 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\Unit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VIAPadelClub.Core.Domain", "VIAPadelClub.Core.Domain\VIAPadelClub.Core.Domain.csproj", "{9F29BF0C-F0EC-48AA-8413-4210F4C33AD5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{DC198F9B-BF40-45E4-A57B-3C106D8AE041}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VIAPadelClub.Infrastructure.Services", "VIAPadelClub.Infrastructure.Services\VIAPadelClub.Infrastructure.Services.csproj", "{24A3DC09-7C85-48C2-9B0C-F3D23E848CFB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +34,8 @@ Global
 		{76A798A3-7127-4580-851F-51482C68B38E} = {F6AF107A-F35C-481C-A024-3327C9DFAD82}
 		{658AAA6A-6AE8-46F3-ACAA-C0A1D117B0E6} = {46FBDFBB-F4BE-4410-B02D-75B772C1563D}
 		{9F29BF0C-F0EC-48AA-8413-4210F4C33AD5} = {BC77821B-CAA3-498B-B1B0-B0093D6C821B}
+		{DC198F9B-BF40-45E4-A57B-3C106D8AE041} = {B7924B68-B3FF-4362-80C1-6C3D95BCD0E2}
+		{24A3DC09-7C85-48C2-9B0C-F3D23E848CFB} = {DC198F9B-BF40-45E4-A57B-3C106D8AE041}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{48FDF1A6-4D7A-43F9-9237-8CDF2CA8D115}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -48,5 +54,9 @@ Global
 		{9F29BF0C-F0EC-48AA-8413-4210F4C33AD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F29BF0C-F0EC-48AA-8413-4210F4C33AD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F29BF0C-F0EC-48AA-8413-4210F4C33AD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24A3DC09-7C85-48C2-9B0C-F3D23E848CFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24A3DC09-7C85-48C2-9B0C-F3D23E848CFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24A3DC09-7C85-48C2-9B0C-F3D23E848CFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24A3DC09-7C85-48C2-9B0C-F3D23E848CFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

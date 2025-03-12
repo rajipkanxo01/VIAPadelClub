@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using UnitTests.Features.Helpers;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
@@ -124,9 +125,11 @@ public class AddAvailableCourtAggregateTest
          var schedules = new List<DailySchedule>(); 
          var scheduleId = Guid.NewGuid();
          string courtName = "D1";
+         
+         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
     
          // Act
-         var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
+         var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules, fakeDateProvider);
     
          // Assert
          result.Success.Should().BeFalse();
@@ -137,14 +140,16 @@ public class AddAvailableCourtAggregateTest
     public void Should_Fail_When_Schedule_Is_Past()
     {
         // Arrange
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
+        
         var scheduleResult = DailySchedule.CreateSchedule();
-        scheduleResult.Data.scheduleDate = DateTime.Today.AddDays(-1);
+        scheduleResult.Data.scheduleDate = fakeDateProvider.Today().AddDays(-1);
         var schedules = new List<DailySchedule> { scheduleResult.Data };
         var scheduleId = scheduleResult.Data.scheduleId;
         string courtName = "D1";
 
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
+        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules, fakeDateProvider);
 
         // Assert
         result.Success.Should().BeFalse();
@@ -159,9 +164,11 @@ public class AddAvailableCourtAggregateTest
         var schedules = new List<DailySchedule> { scheduleResult.Data };
         var scheduleId = scheduleResult.Data.scheduleId;
         string invalidCourtName = "F1";
+        
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
 
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, invalidCourtName, schedules);
+        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, invalidCourtName, schedules, fakeDateProvider);
 
         // Assert
         result.Success.Should().BeFalse();
@@ -176,10 +183,12 @@ public class AddAvailableCourtAggregateTest
         var scheduleId = scheduleResult.Data.scheduleId;
         string courtName = "D1";
 
-        scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
+        
+        scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules, fakeDateProvider);
 
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
+        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules, fakeDateProvider);
 
         // Assert
         result.Success.Should().BeFalse();
@@ -194,13 +203,15 @@ public class AddAvailableCourtAggregateTest
         var schedules = new List<DailySchedule> { scheduleResult.Data };
         var scheduleId = scheduleResult.Data.scheduleId;
         string courtName = "D1";
+        
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
 
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
+        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules, fakeDateProvider);
 
         // Assert
         result.Success.Should().BeTrue();
         scheduleResult.Data.listOfCourts.Should().Contain(c => c.Name.Value == courtName);
     }
-
 }
+

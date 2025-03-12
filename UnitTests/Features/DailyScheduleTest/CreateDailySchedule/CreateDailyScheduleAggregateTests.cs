@@ -1,4 +1,5 @@
-﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+﻿using UnitTests.Features.Helpers;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using Xunit;
 
@@ -12,13 +13,14 @@ public class CreateDailyScheduleAggregateTests
         // Act
         var dailySchedule = DailySchedule.CreateSchedule();
         var data = dailySchedule.Data;
-
+        
+        
         // Assert
         Assert.NotNull(data.scheduleId);
         Assert.Equal(ScheduleStatus.Draft, data.status);
         Assert.Empty(data.listOfAvailableCourts);
         Assert.Equal(new TimeOnly(15, 0, 0), data.availableFrom);
         Assert.Equal(new TimeOnly(22, 0, 0), data.availableUntil);
-        Assert.Equal(DateTime.Today, data.scheduleDate);
+        Assert.Equal(DateOnly.FromDateTime(DateTime.Today), data.scheduleDate);
     }
 }
