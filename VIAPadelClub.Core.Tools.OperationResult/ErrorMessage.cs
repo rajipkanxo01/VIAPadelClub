@@ -1,4 +1,6 @@
-﻿namespace VIAPadelClub.Core.Tools.OperationResult;
+﻿
+
+namespace VIAPadelClub.Core.Tools.OperationResult;
 
 public static class ErrorMessage
 {
@@ -20,4 +22,8 @@ public static class ErrorMessage
     public static Error CourtAlreadyExists()=> new Error(0, "Court already exists.");
     public static Error InvalidTimeSlot() => new Error(0, "VIP time spans must start and end at whole or half-hour marks (e.g., 10:00, 10:30, 11:00, etc.).");
     public static Error VipTimeOutsideSchedule() => new Error(0, "VIP time must be within daily schedule time.");
+    public static Error NoCourtAvailable() => new Error(0, "No court available.");
+    public static Error PastScheduleCannotBeActivated() => new Error(0, "Past schedule cannot be activated.");
+    public static Error ScheduleAlreadyActive()=> new Error(0, "Schedule is already active.");
+    public static Error ScheduleIsDeleted() => new Error(0, "Schedule is deleted.");
 }

@@ -153,6 +153,23 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
 
+    public Result Activate()
+    {
+        if(scheduleDate < DateOnly.FromDateTime(DateTime.Today))
+            return Result.Fail(ErrorMessage.PastScheduleCannotBeActivated()._message);
+        
+        if(listOfCourts.Count==0)
+            return Result.Fail(ErrorMessage.NoCourtAvailable()._message);
+
+        if (status == ScheduleStatus.Active)
+            return Result.Fail(ErrorMessage.ScheduleAlreadyActive()._message);
+        
+        if (isDeleted)
+            return Result.Fail(ErrorMessage.ScheduleIsDeleted()._message);
+        
+        status = ScheduleStatus.Active;
+        return Result.Ok();
+    }
     public Result DeleteSchedule(IDateProvider dateProvider)
     {
         if (isDeleted)
