@@ -18,6 +18,7 @@ public class DailySchedule : AggregateRoot
     internal List<Court> listOfCourts;
     internal List<Court> listOfAvailableCourts;
     internal List<Booking> listOfBookings;
+    internal bool isDeleted;
 
     private DailySchedule()
     {
@@ -29,6 +30,7 @@ public class DailySchedule : AggregateRoot
         listOfCourts = [];
         listOfAvailableCourts = [];
         listOfBookings = [];
+        isDeleted = false;
     }
 
     public static Result<DailySchedule> CreateSchedule()
@@ -147,6 +149,30 @@ public class DailySchedule : AggregateRoot
             vipTimeRanges.Add((vipStartTime, vipEndTime));
         }
 
+        return Result.Ok();
+    }
+
+    public Result DeleteSchedule()
+    {
+        if (isDeleted)
+            return Result.Fail("Schedule is already deleted");
+
+        if (scheduleDate < DateTime.Today)
+            return Result.Fail("Cannot delete a schedule from the past.");
+        
+        if (scheduleDate == DateTime.Today && status == ScheduleStatus.Active)
+            return Result.Fail("Cannot delete an active schedule on the same day.");
+
+        isDeleted = true;
+
+        foreach (var booking in listOfBookings)
+        {
+            booking.CancelBooking();
+            Console.WriteLine("**NOTIFICATION** Your booking on {scheduleDate} has been canceled due to schedule deletion.");
+        }
+            
+        listOfCourts.Clear();
+        
         return Result.Ok();
     }
 }
