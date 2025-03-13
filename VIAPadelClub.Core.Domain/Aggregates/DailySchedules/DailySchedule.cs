@@ -153,9 +153,9 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
 
-    public Result Activate()
+    public Result Activate(IDateProvider dateProvider)
     {
-        if(scheduleDate < DateOnly.FromDateTime(DateTime.Today))
+        if(scheduleDate < dateProvider.Today())
             return Result.Fail(ErrorMessage.PastScheduleCannotBeActivated()._message);
         
         if(listOfCourts.Count==0)
