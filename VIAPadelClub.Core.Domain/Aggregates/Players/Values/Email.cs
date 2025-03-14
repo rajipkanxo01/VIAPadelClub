@@ -41,7 +41,7 @@ namespace VIAPadelClub.Core.Domain.Aggregates.Players.Values
 
         private static Result ValidateEmailIsCorrectFormat(string email)
         {
-            const string emailPattern = @"^([a-zA-Z]{3,4}|\d{6})@via\.dk$";
+            const string emailPattern = @"^(?:(?:[a-zA-Z]{3,4})|\d{6})@via\.dk$";
             return !Regex.IsMatch(email, emailPattern)
                 ? Result.Fail(ErrorMessage.InvalidEmailFormat()._message)
                 : Result.Ok();

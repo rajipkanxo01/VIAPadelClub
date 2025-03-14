@@ -1,35 +1,46 @@
-﻿namespace UnitTests.Features.PlayerTest.ManagerAddVIPStatus;
+﻿using UnitTests.Features.Helpers;
+using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
+
+namespace UnitTests.Features.PlayerTest.ManagerAddVIPStatus;
 
 using VIAPadelClub.Core.Domain.Aggregates.Players;
 using Xunit;
 
 public class ManagerAddsVIPStatusPlayerAggregateTest {
     [Fact]
-    public void Should_Mark_Player_As_VIP()
+    public async Task Should_Mark_Player_As_VIP()
     {
         // Arrange
-        var player = Player.Register("test@via.dk", "Nescaffe", "Coffee", "http://profile.uri").Data!;
+        var emailChecker = new FakeUniqueEmailChecker();
+        var email = Email.Create("test@via.dk");
+        var fullName = FullName.Create("John", "Doe");
+        var profileUri = ProfileUri.Create("http://example.com");
+        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
         
         // Act
-        var result = player.ChangeToVIPStatus();
+        var result = player.Data.ChangeToVIPStatus();
 
         // Assert
         Assert.True(result.Success);
-        Assert.NotNull(player.vipMemberShip);
-        Assert.True(player.vipMemberShip.IsVIP);
+        Assert.NotNull(player.Data.vipMemberShip);
+        Assert.True(player.Data.vipMemberShip.IsVIP);
     }
     
     [Fact]
-    public void Should_Reject_If_Player_Is_Already_VIP()
+    public async Task Should_Reject_If_Player_Is_Already_VIP()
     {
         // Arrange
-        var player = Player.Register("test@via.dk", "Tim", "Regent", "http://profile.uri").Data!;
+        var emailChecker = new FakeUniqueEmailChecker();
+        var email = Email.Create("test@via.dk");
+        var fullName = FullName.Create("John", "Doe");
+        var profileUri = ProfileUri.Create("http://example.com");
+        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
         
         // First VIP upgrade
-        player.ChangeToVIPStatus();
+        player.Data.ChangeToVIPStatus();
 
         // Act
-        var result = player.ChangeToVIPStatus(); //We try again
+        var result = player.Data.ChangeToVIPStatus(); //We try again
 
         // Assert
         Assert.False(result.Success); // It shouldn't upgrade again
@@ -37,14 +48,18 @@ public class ManagerAddsVIPStatusPlayerAggregateTest {
     }
     
     [Fact]
-    public void Should_Reject_If_Player_Is_Quarantined()
+    public async Task Should_Reject_If_Player_Is_Quarantined()
     {
         // Arrange
-        var player = Player.Register("test@via.dk", "Dairy", "Milk", "http://profile.uri").Data!;
-        player.isQuarantined = true;
+        var emailChecker = new FakeUniqueEmailChecker();
+        var email = Email.Create("test@via.dk");
+        var fullName = FullName.Create("John", "Doe");
+        var profileUri = ProfileUri.Create("http://example.com");
+        var player =await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+        player.Data.isQuarantined = true;
         
         // Act
-        var result = player.ChangeToVIPStatus();
+        var result = player.Data.ChangeToVIPStatus();
 
         // Assert
         Assert.False(result.Success);
@@ -52,14 +67,18 @@ public class ManagerAddsVIPStatusPlayerAggregateTest {
     }
     
     [Fact]
-    public void Should_Reject_If_Player_Is_Blacklisted()
+    public async Task Should_Reject_If_Player_Is_Blacklisted()
     {
         // Arrange
-        var player = Player.Register("test@via.dk", "Chew", "Gum", "http://profile.uri").Data!;
-        player.isBlackListed = true;
+        var emailChecker = new FakeUniqueEmailChecker();
+        var email = Email.Create("test@via.dk");
+        var fullName = FullName.Create("John", "Doe");
+        var profileUri = ProfileUri.Create("http://example.com");
+        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+        player.Data.isBlackListed = true;
         
         // Act
-        var result = player.ChangeToVIPStatus();
+        var result = player.Data.ChangeToVIPStatus();
 
         // Assert
         Assert.False(result.Success);

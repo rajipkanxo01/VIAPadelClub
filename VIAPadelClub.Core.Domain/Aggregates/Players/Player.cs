@@ -28,17 +28,24 @@ public class Player : AggregateRoot
         quarantines = new List<Quarantine>();
     }
     
-    public static Result<Player> Register(string email, string firstName, string lastName, string profileUri)
+    public static async Task<Result<Player>> Register(Email email, FullName fullName, ProfileUri profileUri,IEmailUniqueChecker emailUniqueChecker)
     {
-        var emailResult = Email.Create(email.ToLower());
+        if (!await emailUniqueChecker.IsUnique(email.Value.ToLower()))
+        {
+            return Result<Player>.Fail(ErrorMessage.DuplicateEmail()._message);
+        }
+        
+        var emailResult=Email.Create(email.Value.ToLower());
         if (!emailResult.Success) return Result<Player>.Fail(emailResult.ErrorMessage);
-
-        var fullNameResult = FullName.Create(firstName, lastName);
+        
+        var fullNameResult=FullName.Create(fullName.FirstName, fullName.LastName);
         if (!fullNameResult.Success) return Result<Player>.Fail(fullNameResult.ErrorMessage);
-
-        var profileUriResult = ProfileUri.Create(profileUri);
+        
+        var profileUriResult=ProfileUri.Create(profileUri.Value);
         if (!profileUriResult.Success) return Result<Player>.Fail(profileUriResult.ErrorMessage);
-    
+        
+        emailUniqueChecker.AddEmail(email.Value.ToLower());
+        
         return Result<Player>.Ok(new Player(emailResult.Data, fullNameResult.Data, profileUriResult.Data));
     }
 

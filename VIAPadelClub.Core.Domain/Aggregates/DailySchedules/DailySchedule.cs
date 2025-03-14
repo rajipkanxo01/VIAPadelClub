@@ -40,17 +40,9 @@ public class DailySchedule : AggregateRoot
         return Result<DailySchedule>.Ok(dailySchedule);
     }
 
-    private static Result<DailySchedule> FindSchedule(Guid scheduleId, List<DailySchedule> schedules)
+    public Result AddAvailableCourt(Court courtName, IDateProvider dateProvider, IScheduleRepository repository)
     {
-        var schedule = schedules.FirstOrDefault(s => s.scheduleId == scheduleId);
-        return schedule == null
-            ? Result<DailySchedule>.Fail(ErrorMessage.ScheduleNotFound()._message)
-            : Result<DailySchedule>.Ok(schedule);
-    }
-
-    public Result AddAvailableCourt(Guid scheduleId, string courtName, List<DailySchedule> schedules, IDateProvider dateProvider)
-    {
-        var scheduleResult = FindSchedule(scheduleId, schedules);
+        var scheduleResult = repository.FindSchedule(scheduleId);
         if (!scheduleResult.Success)
         {
             return Result.Fail(scheduleResult.ErrorMessage);
@@ -64,7 +56,7 @@ public class DailySchedule : AggregateRoot
             return validationResult;
         }
 
-        var courtNameResult = CourtName.Create(courtName);
+        var courtNameResult = CourtName.Create(courtName.Name.Value);
         if (!courtNameResult.Success)
         {
             return Result.Fail(courtNameResult.ErrorMessage);
@@ -77,6 +69,7 @@ public class DailySchedule : AggregateRoot
         }
 
         schedule.listOfCourts.Add(Court.Create(courtNameResult.Data));
+        repository.AddSchedule(schedule);
         return Result.Ok();
     }
 
