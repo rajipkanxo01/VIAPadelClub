@@ -2,6 +2,7 @@
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
 using VIAPadelClub.Core.Tools.OperationResult;
+// ReSharper disable ParameterHidesMember
 
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
 
@@ -10,7 +11,7 @@ namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 public class DailySchedule : AggregateRoot
 {
     public Guid scheduleId;
-    internal DateTime scheduleDate;
+    internal DateOnly scheduleDate;
     internal TimeOnly availableFrom;
     internal TimeOnly availableUntil;
     internal List<(TimeOnly start, TimeOnly end)> vipTimeRanges = new();
@@ -23,7 +24,7 @@ public class DailySchedule : AggregateRoot
     private DailySchedule()
     {
         scheduleId = Guid.NewGuid();
-        scheduleDate = DateTime.Today;
+        scheduleDate = DateOnly.FromDateTime(DateTime.Today);
         availableFrom = new TimeOnly(15, 0, 0);
         availableUntil = new TimeOnly(22, 0, 0);
         status = ScheduleStatus.Draft;
@@ -39,17 +40,9 @@ public class DailySchedule : AggregateRoot
         return Result<DailySchedule>.Ok(dailySchedule);
     }
 
-    private static Result<DailySchedule> FindSchedule(Guid scheduleId, List<DailySchedule> schedules)
+    public Result AddAvailableCourt(Court courtName, IDateProvider dateProvider, IScheduleRepository repository)
     {
-        var schedule = schedules.FirstOrDefault(s => s.scheduleId == scheduleId);
-        return schedule == null
-            ? Result<DailySchedule>.Fail(ErrorMessage.ScheduleNotFound()._message)
-            : Result<DailySchedule>.Ok(schedule);
-    }
-
-    public Result AddAvailableCourt(Guid scheduleId, string courtName, List<DailySchedule> schedules)
-    {
-        var scheduleResult = FindSchedule(scheduleId, schedules);
+        var scheduleResult = repository.FindSchedule(scheduleId);
         if (!scheduleResult.Success)
         {
             return Result.Fail(scheduleResult.ErrorMessage);
@@ -57,13 +50,13 @@ public class DailySchedule : AggregateRoot
 
         var schedule = scheduleResult.Data;
 
-        var validationResult = schedule.ValidateScheduleForCourtAddition();
+        var validationResult = schedule.ValidateScheduleForCourtAddition(dateProvider.Today());
         if (!validationResult.Success)
         {
             return validationResult;
         }
 
-        var courtNameResult = CourtName.Create(courtName);
+        var courtNameResult = CourtName.Create(courtName.Name.Value);
         if (!courtNameResult.Success)
         {
             return Result.Fail(courtNameResult.ErrorMessage);
@@ -76,6 +69,7 @@ public class DailySchedule : AggregateRoot
         }
 
         schedule.listOfCourts.Add(Court.Create(courtNameResult.Data));
+        repository.AddSchedule(schedule);
         return Result.Ok();
     }
 
@@ -89,9 +83,9 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
 
-    private Result ValidateScheduleForCourtAddition()
+    private Result ValidateScheduleForCourtAddition(DateOnly today)
     {
-        if (scheduleDate < DateTime.Today)
+        if (scheduleDate < today)
         {
             return Result.Fail(ErrorMessage.PastScheduleCannotBeUpdated()._message);
         }
@@ -152,15 +146,32 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
 
-    public Result DeleteSchedule()
+    public Result Activate(IDateProvider dateProvider)
+    {
+        if(scheduleDate < dateProvider.Today())
+            return Result.Fail(ErrorMessage.PastScheduleCannotBeActivated()._message);
+        
+        if(listOfCourts.Count==0)
+            return Result.Fail(ErrorMessage.NoCourtAvailable()._message);
+
+        if (status == ScheduleStatus.Active)
+            return Result.Fail(ErrorMessage.ScheduleAlreadyActive()._message);
+        
+        if (isDeleted)
+            return Result.Fail(ErrorMessage.ScheduleIsDeleted()._message);
+        
+        status = ScheduleStatus.Active;
+        return Result.Ok();
+    }
+    public Result DeleteSchedule(IDateProvider dateProvider)
     {
         if (isDeleted)
             return Result.Fail(ErrorMessage.ScheduleAlreadyDeleted()._message);
 
-        if (scheduleDate < DateTime.Today)
+        if (scheduleDate < dateProvider.Today())
             return Result.Fail(ErrorMessage.PastScheduleCannotBeDeleted()._message);
         
-        if (scheduleDate == DateTime.Today && status == ScheduleStatus.Active)
+        if (scheduleDate == dateProvider.Today() && status == ScheduleStatus.Active)
             return Result.Fail(ErrorMessage.SameDayActiveScheduleCannotBeDeleted()._message);
 
         isDeleted = true;

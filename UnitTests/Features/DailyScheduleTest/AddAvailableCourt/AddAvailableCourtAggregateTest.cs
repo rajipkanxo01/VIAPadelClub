@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using UnitTests.Features.Helpers;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
@@ -120,13 +121,14 @@ public class AddAvailableCourtAggregateTest
      public void Should_Fail_When_Schedule_Not_Found()
      {
          // Arrange
+         var fakeScheduleRepo= new FakeScheduleRepository();
          var scheduleResult = DailySchedule.CreateSchedule();
-         var schedules = new List<DailySchedule>(); 
-         var scheduleId = Guid.NewGuid();
          string courtName = "D1";
+         
+         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
     
          // Act
-         var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
+         var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data), fakeDateProvider, fakeScheduleRepo);
     
          // Assert
          result.Success.Should().BeFalse();
@@ -137,50 +139,55 @@ public class AddAvailableCourtAggregateTest
     public void Should_Fail_When_Schedule_Is_Past()
     {
         // Arrange
+        var fakeScheduleRepo= new FakeScheduleRepository();
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
+        
         var scheduleResult = DailySchedule.CreateSchedule();
-        scheduleResult.Data.scheduleDate = DateTime.Today.AddDays(-1);
-        var schedules = new List<DailySchedule> { scheduleResult.Data };
-        var scheduleId = scheduleResult.Data.scheduleId;
+        scheduleResult.Data.scheduleDate = fakeDateProvider.Today().AddDays(-1);
+        fakeScheduleRepo.AddSchedule(scheduleResult.Data);
         string courtName = "D1";
-
+    
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
+        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data), fakeDateProvider, fakeScheduleRepo);
 
         // Assert
         result.Success.Should().BeFalse();
         result.ErrorMessage.Should().Contain(ErrorMessage.PastScheduleCannotBeUpdated()._message);
     }
-
+    
     [Fact]
     public void Should_Fail_When_Court_Name_Is_Invalid()
     {
         // Arrange
+        var fakeScheduleRepo= new FakeScheduleRepository();
         var scheduleResult = DailySchedule.CreateSchedule();
-        var schedules = new List<DailySchedule> { scheduleResult.Data };
-        var scheduleId = scheduleResult.Data.scheduleId;
         string invalidCourtName = "F1";
-
+        
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
+    
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, invalidCourtName, schedules);
+        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(invalidCourtName).Data), fakeDateProvider, fakeScheduleRepo);
 
         // Assert
         result.Success.Should().BeFalse();
     }
-
+    
     [Fact]
     public void Should_Fail_When_Court_Already_Exists_In_Daily_Schedule()
     {
         // Arrange
+        var fakeScheduleRepo= new FakeScheduleRepository();
         var scheduleResult = DailySchedule.CreateSchedule();
-        var schedules = new List<DailySchedule> { scheduleResult.Data };
-        var scheduleId = scheduleResult.Data.scheduleId;
+        fakeScheduleRepo.AddSchedule(scheduleResult.Data);
         string courtName = "D1";
-
-        scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
-
+    
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
+        
+        scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data), fakeDateProvider, fakeScheduleRepo);
+    
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
-
+        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data), fakeDateProvider, fakeScheduleRepo);
+    
         // Assert
         result.Success.Should().BeFalse();
         result.ErrorMessage.Should().Contain(ErrorMessage.CourtAlreadyExists()._message);
@@ -190,17 +197,21 @@ public class AddAvailableCourtAggregateTest
     public void Should_Add_Court_Successfully_When_Valid()
     {
         // Arrange
+        var fakeScheduleRepo= new FakeScheduleRepository();
         var scheduleResult = DailySchedule.CreateSchedule();
-        var schedules = new List<DailySchedule> { scheduleResult.Data };
-        var scheduleId = scheduleResult.Data.scheduleId;
+        fakeScheduleRepo.AddSchedule(scheduleResult.Data);
         string courtName = "D1";
-
+        
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
+    
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(scheduleId, courtName, schedules);
-
+        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data), fakeDateProvider, fakeScheduleRepo);
+    
         // Assert
         result.Success.Should().BeTrue();
         scheduleResult.Data.listOfCourts.Should().Contain(c => c.Name.Value == courtName);
     }
-
+    
+    
 }
+

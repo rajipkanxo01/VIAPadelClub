@@ -1,4 +1,7 @@
-﻿namespace UnitTests.Features.PlayerTest.PlayerQuarantineTest;
+﻿using UnitTests.Features.Helpers;
+using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
+
+namespace UnitTests.Features.PlayerTest.PlayerQuarantineTest;
 
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
@@ -10,71 +13,83 @@ using Xunit;
 public class PlayerQuarantineTest {
     
     [Theory]
-    [InlineData("test@via.dk", "Pramesh", "Smith", "http://profile.uri", "2025-01-20")]
-    [InlineData("jane@via.dk", "Rajip", "Kang", "http://profile.uri", "2025-02-10")]
-    public void Should_Quarantine_Player_Successfully(string email, string firstName, string lastName, string profileUri, string startDateString)
+    [InlineData("2025-01-20")]
+    [InlineData("2025-02-10")]
+    public async Task Should_Quarantine_Player_Successfully(string startDateString)
     {
         // Arrange
-        var player = Player.Register(email, firstName, lastName, profileUri).Data!;
+        var emailChecker = new FakeUniqueEmailChecker();
+        var email = Email.Create("test@via.dk");
+        var fullName = FullName.Create("John", "Doe");
+        var profileUri = ProfileUri.Create("http://example.com");
+        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
         var startDate = DateOnly.Parse(startDateString);
         var schedules = new List<DailySchedule>();
 
         // Act
-        var result = player.Quarantine(startDate, schedules);
+        var result = player.Data.Quarantine(startDate, schedules);
 
         // Assert
         Assert.True(result.Success);
         Assert.NotNull(result.Data);
-        Assert.Single(player.quarantines); // Only one quarantine should exist
+        Assert.Single(player.Data.quarantines); // Only one quarantine should exist
         Assert.Equal(startDate, result.Data!.StartDate);
         Assert.Equal(startDate.AddDays(3), result.Data!.EndDate);
     }
     
     [Theory]
-    [InlineData("test@via.dk", "Pramesh", "Smith", "http://profile.uri", "2025-01-20")]
-    [InlineData("jane@via.dk", "Rajip", "Kang", "http://profile.uri", "2025-02-10")]
-    public void Should_Extend_Existing_Quarantine(string email, string firstName, string lastName, string profileUri, string startDateString)
+    [InlineData("2025-01-20")]
+    [InlineData("2025-02-10")]
+    public async Task Should_Extend_Existing_Quarantine(string startDateString)
     {
         // Arrange
-        var player = Player.Register(email, firstName, lastName, profileUri).Data!;
+        var emailChecker = new FakeUniqueEmailChecker();
+        var email = Email.Create("test@via.dk");
+        var fullName = FullName.Create("John", "Doe");
+        var profileUri = ProfileUri.Create("http://example.com");
+        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
         var startDate = DateOnly.Parse(startDateString);
         var schedules = new List<DailySchedule>();
 
 
         // First Quarantine
-        player.Quarantine(startDate, schedules);
+        player.Data.Quarantine(startDate, schedules);
 
         // Act - Quarantine again on the same date, should extend
-        var result = player.Quarantine(startDate, schedules);
+        var result = player.Data.Quarantine(startDate, schedules);
 
         // Assert
         Assert.True(result.Success);
         Assert.NotNull(result.Data);
-        Assert.Single(player.quarantines); // No new quarantine, now we extended
+        Assert.Single(player.Data.quarantines); // No new quarantine, now we extended
         Assert.Equal(startDate, result.Data.StartDate);
         Assert.Equal(startDate.AddDays(6), result.Data.EndDate); // Extended by another 3 days
     }
     
     [Theory]
-    [InlineData("test@via.dk", "John", "Doe", "http://profile.uri", "2025-01-20")]
-    [InlineData("jane@via.dk", "Jane", "Smith", "http://profile.uri", "2025-02-10")]
-    public void Should_Fail_To_Quarantine_Blacklisted_Player(string email, string firstName, string lastName, string profileUri, string startDateString)
+    [InlineData( "2025-01-20")]
+    [InlineData("2025-02-10")]
+    public async Task Should_Fail_To_Quarantine_Blacklisted_Player(string startDateString)
     {
         // Arrange
-        var player = Player.Register(email, firstName, lastName, profileUri).Data!;
-        player.isBlackListed = true;
+        var emailChecker = new FakeUniqueEmailChecker();
+        var email = Email.Create("test@via.dk");
+        var fullName = FullName.Create("John", "Doe");
+        var profileUri = ProfileUri.Create("http://example.com");
+        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+        player.Data.isBlackListed = true;
         var startDate = DateOnly.Parse(startDateString);
         var schedules = new List<DailySchedule>();
 
 
         // Act
-        var result = player.Quarantine(startDate, schedules);
+        var result = player.Data.Quarantine(startDate, schedules);
 
         // Assert
         Assert.False(result.Success);
         Assert.Null(result.Data);
         Assert.Equal("Player is already blacklisted and cannot be quarantined.", result.ErrorMessage);
-        Assert.Empty(player.quarantines);
+        Assert.Empty(player.Data.quarantines);
     }
     
 

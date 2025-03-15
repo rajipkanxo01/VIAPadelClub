@@ -1,4 +1,5 @@
-﻿using VIAPadelClub.Core.Domain.Aggregates.Players;
+﻿using UnitTests.Features.Helpers;
+using VIAPadelClub.Core.Domain.Aggregates.Players;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
@@ -7,16 +8,43 @@ namespace UnitTests.Features.PlayerTest.RegisterNewAccount;
 
 public class RegisterNewAccountAggregateTest
 {
-    [Theory]
-    [InlineData("john@via.dk", "John", "Doe", "https://profile.com/john", true)]
-    [InlineData("invalidemail.com", "John", "Doe", "https://profile.com/john", false)]
-    [InlineData("john@via.dk", "J", "Doe", "https://profile.com/john", false)]
-    [InlineData("john@via.dk", "John", "Doe", "", false)]
-    public void Should_Register_User_With_Valid_Fields(string email, string firstName, string lastName, string profileUri, bool expectedSuccess)
+    [Fact]
+    public async Task Should_Succeed_When_Input_Are_Valid_For_Registration()
     {
-        var result = Player.Register(email, firstName, lastName, profileUri);
-        Assert.Equal(expectedSuccess, result.Success);
+        // Arrange
+        var emailChecker = new FakeUniqueEmailChecker();
+        emailChecker.AddEmail(Email.Create("tesd@via.dk").Data.Value);
+        emailChecker.AddEmail(Email.Create("123456@via.dk").Data.Value);
+        var email = Email.Create("test@via.dk");
+        var fullName = FullName.Create("John", "Doe");
+        var profileUri = ProfileUri.Create("http://example.com");
+
+        // Act
+        var result = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+
+        // Assert
+        Assert.True(result.Success);
+        Assert.NotNull(result.Data);
     }
+
+    [Fact]
+    public async Task Should_Fail_When_Email_Is_Duplicate()
+    {
+       //Arrange
+         var emailChecker = new FakeUniqueEmailChecker();
+         var email = Email.Create("test@via.dk");
+         emailChecker.AddEmail(email.Data.Value);
+         var fullName = FullName.Create("John", "Doe");
+         var profileUri = ProfileUri.Create("http://example.com");
+         
+         //Act
+         var result = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+         
+         //Assert
+         Assert.False(result.Success);
+         Assert.NotNull(result.ErrorMessage);
+    }
+
     
     [Theory]
     [InlineData("test@gmail.com")]
@@ -32,6 +60,10 @@ public class RegisterNewAccountAggregateTest
     [Theory]
     [InlineData("@via.com")]
     [InlineData("123@via,com")]
+    [InlineData("123as@via.com")]
+    [InlineData("1235678@via.com")]
+    [InlineData("ab@via.com")]
+    [InlineData("qwesd@via.com")]
     public void Should_Return_Failure_With_Incorrect_Email_Format(string email)
     {
         var result = Email.Create(email);
@@ -52,6 +84,8 @@ public class RegisterNewAccountAggregateTest
     
     [Theory]
     [InlineData("abc@via.dk")]
+    [InlineData("abca@via.dk")]
+    [InlineData("123456@via.dk")]
     public void Should_Return_Success_With_Valid_Email_Format(string email)
     {
         var result = Email.Create(email);
