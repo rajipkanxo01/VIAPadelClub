@@ -40,9 +40,9 @@ public class DailySchedule : AggregateRoot
         return Result<DailySchedule>.Ok(dailySchedule);
     }
 
-    public Result AddAvailableCourt(Court courtName, IDateProvider dateProvider, IScheduleRepository repository)
+    public Result AddAvailableCourt(Court court, IDateProvider dateProvider, IScheduleFinder scheduleFinder)
     {
-        var scheduleResult = repository.FindSchedule(scheduleId);
+        var scheduleResult = scheduleFinder.FindSchedule(scheduleId);
         if (!scheduleResult.Success)
         {
             return Result.Fail(scheduleResult.ErrorMessage);
@@ -56,7 +56,7 @@ public class DailySchedule : AggregateRoot
             return validationResult;
         }
 
-        var courtNameResult = CourtName.Create(courtName.Name.Value);
+        var courtNameResult = CourtName.Create(court.Name.Value);
         if (!courtNameResult.Success)
         {
             return Result.Fail(courtNameResult.ErrorMessage);
@@ -68,18 +68,48 @@ public class DailySchedule : AggregateRoot
             return courtCheckResult;
         }
 
-        schedule.listOfCourts.Add(Court.Create(courtNameResult.Data));
-        repository.AddSchedule(schedule);
+        schedule.listOfAvailableCourts.Add(Court.Create(courtNameResult.Data));
+        scheduleFinder.AddSchedule(schedule);
         return Result.Ok();
     }
 
     private Result HasCourt(CourtName name)
     {
-        if (listOfCourts.Any(court => court.Name.Value == name.Value))
+        if (listOfAvailableCourts.Any(court => court.Name.Value == name.Value))
         {
             return Result.Fail(ErrorMessage.CourtAlreadyExists()._message);
         }
 
+        return Result.Ok();
+    }
+    
+    public Result removeAvailableCourt(Court court, IDateProvider dateProvider, IScheduleFinder scheduleFinder)
+    {
+        var scheduleResult = scheduleFinder.FindSchedule(scheduleId);
+        if (!scheduleResult.Success)
+        {
+            return Result.Fail(scheduleResult.ErrorMessage);
+        }
+
+        var schedule = scheduleResult.Data;
+        
+        if (scheduleDate < dateProvider.Today() && (schedule.status == ScheduleStatus.Draft || schedule.status == ScheduleStatus.Active))
+        {
+            return Result.Fail(ErrorMessage.PastScheduleCannotBeUpdated()._message);
+        }
+        
+        if (!schedule.listOfAvailableCourts.Contains(court))
+        {
+            return Result.Fail(ErrorMessage.NoCourtAvailable()._message);
+        }
+        //Todo : F3 and F5 for UC 8 can be only done after create booking is done
+        if (schedule.scheduleId != scheduleId)
+        {
+            return Result.Fail(ErrorMessage.ScheduleNotFound()._message);
+        }
+        //Todo : S5 and S2 can only be done after create booking is done
+        
+        schedule.listOfAvailableCourts.Remove(court);
         return Result.Ok();
     }
 

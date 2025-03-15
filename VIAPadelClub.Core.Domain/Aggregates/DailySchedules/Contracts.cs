@@ -7,8 +7,8 @@ public interface IDateProvider
     DateOnly Today();
 }
 
-public interface IScheduleRepository
+public interface IScheduleFinder
 {
     Result<DailySchedule> FindSchedule(Guid scheduleId);
-    void AddSchedule(DailySchedule schedule);
+    void AddSchedule(DailySchedule schedule);    //Todo: Remove Add schedule after session 6
 }
