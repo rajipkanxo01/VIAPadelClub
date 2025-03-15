@@ -9,6 +9,7 @@ public static class ErrorMessage
     public static Error InvalidFirstName() => new Error(0, "Invalid first name. Must be 2-25 letters with no symbols or spaces.");
     public static Error InvalidLastName() => new Error(0, "Invalid last name. Must be 2-25 letters with no symbols or spaces.");
     public static Error InvalidProfileUri() => new Error(0, "Invalid profile uri. Must be a valid uri.");
+    public static Error BlackListedCannotQuarantine() => new Error(0, "Player is already blacklisted and cannot be quarantined.");
     
     // Daily Schedule Error Message
     public static Error InvalidStartingLetter() => new Error(0, "Invalid starting letter. Must start with 'S','s','D' or 'd'.");
@@ -20,4 +21,7 @@ public static class ErrorMessage
     public static Error CourtAlreadyExists()=> new Error(0, "Court already exists.");
     public static Error InvalidTimeSlot() => new Error(0, "VIP time spans must start and end at whole or half-hour marks (e.g., 10:00, 10:30, 11:00, etc.).");
     public static Error VipTimeOutsideSchedule() => new Error(0, "VIP time must be within daily schedule time.");
+    public static Error ScheduleAlreadyDeleted() => new Error(0, "Schedule is already deleted.");
+    public static Error PastScheduleCannotBeDeleted() => new Error(0, "Cannot delete a schedule from the past.");
+    public static Error SameDayActiveScheduleCannotBeDeleted() => new Error(0, "Cannot delete an active schedule on the same day.");
 }
