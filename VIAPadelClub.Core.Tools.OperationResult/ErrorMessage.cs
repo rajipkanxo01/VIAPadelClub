@@ -11,6 +11,7 @@ public static class ErrorMessage
     public static Error InvalidFirstName() => new Error(0, "Invalid first name. Must be 2-25 letters with no symbols or spaces.");
     public static Error InvalidLastName() => new Error(0, "Invalid last name. Must be 2-25 letters with no symbols or spaces.");
     public static Error InvalidProfileUri() => new Error(0, "Invalid profile uri. Must be a valid uri.");
+    public static Error BlackListedCannotQuarantine() => new Error(0, "Player is already blacklisted and cannot be quarantined.");
     
     // Daily Schedule Error Message
     public static Error InvalidStartingLetter() => new Error(0, "Invalid starting letter. Must start with 'S','s','D' or 'd'.");
@@ -27,4 +28,7 @@ public static class ErrorMessage
     public static Error ScheduleAlreadyActive()=> new Error(0, "Schedule is already active.");
     public static Error ScheduleIsDeleted() => new Error(0, "Schedule is deleted.");
     public static Error DuplicateEmail() => new Error(0, "Email already exists.");
+    public static Error ScheduleAlreadyDeleted() => new Error(0, "Schedule is already deleted.");
+    public static Error PastScheduleCannotBeDeleted() => new Error(0, "Cannot delete a schedule from the past.");
+    public static Error SameDayActiveScheduleCannotBeDeleted() => new Error(0, "Cannot delete an active schedule on the same day.");
 }
