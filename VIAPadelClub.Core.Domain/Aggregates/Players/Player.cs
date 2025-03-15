@@ -52,7 +52,7 @@ public class Player : AggregateRoot
     public Result<Quarantine> Quarantine(DateOnly startDate, List<DailySchedule> schedules)
     {
         if (isBlackListed)
-            return Result<Quarantine>.Fail("Player is already blacklisted and cannot be quarantined.");
+            return Result<Quarantine>.Fail(ErrorMessage.BlackListedCannotQuarantine()._message);
 
         var quarantine = Entities.Quarantine.CreateOrExtend(quarantines, startDate);
     

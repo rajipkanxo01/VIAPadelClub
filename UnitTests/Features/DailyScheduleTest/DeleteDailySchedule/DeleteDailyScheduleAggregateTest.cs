@@ -41,7 +41,7 @@ public class DeleteDailyScheduleAggregateTest {
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal("Schedule is already deleted", result.ErrorMessage);
+        Assert.Equal("Schedule is already deleted.", result.ErrorMessage);
     }
 
     [Fact]

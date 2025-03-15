@@ -166,20 +166,20 @@ public class DailySchedule : AggregateRoot
     public Result DeleteSchedule(IDateProvider dateProvider)
     {
         if (isDeleted)
-            return Result.Fail("Schedule is already deleted");
+            return Result.Fail(ErrorMessage.ScheduleAlreadyDeleted()._message);
 
         if (scheduleDate < dateProvider.Today())
-            return Result.Fail("Cannot delete a schedule from the past.");
+            return Result.Fail(ErrorMessage.PastScheduleCannotBeDeleted()._message);
         
         if (scheduleDate == dateProvider.Today() && status == ScheduleStatus.Active)
-            return Result.Fail("Cannot delete an active schedule on the same day.");
+            return Result.Fail(ErrorMessage.SameDayActiveScheduleCannotBeDeleted()._message);
 
         isDeleted = true;
 
         foreach (var booking in listOfBookings)
         {
             booking.CancelBooking();
-            Console.WriteLine("**NOTIFICATION** Your booking on {scheduleDate} has been canceled due to schedule deletion.");
+            Console.WriteLine($"**NOTIFICATION** Your booking on {scheduleDate} has been canceled due to schedule deletion.");
         }
             
         listOfCourts.Clear();
