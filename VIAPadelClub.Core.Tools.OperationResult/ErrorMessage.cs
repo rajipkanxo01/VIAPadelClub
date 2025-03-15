@@ -26,4 +26,5 @@ public static class ErrorMessage
     public static Error PastScheduleCannotBeActivated() => new Error(0, "Past schedule cannot be activated.");
     public static Error ScheduleAlreadyActive()=> new Error(0, "Schedule is already active.");
     public static Error ScheduleIsDeleted() => new Error(0, "Schedule is deleted.");
+    public static Error DuplicateEmail() => new Error(0, "Email already exists.");
 }

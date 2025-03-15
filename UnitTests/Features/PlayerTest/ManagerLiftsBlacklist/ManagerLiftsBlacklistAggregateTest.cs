@@ -1,5 +1,7 @@
-﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+﻿using UnitTests.Features.Helpers;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.Players;
+using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using Xunit;
 
 namespace UnitTests.Features.PlayerTest.ManagerLiftsBlacklist;
@@ -7,32 +9,40 @@ namespace UnitTests.Features.PlayerTest.ManagerLiftsBlacklist;
 public class ManagerLiftsBlacklistAggregateTest
 {
     [Fact]
-    public void Should_Lift_Blacklist_When_Selected()
+    public async Task Should_Lift_Blacklist_When_Selected()
     {
         // Arrange
-        var player = Player.Register("111111@via.dk", "Player", "First", "https://player1profile.com").Data;
+        var emailChecker = new FakeUniqueEmailChecker();
+        var email = Email.Create("test@via.dk");
+        var fullName = FullName.Create("John", "Doe");
+        var profileUri = ProfileUri.Create("http://example.com");
+        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
         var dailySchedules = new List<DailySchedule>();
 
-        player.Blacklist(dailySchedules);
+        player.Data.Blacklist(dailySchedules);
 
         // Act
-        var result = player.LiftBlacklist();
+        var result = player.Data.LiftBlacklist();
 
         // Assert
         Assert.True(result.Success);
         Assert.Empty(result.ErrorMessage);
-        Assert.False(player.isBlackListed);
+        Assert.False(player.Data.isBlackListed);
     }
 
     [Fact]
-    public void Should_Fail_When_Unblacklisting_A_Player_Who_Is_Not_Blacklisted()
+    public async Task Should_Fail_When_Unblacklisting_A_Player_Who_Is_Not_Blacklisted()
     {
         // Arrange
-        var player = Player.Register("111111@via.dk", "Player", "First", "https://player1profile.com").Data;
+        var emailChecker = new FakeUniqueEmailChecker();
+        var email = Email.Create("test@via.dk");
+        var fullName = FullName.Create("John", "Doe");
+        var profileUri = ProfileUri.Create("http://example.com");
+        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
         var dailySchedules = new List<DailySchedule>();
 
         // Act
-        var result = player.LiftBlacklist();
+        var result = player.Data.LiftBlacklist();
 
         // Assert
         Assert.False(result.Success);

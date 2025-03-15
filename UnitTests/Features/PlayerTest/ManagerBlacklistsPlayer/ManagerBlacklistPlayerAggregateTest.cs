@@ -1,5 +1,7 @@
-﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+﻿using UnitTests.Features.Helpers;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.Players;
+using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using Xunit;
 
 namespace UnitTests.Features.PlayerTest.ManagerBlacklistsPlayer;
@@ -7,17 +9,21 @@ namespace UnitTests.Features.PlayerTest.ManagerBlacklistsPlayer;
 public class ManagerBlacklistPlayerAggregateTest
 {
     [Fact]
-    public void Should_Blacklist_Player_When_Selected()
+    public async Task Should_Blacklist_Player_When_Selected()
     {
         // Arrange
-        var player = Player.Register("111111@via.dk", "Player", "First", "https://player1profile.com").Data;
+        var emailChecker = new FakeUniqueEmailChecker();
+        var email = Email.Create("test@via.dk");
+        var fullName = FullName.Create("John", "Doe");
+        var profileUri = ProfileUri.Create("http://example.com");
+        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
         var dailySchedules = new List<DailySchedule>();
 
         // Act
-        var result = player.Blacklist(dailySchedules);
+        var result = player.Data.Blacklist(dailySchedules);
 
         // Assert
-        Assert.True(player.isBlackListed);
+        Assert.True(player.Data.isBlackListed);
         Assert.True(result.Success);
     }
 
@@ -26,35 +32,43 @@ public class ManagerBlacklistPlayerAggregateTest
     [InlineData("2025-03-15")]
     [InlineData("2025-04-22")]
     [InlineData("2025-04-26")]
-    public void Should_Remove_Quarantine_When_Player_Is_Blacklisted(string startDate)
+    public async Task Should_Remove_Quarantine_When_Player_Is_Blacklisted(string startDate)
     {
         // Arrange
-        var player = Player.Register("111111@via.dk", "Player", "First", "https://player1profile.com").Data;
+        var emailChecker = new FakeUniqueEmailChecker();
+        var email = Email.Create("test@via.dk");
+        var fullName = FullName.Create("John", "Doe");
+        var profileUri = ProfileUri.Create("http://example.com");
+        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
         var dailySchedules = new List<DailySchedule>();
 
 
-        player.Quarantine(DateOnly.Parse(startDate), dailySchedules);
+        player.Data.Quarantine(DateOnly.Parse(startDate), dailySchedules);
 
         // Act
-        var result = player.Blacklist(dailySchedules);
+        var result = player.Data.Blacklist(dailySchedules);
 
         // Assert
         Assert.True(result.Success);
-        Assert.True(player.isBlackListed);
-        Assert.Null(player.activeQuarantine);
+        Assert.True(player.Data.isBlackListed);
+        Assert.Null(player.Data.activeQuarantine);
     }
 
     [Fact]
-    public void Should_Fail_If_Player_Is_Already_Blacklisted()
+    public async Task Should_Fail_If_Player_Is_Already_Blacklisted()
     {
         // Arrange
-        var player = Player.Register("111111@via.dk", "Player", "First", "https://player1profile.com").Data;
+        var emailChecker = new FakeUniqueEmailChecker();
+        var email = Email.Create("test@via.dk");
+        var fullName = FullName.Create("John", "Doe");
+        var profileUri = ProfileUri.Create("http://example.com");
+        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
         var dailySchedules = new List<DailySchedule>();
 
-        player.Blacklist(dailySchedules);
+        player.Data.Blacklist(dailySchedules);
 
         // Act
-        var result = player.Blacklist(dailySchedules);
+        var result = player.Data.Blacklist(dailySchedules);
 
         // Assert
         Assert.False(result.Success);
