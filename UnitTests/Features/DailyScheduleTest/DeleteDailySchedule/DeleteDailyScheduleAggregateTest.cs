@@ -14,7 +14,7 @@ public class DeleteDailyScheduleAggregateTest {
         // Arrange
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
         
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         schedule.status = ScheduleStatus.Active;
         schedule.scheduleDate = fakeDateProvider.Today().AddDays(1);
 
@@ -33,7 +33,7 @@ public class DeleteDailyScheduleAggregateTest {
         // Arrange
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
         
-        var schedule = DailySchedule.CreateSchedule().Data!;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
         schedule.isDeleted = true;
         
         // Act
@@ -50,7 +50,7 @@ public class DeleteDailyScheduleAggregateTest {
         // Arrange
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
         
-        var schedule = DailySchedule.CreateSchedule().Data!;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
         schedule.status = ScheduleStatus.Draft;
         schedule.scheduleDate = fakeDateProvider.Today();
 
@@ -69,7 +69,7 @@ public class DeleteDailyScheduleAggregateTest {
         // Arrange
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
         
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         schedule.scheduleDate = fakeDateProvider.Today().AddDays(-1);
 
         // Act
@@ -86,7 +86,7 @@ public class DeleteDailyScheduleAggregateTest {
         // Arrange
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
         
-        var schedule = DailySchedule.CreateSchedule().Data!;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
         schedule.status = ScheduleStatus.Active;
         schedule.scheduleDate = fakeDateProvider.Today();
 

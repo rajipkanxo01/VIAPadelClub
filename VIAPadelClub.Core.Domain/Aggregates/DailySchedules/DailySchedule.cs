@@ -24,7 +24,6 @@ public class DailySchedule : AggregateRoot
     private DailySchedule()
     {
         scheduleId = Guid.NewGuid();
-        scheduleDate = DateOnly.FromDateTime(DateTime.Today);
         availableFrom = new TimeOnly(15, 0, 0);
         availableUntil = new TimeOnly(22, 0, 0);
         status = ScheduleStatus.Draft;
@@ -34,9 +33,15 @@ public class DailySchedule : AggregateRoot
         isDeleted = false;
     }
 
-    public static Result<DailySchedule> CreateSchedule()
+    public static Result<DailySchedule> CreateSchedule(IDateProvider dateProvider)
     {
-        var dailySchedule = new DailySchedule();
+        var today = dateProvider.Today();
+        
+        var dailySchedule = new DailySchedule()
+        {
+            scheduleDate = today
+        };
+        
         return Result<DailySchedule>.Ok(dailySchedule);
     }
 
