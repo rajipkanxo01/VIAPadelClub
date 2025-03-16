@@ -191,4 +191,28 @@ public class DailySchedule : AggregateRoot
         
         return Result.Ok();
     }
+    
+    public Result UpdateScheduleDateAndTime(DateOnly date, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider)
+    {
+        if (date <= dateProvider.Today())
+            return Result.Fail(ErrorMessage.ScheduleCannotBeUpdatedWithPastDate()._message);
+
+        if (endTime <= startTime)
+            return Result.Fail(ErrorMessage.ScheduleEndDateMustBeAfterStartDate()._message);
+
+        if ((endTime - startTime) < TimeSpan.FromMinutes(60))
+            return Result.Fail(ErrorMessage.ScheduleInvalidTimeSpan()._message);
+        
+        if (status == ScheduleStatus.Active)
+            return Result.Fail(ErrorMessage.InvalidScheduleUpdateStatus()._message);
+
+        if ((startTime.Minute != 0 && startTime.Minute != 30) || (endTime.Minute != 0 && endTime.Minute != 30))
+            return Result.Fail(ErrorMessage.InvalidScheduleTimeSpan()._message);
+
+        scheduleDate = date;
+        availableFrom = startTime;
+        availableUntil = endTime;
+
+        return Result.Ok();
+    }
 }
