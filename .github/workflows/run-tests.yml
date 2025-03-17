@@ -1,0 +1,36 @@
+﻿name: Run Unit Tests on Pull Request
+
+on:
+  pull_request:
+    -main
+    - Assignment[1-9]*
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set Up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0'
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build Solution
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Run Tests
+        run: dotnet test Tests --no-build --configuration Release --logger trx
+
+      - name: Upload Test Results (Optional)
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results
+          path: Tests/TestResults/
