@@ -31,4 +31,9 @@ public static class ErrorMessage
     public static Error ScheduleAlreadyDeleted() => new Error(0, "Schedule is already deleted.");
     public static Error PastScheduleCannotBeDeleted() => new Error(0, "Cannot delete a schedule from the past.");
     public static Error SameDayActiveScheduleCannotBeDeleted() => new Error(0, "Cannot delete an active schedule on the same day.");
+    public static Error ScheduleCannotBeUpdatedWithPastDate() => new Error(0, "Cannot update schedule with past date.");
+    public static Error ScheduleEndDateMustBeAfterStartDate() => new Error(0, "The end time must be after the start time.");
+    public static Error ScheduleInvalidTimeSpan() => new Error(0, "The time interval must span 60 minutes or more.");
+    public static Error InvalidScheduleUpdateStatus() => new Error(0, "An active daily schedule cannot be modified, only deleted.");
+    public static Error InvalidScheduleTimeSpan() => new Error(0, "The minutes of the times must be half or whole hours.");
 }

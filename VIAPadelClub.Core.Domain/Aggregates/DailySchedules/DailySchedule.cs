@@ -24,7 +24,6 @@ public class DailySchedule : AggregateRoot
     private DailySchedule()
     {
         scheduleId = Guid.NewGuid();
-        scheduleDate = DateOnly.FromDateTime(DateTime.Today);
         availableFrom = new TimeOnly(15, 0, 0);
         availableUntil = new TimeOnly(22, 0, 0);
         status = ScheduleStatus.Draft;
@@ -34,9 +33,15 @@ public class DailySchedule : AggregateRoot
         isDeleted = false;
     }
 
-    public static Result<DailySchedule> CreateSchedule()
+    public static Result<DailySchedule> CreateSchedule(IDateProvider dateProvider)
     {
-        var dailySchedule = new DailySchedule();
+        var today = dateProvider.Today();
+        
+        var dailySchedule = new DailySchedule()
+        {
+            scheduleDate = today
+        };
+        
         return Result<DailySchedule>.Ok(dailySchedule);
     }
 
@@ -184,6 +189,30 @@ public class DailySchedule : AggregateRoot
             
         listOfCourts.Clear();
         
+        return Result.Ok();
+    }
+    
+    public Result UpdateScheduleDateAndTime(DateOnly date, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider)
+    {
+        if (date <= dateProvider.Today())
+            return Result.Fail(ErrorMessage.ScheduleCannotBeUpdatedWithPastDate()._message);
+
+        if (endTime <= startTime)
+            return Result.Fail(ErrorMessage.ScheduleEndDateMustBeAfterStartDate()._message);
+
+        if ((endTime - startTime) < TimeSpan.FromMinutes(60))
+            return Result.Fail(ErrorMessage.ScheduleInvalidTimeSpan()._message);
+        
+        if (status == ScheduleStatus.Active)
+            return Result.Fail(ErrorMessage.InvalidScheduleUpdateStatus()._message);
+
+        if ((startTime.Minute != 0 && startTime.Minute != 30) || (endTime.Minute != 0 && endTime.Minute != 30))
+            return Result.Fail(ErrorMessage.InvalidScheduleTimeSpan()._message);
+
+        scheduleDate = date;
+        availableFrom = startTime;
+        availableUntil = endTime;
+
         return Result.Ok();
     }
 }
