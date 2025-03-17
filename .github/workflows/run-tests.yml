@@ -27,7 +27,7 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: Run Tests
-        run: dotnet test Tests/UnitTests --no-build --configuration Release --logger trx
+        run: dotnet test VIAPadelClub.sln --no-build --configuration Release --logger trx
 
       - name: Upload Test Results (Optional)
         uses: actions/upload-artifact@v4
