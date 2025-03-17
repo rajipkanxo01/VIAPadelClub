@@ -2,8 +2,9 @@
 
 on:
   pull_request:
-    - main
-    - Assignment*
+    branches:
+      - main
+      - Assignment*
 
 jobs:
   test:
