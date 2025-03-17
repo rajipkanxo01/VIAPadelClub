@@ -1,13 +1,12 @@
 ﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Tools.OperationResult;
 
-namespace UnitTests.Features.Helpers;
+namespace Services.Contracts;
 
-// better to use Moq instead of this
-public class FakeScheduleRepository : IScheduleRepository
+public class ScheduleFinder : IScheduleFinder
 {
     private readonly List<DailySchedule> _schedules = new();
-
+    
     public Result<DailySchedule> FindSchedule(Guid scheduleId)
     {
         var schedule = _schedules.FirstOrDefault(s => s.scheduleId == scheduleId);
@@ -18,7 +17,6 @@ public class FakeScheduleRepository : IScheduleRepository
 
     public void AddSchedule(DailySchedule schedule)
     {
-            _schedules.Add(schedule);
+        _schedules.Add(schedule);
     }
-    
 }
