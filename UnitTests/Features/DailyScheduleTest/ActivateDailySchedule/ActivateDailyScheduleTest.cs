@@ -12,7 +12,7 @@ public class DailyScheduleTests
     {
         // Arrange
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-        var scheduleResult = DailySchedule.CreateSchedule();
+        var scheduleResult = DailySchedule.CreateSchedule(fakeDateProvider);
         var schedule = scheduleResult.Data;
 
         var courtNameResult = CourtName.Create("S1");
@@ -30,7 +30,7 @@ public class DailyScheduleTests
     {
         // Arrange
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         schedule.scheduleDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
 
         // Act
@@ -46,7 +46,7 @@ public class DailyScheduleTests
     {
         // Arrange
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
 
         // Act
         var result = schedule.Activate(fakeDateProvider);
@@ -62,7 +62,7 @@ public class DailyScheduleTests
     {
         // Arrange
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         var courtNameResult = CourtName.Create("S1");
         schedule.listOfCourts.Add(Court.Create(courtNameResult.Data));
         schedule.status = ScheduleStatus.Active;
@@ -80,7 +80,7 @@ public class DailyScheduleTests
     {
         // Arrange
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         var courtNameResult = CourtName.Create("S1");
         schedule.listOfCourts.Add(Court.Create(courtNameResult.Data));
         schedule.isDeleted = true;

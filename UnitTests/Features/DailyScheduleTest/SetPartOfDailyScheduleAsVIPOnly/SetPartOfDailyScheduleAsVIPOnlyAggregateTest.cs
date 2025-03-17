@@ -4,6 +4,8 @@ using Xunit;
 
 namespace UnitTests.Features.DailyScheduleTest.SetPartOfDailyScheduleAsVIPOnly;
 
+using Helpers;
+
 public class SetPartOfDailyScheduleAsVipOnlyAggregateTest
 {
     [Fact] //S1
@@ -13,8 +15,9 @@ public class SetPartOfDailyScheduleAsVipOnlyAggregateTest
         var scheduleDate = new DateOnly(2025, 03, 10);
         var startTime = new TimeOnly(10, 00);
         var endTime = new TimeOnly(14, 0);
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         schedule.UpdateSchedule(scheduleDate, startTime, endTime);
 
         var vipStartTime = new TimeOnly(11, 00);
@@ -36,8 +39,9 @@ public class SetPartOfDailyScheduleAsVipOnlyAggregateTest
         var scheduleDate = new DateOnly(2025, 03, 10);
         var startTime = new TimeOnly(10, 00);
         var endTime = new TimeOnly(18, 00);
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         schedule.UpdateSchedule(scheduleDate, startTime, endTime);
 
         var firstVipStartTime = new TimeOnly(11, 00);
@@ -79,8 +83,9 @@ public class SetPartOfDailyScheduleAsVipOnlyAggregateTest
 
         var expectedStart = new TimeOnly(expectedStartHour, expectedStartMinute);
         var expectedEnd = new TimeOnly(expectedEndHour, expectedEndMinute);
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         schedule.UpdateSchedule(scheduleDate, startTime, endTime);
 
         var existingVipStart = new TimeOnly(existingStartHour, existingStartMinute);
@@ -123,8 +128,9 @@ public class SetPartOfDailyScheduleAsVipOnlyAggregateTest
         var scheduleDate = new DateOnly(2025, 03, 10);
         var startTime = new TimeOnly(10, 00);
         var endTime = new TimeOnly(14, 00);
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         schedule.UpdateSchedule(scheduleDate, startTime, endTime);
 
         var vipStartTime = new TimeOnly(vipStartHour, vipStartMinute);
@@ -149,8 +155,9 @@ public class SetPartOfDailyScheduleAsVipOnlyAggregateTest
         var scheduleDate = new DateOnly(2025, 03, 10);
         var startTime = new TimeOnly(10, 30);
         var endTime = new TimeOnly(14, 00);
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         schedule.UpdateSchedule(scheduleDate, startTime, endTime);
 
         var vipStartTime = new TimeOnly(11, 15);

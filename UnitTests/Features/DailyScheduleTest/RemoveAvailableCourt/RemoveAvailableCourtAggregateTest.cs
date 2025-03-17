@@ -14,10 +14,10 @@ public class RemoveAvailableCourtAggregateTest
     public void Should_Remove_Court_Successfully_When_Valid() 
     {
         // Arrange
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         var fakeScheduleFinder = new FakeScheduleFinder();
         fakeScheduleFinder.AddSchedule(schedule);
-        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
         var court = Court.Create(CourtName.Create("S1").Data);
         schedule.status = ScheduleStatus.Draft;
         schedule.listOfAvailableCourts.Add(court);
@@ -34,10 +34,10 @@ public class RemoveAvailableCourtAggregateTest
     public void Should_Not_Remove_Court_If_Not_Exists()
     {
         // Arrange
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         var fakeScheduleFinder = new FakeScheduleFinder();
         fakeScheduleFinder.AddSchedule(schedule);
-        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
         var court = Court.Create(CourtName.Create("S1").Data);
         schedule.status = ScheduleStatus.Draft;
 
@@ -53,15 +53,17 @@ public class RemoveAvailableCourtAggregateTest
     public void Should_Not_Remove_Court_If_Schedule_Is_Past()
     {
         // Arrange
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)));
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         var fakeScheduleFinder = new FakeScheduleFinder();
         fakeScheduleFinder.AddSchedule(schedule);
-        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today.AddDays(1)));
         var court = Court.Create(CourtName.Create("S1").Data);
+        schedule.listOfAvailableCourts.Add(court);
         schedule.status = ScheduleStatus.Draft;
+        var fakeCurrentDateProvider= new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
         // Act
-        var result = schedule.removeAvailableCourt(court, fakeDateProvider, fakeScheduleFinder);
+        var result = schedule.removeAvailableCourt(court, fakeCurrentDateProvider, fakeScheduleFinder);
 
         // Assert
         result.Success.Should().BeFalse();
@@ -72,10 +74,10 @@ public class RemoveAvailableCourtAggregateTest
     public void Should_Remove_Court_When_Only_One_Court_Present() // S3
     {
         // Arrange
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         var fakeScheduleFinder = new FakeScheduleFinder();
         fakeScheduleFinder.AddSchedule(schedule);
-        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
         var court = Court.Create(CourtName.Create("S1").Data);
         schedule.status = ScheduleStatus.Draft;
         schedule.listOfAvailableCourts.Add(court);
@@ -92,10 +94,10 @@ public class RemoveAvailableCourtAggregateTest
     public void Should_Remove_Selected_Court_And_Keep_Other_Courts_Intact() // S4
     {
         // Arrange
-        var schedule = DailySchedule.CreateSchedule().Data;
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         var fakeScheduleFinder = new FakeScheduleFinder();
         fakeScheduleFinder.AddSchedule(schedule);
-        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
         var court = Court.Create(CourtName.Create("S1").Data);
         var court1 = Court.Create(CourtName.Create("S2").Data);
         var court2 = Court.Create(CourtName.Create("S3").Data);
