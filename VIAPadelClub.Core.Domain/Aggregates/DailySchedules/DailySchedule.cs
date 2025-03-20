@@ -1,5 +1,6 @@
 ﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
+using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
 using VIAPadelClub.Core.Tools.OperationResult;
 // ReSharper disable ParameterHidesMember
@@ -38,6 +39,7 @@ public class DailySchedule : AggregateRoot
 
     public Guid Id => scheduleId;
     public List<Booking> listOfbookings => listOfBookings;
+    public ScheduleStatus ScheduleStatus => status;
     public static Result<DailySchedule> CreateSchedule(IDateProvider dateProvider)
     {
         var today = dateProvider.Today();
@@ -131,6 +133,7 @@ public class DailySchedule : AggregateRoot
             return Result.Ok();
         }
         listOfAvailableCourts.Remove(court);
+        listOfCourts.Remove(court);
         return Result.Ok();
     }
 
@@ -210,7 +213,8 @@ public class DailySchedule : AggregateRoot
         
         if (isDeleted)
             return Result.Fail(ErrorMessage.ScheduleIsDeleted()._message);
-        
+
+        listOfAvailableCourts = listOfCourts;
         status = ScheduleStatus.Active;
         return Result.Ok();
     }
@@ -261,9 +265,9 @@ public class DailySchedule : AggregateRoot
 
         return Result.Ok();
     }
-    public Result<Booking> BookCourt (Player player, Court court, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider)
+    public Result<Booking> BookCourt (Email bookedByPlayer, Court court, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider, IPlayerFinder playerFinder, IScheduleFinder scheduleFinder)
     {
-        if (isDeleted || status != ScheduleStatus.Active) //F1 and 2
+        /*if (isDeleted || status != ScheduleStatus.Active) //F1 and 2
             return Result<Booking>.Fail(ErrorMessage.ScheduleNotActive()._message);
 
         if (!listOfCourts.Contains(court)) //F4
@@ -289,7 +293,8 @@ public class DailySchedule : AggregateRoot
         
         //create booking using the booking entity. S-1
         
+        return Result<Booking>.Ok(booking);*/
+        var booking = Booking.Create(scheduleId, court, startTime, endTime,bookedByPlayer, scheduleFinder, playerFinder).Data;
         return Result<Booking>.Ok(booking);
     }
-
 }

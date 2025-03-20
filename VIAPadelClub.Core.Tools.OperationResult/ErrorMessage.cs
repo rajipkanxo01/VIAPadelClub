@@ -50,7 +50,7 @@ public static class ErrorMessage
     public static Error OneHourGapBetweenScheduleStartTimeAndBookingStartTime() => new Error(0, "There should be a one-hour gap between the schedule start time and the booking start time.");
     public static Error OneHourGapBetweenScheduleEndTimeAndBookingEndTime() => new Error(0, "There should be a one-hour gap between the schedule end time and the booking end time.");
     public static Error ActiveCourtCannotBeRemoved() => new Error(0, "Active court cannot be removed.");
-    public static Error CourtWithLaterBookingsCannotBeRemoved() => new Error(0, "Court with later bookings cannot be removed.");7
+    public static Error CourtWithLaterBookingsCannotBeRemoved() => new Error(0, "Court with later bookings cannot be removed.");
       
     // Booking Errors
     public static Error ScheduleNotActive() => new Error(0, "courts cannot be booked if the Schedule is not active");

@@ -31,7 +31,6 @@ public class CreateBookingEntityTest
         Assert.Equal(ErrorMessage.ScheduleNotFound()._message, result.ErrorMessage);
     }
     
-    
     [Fact]
     public async Task Should_Create_Booking_When_Field_Is_Valid()
     {
@@ -57,11 +56,11 @@ public class CreateBookingEntityTest
         dailySchedule.Data.listOfCourts.Add(court);
         dailySchedule.Data.AddAvailableCourt(court, fakeDateProvider,scheduleFinder);
         
-        
         var scheduleId= dailySchedule.Data.Id;
         var player = await Player.Register(email, fullName.Data, profileUri.Data,emailChecker);
 
         playerFinder.AddPlayer(player.Data);
+        dailySchedule.Data.Activate(fakeDateProvider);
         
         //Act
         var result = Booking.Create(scheduleId, court, new TimeOnly(10, 0), new TimeOnly(11, 0), email, scheduleFinder, playerFinder);
@@ -76,12 +75,16 @@ public class CreateBookingEntityTest
     {
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
         var court = Court.Create(CourtName.Create("S1").Data);
         var email = Email.Create("test@via.dk").Data;
         var dailySchedule = DailySchedule.CreateSchedule(new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today))).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         scheduleFinder.AddSchedule(dailySchedule);
+        
+        dailySchedule.listOfCourts.Add(court);
+        dailySchedule.Activate(fakeDateProvider);
 
         var result = Booking.Create(dailySchedule.Id, court, new TimeOnly(8, 0), new TimeOnly(10, 0), email, scheduleFinder, playerFinder);
 
@@ -94,12 +97,16 @@ public class CreateBookingEntityTest
     {
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
         var court = Court.Create(CourtName.Create("S1").Data);
         var email = Email.Create("test@via.dk").Data;
-        var dailySchedule = DailySchedule.CreateSchedule(new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today))).Data;
+        var dailySchedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         dailySchedule.availableUntil = new TimeOnly(17, 0);
         scheduleFinder.AddSchedule(dailySchedule);
+        
+        dailySchedule.listOfCourts.Add(court);
+        dailySchedule.Activate(fakeDateProvider);
 
         var result = Booking.Create(dailySchedule.Id, court, new TimeOnly(16, 0), new TimeOnly(18, 0), email, scheduleFinder, playerFinder);
 
@@ -113,20 +120,24 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
         var fullName = FullName.Create("John", "Doe");
         var profileUri = ProfileUri.Create("http://example.com");
-        
+
         var court = Court.Create(CourtName.Create("S1").Data);
-        var dailySchedule = DailySchedule.CreateSchedule(new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today))).Data;
+        var dailySchedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
         scheduleFinder.AddSchedule(dailySchedule);
 
         var player = await Player.Register(email, fullName.Data, profileUri.Data, emailChecker);
         playerFinder.AddPlayer(player.Data);
+        
+        dailySchedule.listOfCourts.Add(court);
+        dailySchedule.Activate(fakeDateProvider);
         
         // Act - Booking starts at 18:00, after schedule end time 17:00
         var result = Booking.Create(
@@ -150,6 +161,7 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
@@ -157,10 +169,13 @@ public class CreateBookingEntityTest
         var profileUri = ProfileUri.Create("http://example.com");
         
         var court = Court.Create(CourtName.Create("S1").Data);
-        var dailySchedule = DailySchedule.CreateSchedule(new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today))).Data;
+        var dailySchedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
         scheduleFinder.AddSchedule(dailySchedule);
+        
+        dailySchedule.listOfCourts.Add(court);
+        dailySchedule.Activate(fakeDateProvider);
 
         var player = await Player.Register(email, fullName.Data, profileUri.Data, emailChecker);
         playerFinder.AddPlayer(player.Data);
@@ -216,19 +231,21 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
         var fullName = FullName.Create("John", "Doe");
         var profileUri = ProfileUri.Create("http://example.com");
-        
+
         var court = Court.Create(CourtName.Create("S1").Data);
-        var dailySchedule = DailySchedule.CreateSchedule(new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today))).Data;
+        var dailySchedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
         scheduleFinder.AddSchedule(dailySchedule);
 
         var player = await Player.Register(email, fullName.Data, profileUri.Data, emailChecker);
+        
         // Set up quarantine that extends past the schedule date
         player.Data.isQuarantined = true;
         var quarantineResult = player.Data.Quarantine(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), new List<DailySchedule>());
@@ -237,6 +254,9 @@ public class CreateBookingEntityTest
             player.Data.activeQuarantine = quarantineResult.Data; 
         }
         playerFinder.AddPlayer(player.Data);
+        
+        dailySchedule.listOfCourts.Add(court);
+        dailySchedule.Activate(fakeDateProvider);
         
         // Act
         var result = Booking.Create(
@@ -260,14 +280,15 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
         var fullName = FullName.Create("John", "Doe");
         var profileUri = ProfileUri.Create("http://example.com");
-        
+
         var court = Court.Create(CourtName.Create("S1").Data);
-        var dailySchedule = DailySchedule.CreateSchedule(new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today))).Data;
+        var dailySchedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
         scheduleFinder.AddSchedule(dailySchedule);
@@ -275,6 +296,9 @@ public class CreateBookingEntityTest
         var player = await Player.Register(email, fullName.Data, profileUri.Data, emailChecker);
         player.Data.isBlackListed = true;
         playerFinder.AddPlayer(player.Data);
+        
+        dailySchedule.listOfCourts.Add(court);
+        dailySchedule.Activate(fakeDateProvider);
         
         // Act
         var result = Booking.Create(
@@ -299,6 +323,7 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
@@ -306,13 +331,16 @@ public class CreateBookingEntityTest
         var profileUri = ProfileUri.Create("http://example.com");
         
         var court = Court.Create(CourtName.Create("S1").Data);
-        var dailySchedule = DailySchedule.CreateSchedule(new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today))).Data;
+        var dailySchedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
         scheduleFinder.AddSchedule(dailySchedule);
 
         var player = await Player.Register(email, fullName.Data, profileUri.Data, emailChecker);
         playerFinder.AddPlayer(player.Data);
+        
+        dailySchedule.listOfCourts.Add(court);
+        dailySchedule.Activate(fakeDateProvider);
         
         // Act - Try to book with 30 minute gap from schedule start (9:30-11:00)
         var result = Booking.Create(
@@ -336,6 +364,7 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
@@ -350,6 +379,9 @@ public class CreateBookingEntityTest
 
         var player = await Player.Register(email, fullName.Data, profileUri.Data, emailChecker);
         playerFinder.AddPlayer(player.Data);
+        
+        dailySchedule.listOfCourts.Add(court);
+        dailySchedule.Activate(fakeDateProvider);
         
         // Act - Try to book with 30 minute gap from schedule end (15:00-16:30)
         var result = Booking.Create(
@@ -373,6 +405,7 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
@@ -380,13 +413,18 @@ public class CreateBookingEntityTest
         var profileUri = ProfileUri.Create("http://example.com");
         
         var court = Court.Create(CourtName.Create("S1").Data);
-        var dailySchedule = DailySchedule.CreateSchedule(new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today))).Data;
+        
+        var dailySchedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
+        dailySchedule.listOfCourts.Add(court);
+        
         scheduleFinder.AddSchedule(dailySchedule);
 
         var player = await Player.Register(email, fullName.Data, profileUri.Data, emailChecker);
         playerFinder.AddPlayer(player.Data);
+        
+        dailySchedule.Activate(fakeDateProvider);
         
         // Create an existing booking
         var existingBooking = Booking.Create(
@@ -422,6 +460,7 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
@@ -433,6 +472,10 @@ public class CreateBookingEntityTest
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
         scheduleFinder.AddSchedule(dailySchedule);
+        
+        dailySchedule.listOfCourts.Add(court);
+        
+        dailySchedule.Activate(fakeDateProvider);
 
         var player = await Player.Register(email, fullName.Data, profileUri.Data, emailChecker);
         playerFinder.AddPlayer(player.Data);
@@ -471,16 +514,21 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
         var fullName = FullName.Create("John", "Doe");
         var profileUri = ProfileUri.Create("http://example.com");
-        
+
         var court = Court.Create(CourtName.Create("S1").Data);
-        var dailySchedule = DailySchedule.CreateSchedule(new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today))).Data;
+        var dailySchedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
+        
+        dailySchedule.listOfCourts.Add(court);
+        dailySchedule.Activate(fakeDateProvider);
+        
         // Add VIP time range
         dailySchedule.AddVipTimeSlots(new TimeOnly(11, 0), new TimeOnly(13, 0));
         scheduleFinder.AddSchedule(dailySchedule);
@@ -509,18 +557,22 @@ public class CreateBookingEntityTest
     {
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
         emailChecker.AddEmail(Email.Create("ford@via.dk").Data.Value);
         var fullName = FullName.Create("John", "Doe");
         var profileUri = ProfileUri.Create("http://example.com");
-        
+
         var court = Court.Create(CourtName.Create("S1").Data);
-        var dailySchedule = DailySchedule.CreateSchedule(new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today))).Data;
+        var dailySchedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9,0);
         dailySchedule.availableUntil = new TimeOnly(17,0);
         scheduleFinder.AddSchedule(dailySchedule);
+        
+        dailySchedule.listOfCourts.Add(court);
+        dailySchedule.Activate(fakeDateProvider);
 
         var player = await Player.Register(email, fullName.Data, profileUri.Data,emailChecker);
 

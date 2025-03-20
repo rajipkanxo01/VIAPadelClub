@@ -24,20 +24,21 @@ public class RemoveAvailableCourtAggregateTest
         fakeScheduleFinder.AddSchedule(schedule);
 
         var player = SetupPlayer(fakePlayerFinder).Data;
-
-        var booking = Booking.Create(schedule.scheduleId, Court.Create(CourtName.Create("S1").Data), new TimeOnly(15, 0), new TimeOnly(16, 0), player.email,fakeScheduleFinder, fakePlayerFinder).Data;
-        var court = Court.Create(CourtName.Create("S1").Data);
         
-        schedule.status = ScheduleStatus.Draft;
-        schedule.listOfAvailableCourts.Add(court);
+        var court = Court.Create(CourtName.Create("S1").Data);
+        schedule.listOfCourts.Add(court);
+        
+        schedule.Activate(fakeDateProvider);
+        var booking = Booking.Create(schedule.scheduleId, court, new TimeOnly(15, 0), new TimeOnly(16, 0), player.email,fakeScheduleFinder, fakePlayerFinder).Data;
+        
         schedule.listOfbookings.Add(booking);
-
+        
         // Act
         var result = schedule.RemoveAvailableCourt(court, fakeDateProvider);
 
         // Assert
         result.Success.Should().BeTrue();
-        schedule.listOfAvailableCourts.Should().NotContain(court);
+        schedule.listOfCourts.Should().NotContain(court);
     }
     
     [Fact]
@@ -72,7 +73,7 @@ public class RemoveAvailableCourtAggregateTest
         
         var court = Court.Create(CourtName.Create("S1").Data);
         
-        schedule.listOfAvailableCourts.Add(court);
+        schedule.listOfCourts.Add(court);
         schedule.status = ScheduleStatus.Draft;
         var fakeCurrentDateProvider= new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
@@ -101,13 +102,15 @@ public class RemoveAvailableCourtAggregateTest
         schedule.availableFrom = new TimeOnly(9,0);
         schedule.availableUntil = new TimeOnly(17,0);
         
-        var booking = Booking.Create(schedule.scheduleId, Court.Create(CourtName.Create("S1").Data), new TimeOnly(10, 0), new TimeOnly(11, 0), player.Data.Email, fakeScheduleFinder, playerFinder).Data;
         var court = Court.Create(CourtName.Create("S1").Data);
+        schedule.listOfCourts.Add(court);
         
-        schedule.status = ScheduleStatus.Draft;
-        schedule.listOfAvailableCourts.Add(court);
-        schedule.listOfbookings.Add(booking);
+        schedule.Activate(fakeDateProvider);
+        
+        var booking = Booking.Create(schedule.scheduleId, court, new TimeOnly(10, 0), new TimeOnly(11, 0), player.Data.Email, fakeScheduleFinder, playerFinder).Data;
 
+        schedule.listOfbookings.Add(booking);
+        
         // Act
         var result = schedule.RemoveAvailableCourt(court, fakeDateProvider);
 
@@ -133,10 +136,11 @@ public class RemoveAvailableCourtAggregateTest
         var court1 = Court.Create(CourtName.Create("S2").Data);
         var court2 = Court.Create(CourtName.Create("S3").Data);
         
-        schedule.status = ScheduleStatus.Draft;
-        schedule.listOfAvailableCourts.Add(court);
-        schedule.listOfAvailableCourts.Add(court1);
-        schedule.listOfAvailableCourts.Add(court2);
+        schedule.listOfCourts.Add(court);
+        schedule.listOfCourts.Add(court1);
+        schedule.listOfCourts.Add(court2);
+        
+        schedule.Activate(fakeDateProvider);
         
         var existingBooking = Booking.Create(schedule.Id, court, new TimeOnly(15, 0), new TimeOnly(16, 0), player.email, fakeScheduleFinder, playerFinder);
         schedule.listOfbookings.Add(existingBooking.Data);

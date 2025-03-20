@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Domain.Aggregates.Players;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
@@ -11,17 +12,17 @@ using Players.Values;
 public class Booking : Entity
 {
     internal Guid BookingId { get; }
-    internal Email Email { get; }
+    internal Email BookedBy { get; }
     internal Court Court { get; }
     internal int Duration{ get; }
     internal TimeOnly StartTime { get; }    
     internal TimeOnly EndTime { get; }
     internal DateOnly BookedDate { get; }
 
-    private Booking(Guid id,Email email, Court court, int duration, DateOnly bookedDate, TimeOnly startTime, TimeOnly endTime) : base(id)
+    private Booking(Guid id,Email bookedBy, Court court, int duration, DateOnly bookedDate, TimeOnly startTime, TimeOnly endTime) : base(id)
     {
         BookingId = id;
-        Email = email;
+        BookedBy = bookedBy;
         Court = court;
         Duration = duration;
         BookedDate = bookedDate;
@@ -39,6 +40,13 @@ public class Booking : Entity
         }
         
         var schedule = scheduleResult.Data;
+        
+        if (schedule.isDeleted || schedule.ScheduleStatus != ScheduleStatus.Active) //F1 and 2
+            return Result<Booking>.Fail(ErrorMessage.ScheduleNotActive()._message);
+
+        if (!schedule.listOfAvailableCourts.Contains(court)) //F4
+            return Result<Booking>.Fail(ErrorMessage.CourtDoesntExistInSchedule()._message); 
+        
         //F5- Booking start time before schedule start time 
         if (startTime < schedule.availableFrom)
         {
@@ -63,11 +71,25 @@ public class Booking : Entity
             return Result<Booking>.Fail(ErrorMessage.BookingEndTimeAfterScheduleEndTime()._message);
         }
         
+        if ((startTime.Minute != 0 && startTime.Minute != 30) || (endTime.Minute != 0 && endTime.Minute != 30))  //F9
+            return Result<Booking>.Fail(ErrorMessage.InvalidBookingTimeSpan()._message);
+        
         var player = playerFinder.FindPlayer(email.Value);
         
         if (!player.Success)
         {
             return Result<Booking>.Fail(player.ErrorMessage);
+        }
+        
+        var duration = endTime - startTime; //F10 and F12
+        if (duration < TimeSpan.FromHours(1) || duration > TimeSpan.FromHours(3)) 
+            return Result<Booking>.Fail(ErrorMessage.BookingDurationError()._message);
+        
+        if (schedule.listOfbookings.Any(b =>  //F11
+                b.Court == court &&
+                !(endTime <= b.StartTime || startTime >= b.EndTime)))
+        {
+            return Result<Booking>.Fail(ErrorMessage.BookingCannotBeOverlapped()._message);
         }
         
         var playerResult = player.Data;
@@ -94,6 +116,9 @@ public class Booking : Entity
                 }
             }
         }
+        
+        if (schedule.listOfbookings.Count(b => b.BookedBy.Value == player.Data.email.Value && b.BookedDate == schedule.scheduleDate) > 2) //F17
+            return Result<Booking>.Fail(ErrorMessage.BookingLimitExceeded()._message);
         
         //F18- Booking leave hole less than one hour
 

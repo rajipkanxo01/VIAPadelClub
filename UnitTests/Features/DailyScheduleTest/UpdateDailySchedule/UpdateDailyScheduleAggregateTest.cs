@@ -1,4 +1,6 @@
-﻿namespace UnitTests.Features.DailyScheduleTest.UpdateDailySchedule;
+﻿using VIAPadelClub.Core.Tools.OperationResult;
+
+namespace UnitTests.Features.DailyScheduleTest.UpdateDailySchedule;
 
 using Helpers;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
@@ -143,6 +145,6 @@ public class UpdateDailyScheduleAggregateTest {
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal("The minutes of the times must be half or whole hours.", result.ErrorMessage);
+        Assert.Equal(ErrorMessage.ScheduleInvalidTimeSpan()._message, result.ErrorMessage);
     }
 }
