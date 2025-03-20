@@ -1,12 +1,11 @@
 ﻿using UnitTests.Features.Helpers;
-using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
-
-namespace UnitTests.Features.PlayerTest.ManagerAddVIPStatus;
-
 using VIAPadelClub.Core.Domain.Aggregates.Players;
+using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using Xunit;
 
-public class ManagerAddsVIPStatusPlayerAggregateTest {
+namespace UnitTests.Features.PlayerTest.ManagerAddsVIPStatus;
+
+public class ManagerAddsVipStatusPlayerAggregateTest {
     [Fact]
     public async Task Should_Mark_Player_As_VIP()
     {

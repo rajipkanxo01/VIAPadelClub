@@ -9,7 +9,7 @@ public class ScheduleFinder : IScheduleFinder
     
     public Result<DailySchedule> FindSchedule(Guid scheduleId)
     {
-        var schedule = _schedules.FirstOrDefault(s => s.scheduleId == scheduleId);
+        var schedule = _schedules.FirstOrDefault(s => s.Id == scheduleId);
         return schedule == null
             ? Result<DailySchedule>.Fail(ErrorMessage.ScheduleNotFound()._message)
             : Result<DailySchedule>.Ok(schedule);
