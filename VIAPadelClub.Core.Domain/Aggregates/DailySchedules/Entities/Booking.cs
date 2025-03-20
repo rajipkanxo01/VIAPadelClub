@@ -18,6 +18,7 @@ public class Booking : Entity
     internal TimeOnly StartTime { get; }    
     internal TimeOnly EndTime { get; }
     internal DateOnly BookedDate { get; }
+    internal BookingStatus BookingStatus { get; private set; }
 
     private Booking(Guid id,Email bookedBy, Court court, int duration, DateOnly bookedDate, TimeOnly startTime, TimeOnly endTime) : base(id)
     {
@@ -28,6 +29,7 @@ public class Booking : Entity
         BookedDate = bookedDate;
         StartTime = startTime;
         EndTime = endTime;
+        BookingStatus = BookingStatus.Active;
     }
 
     public Court court => Court;
@@ -170,13 +172,13 @@ public class Booking : Entity
         var currentTime = timeProvider.CurrentTime();
 
         // Check if the booking is already in the past
-        if (currentDate > BookingDate || (currentDate == BookingDate && currentTime >= BookingStartTime))
+        if (currentDate > BookedDate || (currentDate == BookedDate && currentTime >= StartTime))
         {
             return Result.Fail(ErrorMessage.CannotCancelPastBooking()._message);
         }
 
         // Check if cancellation is too late (less than 1 hour before booking starts)
-        if (currentDate == BookingDate && (BookingStartTime.ToTimeSpan() - currentTime.ToTimeSpan()).TotalHours < 1)
+        if (currentDate == BookedDate && (StartTime.ToTimeSpan() - currentTime.ToTimeSpan()).TotalHours < 1)
         {
             return Result.Fail(ErrorMessage.CancellationTooLate()._message);
         }
