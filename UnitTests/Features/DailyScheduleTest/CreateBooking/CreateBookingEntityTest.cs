@@ -113,7 +113,6 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
-        var bookingFinder = new FakeBookingFinder(scheduleFinder);
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
@@ -151,7 +150,6 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
-        var bookingFinder = new FakeBookingFinder(scheduleFinder);
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
@@ -189,7 +187,6 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
-        var bookingFinder = new FakeBookingFinder(scheduleFinder);
 
         var email = Email.Create("none@via.dk").Data;
         var court = Court.Create(CourtName.Create("S1").Data);
@@ -219,7 +216,6 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
-        var bookingFinder = new FakeBookingFinder(scheduleFinder);
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
@@ -264,7 +260,6 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
-        var bookingFinder = new FakeBookingFinder(scheduleFinder);
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
@@ -304,7 +299,6 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
-        var bookingFinder = new FakeBookingFinder(scheduleFinder);
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
@@ -342,7 +336,6 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
-        var bookingFinder = new FakeBookingFinder(scheduleFinder);
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
@@ -380,7 +373,6 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
-        var bookingFinder = new FakeBookingFinder(scheduleFinder);
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();
@@ -430,7 +422,6 @@ public class CreateBookingEntityTest
         // Setup
         var scheduleFinder = new FakeScheduleFinder();
         var playerFinder = new FakePlayerFinder();
-        var bookingFinder = new FakeBookingFinder(scheduleFinder);
 
         var email = Email.Create("test@via.dk").Data;
         var emailChecker = new FakeUniqueEmailChecker();

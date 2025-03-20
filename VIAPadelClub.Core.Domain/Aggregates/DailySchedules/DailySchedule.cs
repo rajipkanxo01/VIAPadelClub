@@ -90,31 +90,20 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
     
-    public Result RemoveAvailableCourt(Court court, IDateProvider dateProvider, IScheduleFinder scheduleFinder)
+    public Result RemoveAvailableCourt(Court court, IDateProvider dateProvider)
     {
-        var scheduleResult = scheduleFinder.FindSchedule(scheduleId);
-        if (!scheduleResult.Success)
-        {
-            return Result.Fail(scheduleResult.ErrorMessage);
-        }
-
-        var schedule = scheduleResult.Data;
-        
-        if (schedule.scheduleDate < dateProvider.Today() && (schedule.status == ScheduleStatus.Draft || schedule.status == ScheduleStatus.Active))
+        if (scheduleDate < dateProvider.Today() && (status == ScheduleStatus.Draft || status == ScheduleStatus.Active))
         {
             return Result.Fail(ErrorMessage.PastScheduleCannotBeUpdated()._message);
         }
         
-        if (!schedule.listOfAvailableCourts.Contains(court))
+        if (!listOfAvailableCourts.Contains(court))
         {
             return Result.Fail(ErrorMessage.NoCourtAvailable()._message);
         }
-        if (schedule.scheduleId != scheduleId)
-        {
-            return Result.Fail(ErrorMessage.ScheduleNotFound()._message);
-        }
+        
         // Fetch all bookings for the given court on the schedule date
-        var bookingsResult = schedule.listOfBookings.Where(booking => booking.Court.Name.Equals(court.Name));
+        var bookingsResult = listOfbookings.Where(booking => booking.Court.Name.Equals(court.Name));
     
         var bookings = bookingsResult.ToList();
         var currentTime = TimeOnly.FromDateTime(DateTime.Now);
@@ -135,10 +124,10 @@ public class DailySchedule : AggregateRoot
 
         if (bookingsList.All(booking => booking.EndTime <= currentTime))
         {
-            schedule.listOfAvailableCourts.Remove(court);
+            listOfAvailableCourts.Remove(court);
             return Result.Ok();
         }
-        schedule.listOfAvailableCourts.Remove(court);
+        listOfAvailableCourts.Remove(court);
         return Result.Ok();
     }
 

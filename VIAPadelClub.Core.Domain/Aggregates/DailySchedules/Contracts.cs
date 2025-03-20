@@ -14,9 +14,3 @@ public interface IScheduleFinder
     Result<DailySchedule> FindSchedule(Guid scheduleId);
     void AddSchedule(DailySchedule schedule);    //Todo: Remove Add schedule after session 6
 }
-
-public interface IBookingFinder
-{
-    Result<IEnumerable<Booking>> FindBookingForCourt(CourtName courtName,Guid scheduleId);
-    void AddBooking(Booking booking);    //Todo: Remove Add booking after session 6
-}

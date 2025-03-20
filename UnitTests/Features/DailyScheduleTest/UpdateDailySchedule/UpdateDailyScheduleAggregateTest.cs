@@ -13,7 +13,9 @@ public class UpdateDailyScheduleAggregateTest {
         // Arrange
         var today = new DateOnly(2025, 08, 10);
         var futureDate = new DateOnly(2025, 08, 11);
+        
         var fakeDateProvider = new FakeDateProvider(today);
+        
         var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
         schedule.status = ScheduleStatus.Draft;
 
@@ -33,7 +35,9 @@ public class UpdateDailyScheduleAggregateTest {
         // Arrange
         var today = new DateOnly(2025, 08, 10);
         var futureDate = new DateOnly(2025, 08, 11);
+        
         var fakeDateProvider = new FakeDateProvider(today);
+        
         var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
         schedule.status = ScheduleStatus.Draft;
 
@@ -52,7 +56,9 @@ public class UpdateDailyScheduleAggregateTest {
         // Arrange
         var today = new DateOnly(2025, 08, 10);
         var pastDate = new DateOnly(2025, 08, 09);
+        
         var fakeDateProvider = new FakeDateProvider(today);
+        
         var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
 
         // Act
@@ -69,7 +75,9 @@ public class UpdateDailyScheduleAggregateTest {
         // Arrange
         var today = new DateOnly(2025, 08, 10);
         var futureDate = new DateOnly(2025, 08, 11);
+        
         var fakeDateProvider = new FakeDateProvider(today);
+        
         var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
 
         // Act
@@ -86,7 +94,9 @@ public class UpdateDailyScheduleAggregateTest {
         // Arrange
         var today = new DateOnly(2025, 08, 10);
         var futureDate = new DateOnly(2025, 08, 11);
+        
         var fakeDateProvider = new FakeDateProvider(today);
+        
         var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
 
         // Act
@@ -103,7 +113,9 @@ public class UpdateDailyScheduleAggregateTest {
         // Arrange
         var today = new DateOnly(2025, 08, 10);
         var futureDate = new DateOnly(2025, 08, 11);
+        
         var fakeDateProvider = new FakeDateProvider(today);
+        
         var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
         schedule.status = ScheduleStatus.Active;
 
@@ -121,7 +133,9 @@ public class UpdateDailyScheduleAggregateTest {
         // Arrange
         var today = new DateOnly(2025, 08, 10);
         var futureDate = new DateOnly(2025, 08, 11);
+        
         var fakeDateProvider = new FakeDateProvider(today);
+        
         var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
 
         // Act

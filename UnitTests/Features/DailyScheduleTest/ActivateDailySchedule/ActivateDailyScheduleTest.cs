@@ -5,6 +5,8 @@ using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 
+namespace UnitTests.Features.DailyScheduleTest.ActivateDailySchedule;
+
 public class DailyScheduleTests
 {
     [Fact]
