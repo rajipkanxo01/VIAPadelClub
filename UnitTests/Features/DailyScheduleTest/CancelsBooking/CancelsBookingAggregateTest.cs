@@ -11,14 +11,12 @@ namespace UnitTests.Features.DailyScheduleTest.CancelsBooking;
 
 public class CancelsBookingAggregateTest
 {
-    private readonly IScheduleFinder _fakeScheduleRepo = new FakeScheduleFinder();
 
     [Fact] // S1
     public void Should_Cancel_Booking_When_More_Than_One_Hour_Before_Start()
     {
         // Arrange
-        var courtName = "D1";
-        var bookingDate = new DateOnly(2025, 01, 31);
+        var courtName = CourtName.Create("D1").Data;
         var bookingStartTime = new TimeOnly(12, 0, 0);
         var bookingEndTime = new TimeOnly(13, 0, 0);
 
@@ -27,12 +25,17 @@ public class CancelsBookingAggregateTest
 
         var fakeDateProvider = new FakeDateProvider(cancellationDate);
         var fakeTimeProvider = new FakeTimeProvider(cancellationTime);
+        var fakePlayerFinder = new FakePlayerFinder();
+        var fakeScheduleFinder = new FakeScheduleFinder();
 
-        var schedule = SetupDailySchedule(courtName, bookingDate);
-        var player = SetupPlayer("test@via.dk", "Test", "Player");
+        var court = Court.Create(courtName);
 
-        var createdBooking = schedule.CreateBooking(schedule.scheduleId, courtName, bookingStartTime, bookingEndTime, bookingDate, player.email, _fakeScheduleRepo).Data;
-
+        var schedule = SetupDailySchedule(court, fakeScheduleFinder);
+        var player = SetupPlayer("test@via.dk", "Test", "Player", fakePlayerFinder);
+        
+        var createdBooking = schedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder).Data;
+        schedule.listOfBookings.Add(createdBooking);
+        
         // Act
         var cancelResult = schedule.CancelBooking(createdBooking.BookingId, fakeDateProvider, fakeTimeProvider, player.email);
 
@@ -45,8 +48,8 @@ public class CancelsBookingAggregateTest
     public void Should_Cancel_Booking_When_Date_Before_Schedule_But_Time_Less_Than_1_Hour()
     {
         // Arrange
-        var courtName = "D1";
-        var bookingDate = new DateOnly(2025, 03, 19);
+        var courtName = CourtName.Create("D1").Data;
+        var scheduleDate = DateOnly.FromDateTime(DateTime.Today).AddDays(2);
         var bookingStartTime = new TimeOnly(12, 0, 0);
         var bookingEndTime = new TimeOnly(14, 0, 0);
 
@@ -55,12 +58,16 @@ public class CancelsBookingAggregateTest
 
         var fakeDateProvider = new FakeDateProvider(cancellationDate);
         var fakeTimeProvider = new FakeTimeProvider(cancellationTime);
-    
-        var schedule = SetupDailySchedule(courtName, bookingDate);
-        var player = SetupPlayer("test@via.dk", "Test", "Player");
+        var fakePlayerFinder = new FakePlayerFinder();
+        var fakeScheduleFinder = new FakeScheduleFinder();
 
-        var createdBooking = schedule.CreateBooking(
-            schedule.scheduleId, courtName, bookingStartTime, bookingEndTime, bookingDate, player.email, _fakeScheduleRepo).Data;
+        var court = Court.Create(courtName);
+    
+        var schedule = SetupDailySchedule(court, fakeScheduleFinder);
+        var player = SetupPlayer("test@via.dk", "Test", "Player", fakePlayerFinder);
+
+        var createdBooking = schedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder).Data;
+        schedule.listOfBookings.Add(createdBooking);
 
         // Act
         var cancelResult = schedule.CancelBooking(createdBooking.BookingId, fakeDateProvider, fakeTimeProvider, player.email);
@@ -72,28 +79,31 @@ public class CancelsBookingAggregateTest
 
 
     [Theory] // F1
-    [InlineData( "12:00", "2025-03-19", "10:00")] // Cancellation the next day
-    [InlineData("12:00", "2025-03-18", "12:01")] // Cancellation 1 min after start
-    [InlineData("12:00", "2025-03-18", "13:00")] // Cancellation after booking started
-    public void Should_Fail_When_Booking_Is_In_The_Past(string bookingStartTimeStr, string cancellationDateStr, string cancellationTimeStr)
+    [InlineData("12:00", "12:01")] // Cancellation 1 min after start
+    [InlineData("12:00", "13:00")] // Cancellation after booking started
+    public void Should_Fail_When_Booking_Is_In_The_Past(string bookingStartTimeStr, string cancellationTimeStr)
     {
         // Arrange
-        var courtName = "D1";
+        var courtName = CourtName.Create("D1").Data;
 
-        var bookingDate = DateOnly.Parse("2025-03-18");
         var bookingStartTime = TimeOnly.Parse(bookingStartTimeStr);
         var bookingEndTime = bookingStartTime.AddHours(2);
 
-        var cancellationDate = DateOnly.Parse(cancellationDateStr);
+        var cancellationDate = DateOnly.FromDateTime(DateTime.Today.AddDays(5));
         var cancellationTime = TimeOnly.Parse(cancellationTimeStr);
 
         var fakeDateProvider = new FakeDateProvider(cancellationDate);
         var fakeTimeProvider = new FakeTimeProvider(cancellationTime);
+        var fakePlayerFinder = new FakePlayerFinder();
+        var fakeScheduleFinder = new FakeScheduleFinder();
 
-        var schedule = SetupDailySchedule(courtName, bookingDate);
-        var player = SetupPlayer("test@via.dk", "Test", "Player");
+        var court = Court.Create(courtName);
 
-        var createdBooking = schedule.CreateBooking(schedule.scheduleId, courtName, bookingStartTime, bookingEndTime, bookingDate, player.email, _fakeScheduleRepo).Data;
+        var schedule = SetupDailySchedule(court, fakeScheduleFinder);
+        var player = SetupPlayer("test@via.dk", "Test", "Player", fakePlayerFinder);
+
+        var createdBooking = schedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder).Data;
+        schedule.listOfBookings.Add(createdBooking);
 
         // Act
         var cancelResult = schedule.CancelBooking(createdBooking.BookingId, fakeDateProvider, fakeTimeProvider, player.email);
@@ -110,22 +120,26 @@ public class CancelsBookingAggregateTest
     public void Should_Fail_When_Cancellation_Is_Too_Late(string bookingStartTimeStr, string cancellationTimeStr)
     {
         // Arrange
-        var courtName = "D1";
+        var courtName = CourtName.Create("D1").Data;
 
-        var bookingDate = DateOnly.Parse("2025-03-18");
         var bookingStartTime = TimeOnly.Parse(bookingStartTimeStr);
         var bookingEndTime = bookingStartTime.AddHours(2);
 
-        var cancellationDate = DateOnly.Parse("2025-03-18");
+        var cancellationDate = DateOnly.FromDateTime(DateTime.Today.AddDays(4));
         var cancellationTime = TimeOnly.Parse(cancellationTimeStr);
 
         var fakeDateProvider = new FakeDateProvider(cancellationDate);
         var fakeTimeProvider = new FakeTimeProvider(cancellationTime);
+        var fakePlayerFinder = new FakePlayerFinder();
+        var fakeScheduleFinder = new FakeScheduleFinder();
 
-        var schedule = SetupDailySchedule(courtName, bookingDate);
-        var player = SetupPlayer("test@via.dk", "Test", "Player");
+        var court = Court.Create(courtName);
 
-        var createdBooking = schedule.CreateBooking(schedule.scheduleId, courtName, bookingStartTime, bookingEndTime, bookingDate, player.email, _fakeScheduleRepo).Data;
+        var schedule = SetupDailySchedule(court, fakeScheduleFinder);
+        var player = SetupPlayer("test@via.dk", "Test", "Player", fakePlayerFinder);
+
+        var createdBooking = schedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder).Data;
+        schedule.listOfBookings.Add(createdBooking);
         
         // Act
         var result = schedule.CancelBooking(createdBooking.BookingId, fakeDateProvider, fakeTimeProvider, player.email);
@@ -139,15 +153,19 @@ public class CancelsBookingAggregateTest
     public void Should_Fail_When_Cancelling_Nonexistent_Booking()
     {
         // Arrange
-        var courtName = "D1";
+        var courtName = CourtName.Create("D1").Data;
         var cancellationDate = new DateOnly(2025, 01, 31);
         var cancellationTime = new TimeOnly(12, 0, 0);
 
         var fakeDateProvider = new FakeDateProvider(cancellationDate);
         var fakeTimeProvider = new FakeTimeProvider(cancellationTime);
+        var fakePlayerFinder = new FakePlayerFinder();
+        var fakeScheduleFinder = new FakeScheduleFinder();
 
-        var schedule = SetupDailySchedule(courtName, cancellationDate);
-        var firstPlayer = SetupPlayer("111111@via.dk", "First", "Player");
+        var court = Court.Create(courtName);
+
+        var schedule = SetupDailySchedule(court, fakeScheduleFinder);
+        var firstPlayer = SetupPlayer("111111@via.dk", "First", "Player", fakePlayerFinder);
 
         var nonExistentBookingId = Guid.NewGuid();
 
@@ -163,8 +181,8 @@ public class CancelsBookingAggregateTest
     public void Should_Fail_When_Player_Does_Not_Own_Booking()
     {
         // Arrange
-        var courtName = "D1";
-        var bookingDate = new DateOnly(2025, 01, 31);
+        var courtName = CourtName.Create("D1").Data;
+        var scheduleDate = DateOnly.FromDateTime(DateTime.Today).AddDays(2);
         var bookingStartTime = new TimeOnly(12, 0, 0);
         var bookingEndTime = new TimeOnly(13, 0, 0);
 
@@ -173,12 +191,17 @@ public class CancelsBookingAggregateTest
 
         var fakeDateProvider = new FakeDateProvider(cancellationDate);
         var fakeTimeProvider = new FakeTimeProvider(cancellationTime);
+        var fakePlayerFinder = new FakePlayerFinder();
+        var fakeScheduleFinder = new FakeScheduleFinder();
 
-        var schedule = SetupDailySchedule(courtName, bookingDate);
-        var firstPlayer = SetupPlayer("111111@via.dk", "First", "Player");
-        var secondPlayer = SetupPlayer("111112@via.dk", "Second", "Player");
+        var court = Court.Create(courtName);
 
-        var createdBooking = schedule.CreateBooking(schedule.scheduleId, courtName, bookingStartTime, bookingEndTime, bookingDate, firstPlayer.email, _fakeScheduleRepo).Data;
+        var schedule = SetupDailySchedule(court, fakeScheduleFinder);
+        var firstPlayer = SetupPlayer("111111@via.dk", "First", "Player", fakePlayerFinder);
+        var secondPlayer = SetupPlayer("111112@via.dk", "Second", "Player", fakePlayerFinder);
+
+        var createdBooking = schedule.BookCourt(firstPlayer.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder).Data;
+        schedule.listOfBookings.Add(createdBooking);
 
         // Act
         var result = schedule.CancelBooking(createdBooking.BookingId, fakeDateProvider, fakeTimeProvider, secondPlayer.email);
@@ -188,18 +211,32 @@ public class CancelsBookingAggregateTest
         Assert.Equal(ErrorMessage.BookingOwnershipViolation()._message, result.ErrorMessage);
     }
 
-    private DailySchedule SetupDailySchedule(string courtName, DateOnly scheduleDate)
+    private DailySchedule SetupDailySchedule(Court court, IScheduleFinder fakeScheduleFinder)
     {
-        var schedule = DailySchedule.CreateSchedule(new FakeDateProvider(scheduleDate)).Data;
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today).AddDays(3)); 
+        var dateForDailySchedule = DateOnly.FromDateTime(DateTime.Today.AddDays(4));
+        
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
 
-        schedule.UpdateScheduleDateAndTime(scheduleDate, new TimeOnly(10, 0), new TimeOnly(14, 0), new FakeDateProvider(scheduleDate));
-        schedule.Activate(new FakeDateProvider(scheduleDate));
-        schedule.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data), new FakeDateProvider(scheduleDate), _fakeScheduleRepo);
+        schedule.UpdateScheduleDateAndTime(dateForDailySchedule, new TimeOnly(10, 0), new TimeOnly(14, 0), fakeDateProvider);
+        schedule.AddAvailableCourt(court, fakeDateProvider, fakeScheduleFinder);
+        schedule.listOfCourts.Add(court);
+        schedule.Activate(fakeDateProvider);
+        
+        fakeScheduleFinder.AddSchedule(schedule);
         return schedule;
     }
 
-    private Player SetupPlayer(string email, string firstName, string lastName)
+    private Player SetupPlayer(string emailStr, string firstNameStr, string lastNameStr, IPlayerFinder fakePlayerFinder)
     {
-        return Player.Register(Email.Create(email).Data, FullName.Create(firstName, lastName).Data, ProfileUri.Create("http://example.com").Data, new FakeUniqueEmailChecker()).Result.Data;
+        var email = Email.Create(emailStr).Data;
+        var fullName = FullName.Create(firstNameStr, lastNameStr).Data;
+        var profileUri = ProfileUri.Create("http://example.com").Data;
+        var fakeUniqueEmailChecker = new FakeUniqueEmailChecker();
+        
+        var player = Player.Register(email, fullName, profileUri, fakeUniqueEmailChecker).Result.Data;
+        fakePlayerFinder.AddPlayer(player);
+        
+        return player;
     }
 }
