@@ -10,7 +10,7 @@ namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 
 public class DailySchedule : AggregateRoot
 {
-    public Guid scheduleId;
+    internal Guid scheduleId;
     internal DateOnly scheduleDate;
     internal TimeOnly availableFrom;
     internal TimeOnly availableUntil;
@@ -33,6 +33,8 @@ public class DailySchedule : AggregateRoot
         isDeleted = false;
     }
 
+    public Guid Id => scheduleId;
+    public List<Booking> listOfbookings => listOfBookings;
     public static Result<DailySchedule> CreateSchedule(IDateProvider dateProvider)
     {
         var today = dateProvider.Today();
@@ -88,7 +90,7 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
     
-    public Result removeAvailableCourt(Court court, IDateProvider dateProvider, IScheduleFinder scheduleFinder)
+    public Result RemoveAvailableCourt(Court court, IDateProvider dateProvider, IScheduleFinder scheduleFinder)
     {
         var scheduleResult = scheduleFinder.FindSchedule(scheduleId);
         if (!scheduleResult.Success)
@@ -107,13 +109,35 @@ public class DailySchedule : AggregateRoot
         {
             return Result.Fail(ErrorMessage.NoCourtAvailable()._message);
         }
-        //Todo : F3 and F5 for UC 8 can be only done after create booking is done
         if (schedule.scheduleId != scheduleId)
         {
             return Result.Fail(ErrorMessage.ScheduleNotFound()._message);
         }
-        //Todo : S5 and S2 can only be done after create booking is done
+        // Fetch all bookings for the given court on the schedule date
+        var bookingsResult = schedule.listOfBookings.Where(booking => booking.Court.Name.Equals(court.Name));
+    
+        var bookings = bookingsResult.ToList();
+        var currentTime = TimeOnly.FromDateTime(DateTime.Now);
+
         
+        // F3 – Booking is ongoing
+        var bookingsList = bookings.ToList();
+        if (bookingsList.Any(booking => booking.StartTime < currentTime && booking.EndTime > currentTime))
+        {
+            return Result.Fail(ErrorMessage.ActiveCourtCannotBeRemoved()._message);
+        }
+        
+        // F5 – Bookings later on the same day
+        if (bookingsList.Any(booking => booking.StartTime >= currentTime))
+        {
+            return Result.Fail(ErrorMessage.CourtWithLaterBookingsCannotBeRemoved()._message);
+        }
+
+        if (bookingsList.All(booking => booking.EndTime <= currentTime))
+        {
+            schedule.listOfAvailableCourts.Remove(court);
+            return Result.Ok();
+        }
         schedule.listOfAvailableCourts.Remove(court);
         return Result.Ok();
     }

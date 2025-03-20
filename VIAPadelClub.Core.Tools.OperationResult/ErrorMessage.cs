@@ -36,4 +36,19 @@ public static class ErrorMessage
     public static Error ScheduleInvalidTimeSpan() => new Error(0, "The time interval must span 60 minutes or more.");
     public static Error InvalidScheduleUpdateStatus() => new Error(0, "An active daily schedule cannot be modified, only deleted.");
     public static Error InvalidScheduleTimeSpan() => new Error(0, "The minutes of the times must be half or whole hours.");
+    public static Error BookingStartTimeBeforeScheduleStartTime() => new Error(0, "Booking start time must be after schedule start time.");
+    public static Error BookingEndTimeAfterScheduleStartTime() => new Error(0, "Booking end time must be before schedule end time.");
+    public static Error BookingStartTimeAfterScheduleStartTime()=> new Error(0, "Booking start time must be before schedule end time.");
+    public static Error BookingEndTimeAfterScheduleEndTime()=> new Error(0, "Booking end time must be before schedule end time.");
+    public static Error QuarantinePlayerCannotBookCourt() => new Error(0, "Player is quarantined and cannot book a court.");
+    public static Error PlayerIsBlacklisted() => new Error(0, "Player is blacklisted.");
+    public static Error NonVipMemberCannotBookInVipTimeSlot()=> new Error(0, "Non-VIP members cannot book in VIP time slots.");
+    public static Error NoPlayerFound() => new Error(0, "Player not found.");
+    public static Error OneHourGapShouldBeBeforeNewBooking() => new Error(0, "There should be a one-hour gap before a new booking.");
+    public static Error OneHourGapShouldBeAfterAnotherBooking() => new Error(0, "There should be a one-hour gap after another booking.");
+    public static Error BookingCannotBeOverlapped() => new Error(0, "Booking cannot be overlapped.");
+    public static Error OneHourGapBetweenScheduleStartTimeAndBookingStartTime() => new Error(0, "There should be a one-hour gap between the schedule start time and the booking start time.");
+    public static Error OneHourGapBetweenScheduleEndTimeAndBookingEndTime() => new Error(0, "There should be a one-hour gap between the schedule end time and the booking end time.");
+    public static Error ActiveCourtCannotBeRemoved() => new Error(0, "Active court cannot be removed.");
+    public static Error CourtWithLaterBookingsCannotBeRemoved() => new Error(0, "Court with later bookings cannot be removed.");
 }

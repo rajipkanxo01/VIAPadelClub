@@ -1,4 +1,5 @@
-﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+﻿using System.Runtime.CompilerServices;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 
 using VIAPadelClub.Core.Domain.Aggregates.Players.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
@@ -6,7 +7,6 @@ using VIAPadelClub.Core.Domain.Common.BaseClasses;
 using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Domain.Aggregates.Players;
-
 public class Player : AggregateRoot
 {
     internal Email email;
@@ -28,6 +28,8 @@ public class Player : AggregateRoot
         quarantines = new List<Quarantine>();
     }
     
+    public Email Email => email;
+    
     public static async Task<Result<Player>> Register(Email email, FullName fullName, ProfileUri profileUri,IEmailUniqueChecker emailUniqueChecker)
     {
         if (!await emailUniqueChecker.IsUnique(email.Value.ToLower()))
@@ -45,10 +47,11 @@ public class Player : AggregateRoot
         if (!profileUriResult.Success) return Result<Player>.Fail(profileUriResult.ErrorMessage);
         
         emailUniqueChecker.AddEmail(email.Value.ToLower());
+        var playerResult = new Player(emailResult.Data, fullNameResult.Data, profileUriResult.Data);
         
-        return Result<Player>.Ok(new Player(emailResult.Data, fullNameResult.Data, profileUriResult.Data));
+        return Result<Player>.Ok(playerResult);
     }
-
+    
     public Result<Quarantine> Quarantine(DateOnly startDate, List<DailySchedule> schedules)
     {
         if (isBlackListed)
@@ -60,6 +63,7 @@ public class Player : AggregateRoot
         {
             quarantines.Add(quarantine);
             isQuarantined = true;
+            activeQuarantine=quarantine;
         }
         
         //TODO: Uncomment below once Booking entity is available
