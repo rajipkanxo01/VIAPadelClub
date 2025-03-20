@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Domain.Aggregates.Players;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
@@ -164,8 +164,30 @@ public class Booking : Entity
         return Result<Booking>.Ok(newBooking);
     }
     
-    public void CancelBooking()
+    public Result Cancel(IDateProvider dateProvider, ITimeProvider timeProvider, Email playerMakingCancel)
     {
-        throw new NotImplementedException();
+        var currentDate = dateProvider.Today();
+        var currentTime = timeProvider.CurrentTime();
+
+        // Check if the booking is already in the past
+        if (currentDate > BookingDate || (currentDate == BookingDate && currentTime >= BookingStartTime))
+        {
+            return Result.Fail(ErrorMessage.CannotCancelPastBooking()._message);
+        }
+
+        // Check if cancellation is too late (less than 1 hour before booking starts)
+        if (currentDate == BookingDate && (BookingStartTime.ToTimeSpan() - currentTime.ToTimeSpan()).TotalHours < 1)
+        {
+            return Result.Fail(ErrorMessage.CancellationTooLate()._message);
+        }
+
+        // Check if player owns the booking
+        if (playerMakingCancel != BookedBy)
+        {
+            return Result.Fail(ErrorMessage.BookingOwnershipViolation()._message);
+        }
+
+        BookingStatus = BookingStatus.Cancelled;
+        return Result.Ok();
     }
 }

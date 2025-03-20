@@ -218,7 +218,7 @@ public class DailySchedule : AggregateRoot
         status = ScheduleStatus.Active;
         return Result.Ok();
     }
-    public Result DeleteSchedule(IDateProvider dateProvider)
+    public Result DeleteSchedule(IDateProvider dateProvider, ITimeProvider timeProvider)
     {
         if (isDeleted)
             return Result.Fail(ErrorMessage.ScheduleAlreadyDeleted()._message);
@@ -233,7 +233,7 @@ public class DailySchedule : AggregateRoot
 
         foreach (var booking in listOfBookings)
         {
-            booking.CancelBooking();
+            booking.Cancel(dateProvider, timeProvider, booking.BookedBy);
             Console.WriteLine($"**NOTIFICATION** Your booking on {scheduleDate} has been canceled due to schedule deletion.");
         }
             
@@ -265,7 +265,8 @@ public class DailySchedule : AggregateRoot
 
         return Result.Ok();
     }
-    public Result<Booking> BookCourt (Email bookedByPlayer, Court court, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider, IPlayerFinder playerFinder, IScheduleFinder scheduleFinder)
+
+  public Result<Booking> BookCourt (Email bookedByPlayer, Court court, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider, IPlayerFinder playerFinder, IScheduleFinder scheduleFinder)
     {
         /*if (isDeleted || status != ScheduleStatus.Active) //F1 and 2
             return Result<Booking>.Fail(ErrorMessage.ScheduleNotActive()._message);
@@ -296,5 +297,19 @@ public class DailySchedule : AggregateRoot
         return Result<Booking>.Ok(booking);*/
         var booking = Booking.Create(scheduleId, court, startTime, endTime,bookedByPlayer, scheduleFinder, playerFinder).Data;
         return Result<Booking>.Ok(booking);
+
+    }
+ 
+
+    public Result CancelBooking(Guid bookingId, IDateProvider dateProvider, ITimeProvider timeProvider, Email playerMakingCancel)
+    {
+        var booking = listOfBookings.FirstOrDefault(booking => booking.BookingId == bookingId);
+
+        if (booking == null)
+        {
+            return Result.Fail(ErrorMessage.BookingNotFound()._message);
+        }
+
+        return booking.Cancel(dateProvider,timeProvider, playerMakingCancel);
     }
 }

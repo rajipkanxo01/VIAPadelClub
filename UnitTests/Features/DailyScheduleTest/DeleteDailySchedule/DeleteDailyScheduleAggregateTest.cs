@@ -7,19 +7,20 @@ using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using Xunit;
 
 public class DeleteDailyScheduleAggregateTest {
+    private readonly IDateProvider _fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
+    private readonly ITimeProvider _fakeTimeProvider = new FakeTimeProvider(TimeOnly.FromDateTime(DateTime.Now));
     
     [Fact]
     public void Should_Soft_Delete_Active_Schedule()
     {
         // Arrange
-        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
         
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var schedule = DailySchedule.CreateSchedule(_fakeDateProvider).Data;
         schedule.status = ScheduleStatus.Active;
-        schedule.scheduleDate = fakeDateProvider.Today().AddDays(1);
+        schedule.scheduleDate = _fakeDateProvider.Today().AddDays(1);
 
         // Act
-        var result = schedule.DeleteSchedule(fakeDateProvider);
+        var result = schedule.DeleteSchedule(_fakeDateProvider, _fakeTimeProvider);
 
         // Assert
         Assert.True(result.Success);
@@ -31,13 +32,14 @@ public class DeleteDailyScheduleAggregateTest {
     public void Should_Fail_To_Delete_Already_Deleted_Schedule()
     {
         // Arrange
-        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
+        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
+        var fakeTimeProvider = new FakeTimeProvider(TimeOnly.FromDateTime(DateTime.Now));
         
         var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
         schedule.isDeleted = true;
         
         // Act
-        var result = schedule.DeleteSchedule(fakeDateProvider);
+        var result = schedule.DeleteSchedule(fakeDateProvider, fakeTimeProvider);
 
         // Assert
         Assert.False(result.Success);
@@ -48,14 +50,12 @@ public class DeleteDailyScheduleAggregateTest {
     public void Should_Soft_Delete_Draft_Schedule()
     {
         // Arrange
-        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
-        
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
+        var schedule = DailySchedule.CreateSchedule(_fakeDateProvider).Data!;
         schedule.status = ScheduleStatus.Draft;
-        schedule.scheduleDate = fakeDateProvider.Today();
+        schedule.scheduleDate = _fakeDateProvider.Today();
 
         // Act
-        var result = schedule.DeleteSchedule(fakeDateProvider);
+        var result = schedule.DeleteSchedule(_fakeDateProvider, _fakeTimeProvider);
 
         // Assert
         Assert.True(result.Success);
@@ -67,13 +67,11 @@ public class DeleteDailyScheduleAggregateTest {
     public void Should_Fail_To_Delete_Past_Schedule()
     {
         // Arrange
-        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
-        
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
-        schedule.scheduleDate = fakeDateProvider.Today().AddDays(-1);
+        var schedule = DailySchedule.CreateSchedule(_fakeDateProvider).Data;
+        schedule.scheduleDate = _fakeDateProvider.Today().AddDays(-1);
 
         // Act
-        var result = schedule.DeleteSchedule(fakeDateProvider);
+        var result = schedule.DeleteSchedule(_fakeDateProvider, _fakeTimeProvider);
 
         // Assert
         Assert.False(result.Success);
@@ -84,14 +82,12 @@ public class DeleteDailyScheduleAggregateTest {
     public void Should_Fail_To_Delete_Active_Schedule_On_Same_Day()
     {
         // Arrange
-        var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)); 
-        
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
+        var schedule = DailySchedule.CreateSchedule(_fakeDateProvider).Data!;
         schedule.status = ScheduleStatus.Active;
-        schedule.scheduleDate = fakeDateProvider.Today();
+        schedule.scheduleDate = _fakeDateProvider.Today();
 
         // Act
-        var result = schedule.DeleteSchedule(fakeDateProvider);
+        var result = schedule.DeleteSchedule(_fakeDateProvider, _fakeTimeProvider);
 
         // Assert
         Assert.False(result.Success);

@@ -36,6 +36,8 @@ public static class ErrorMessage
     public static Error ScheduleInvalidTimeSpan() => new Error(0, "The time interval must span 60 minutes or more.");
     public static Error InvalidScheduleUpdateStatus() => new Error(0, "An active daily schedule cannot be modified, only deleted.");
     public static Error InvalidScheduleTimeSpan() => new Error(0, "The minutes of the times must be half or whole hours.");
+  
+     // Booking Error Message
     public static Error BookingStartTimeBeforeScheduleStartTime() => new Error(0, "Booking start time must be after schedule start time.");
     public static Error BookingEndTimeAfterScheduleStartTime() => new Error(0, "Booking end time must be before schedule end time.");
     public static Error BookingStartTimeAfterScheduleStartTime()=> new Error(0, "Booking start time must be before schedule end time.");
@@ -52,11 +54,15 @@ public static class ErrorMessage
     public static Error ActiveCourtCannotBeRemoved() => new Error(0, "Active court cannot be removed.");
     public static Error CourtWithLaterBookingsCannotBeRemoved() => new Error(0, "Court with later bookings cannot be removed.");
       
-    // Booking Errors
     public static Error ScheduleNotActive() => new Error(0, "courts cannot be booked if the Schedule is not active");
     public static Error CourtDoesntExistInSchedule() => new Error(0, "The selected court does not exist in this schedule.");
     public static Error InvalidBookingTimeSpan() => new Error(0, "The minutes of the times must be half or whole hours.");
     public static Error BookingTimeConflict() => new Error(0, "Selected time conflicts with an existing booking.");
     public static Error BookingLimitExceeded() => new Error(0, "Players can only have up to two bookings per day.");
     public static Error BookingDurationError() => new Error(0, "Booking duration must be between 1 and 3 hours.");
+
+    public static Error BookingNotFound() => new Error(0, "Booking Not Found");
+    public static Error BookingOwnershipViolation() => new Error(0, "Player does not own this booking");
+    public static Error CannotCancelPastBooking() => new Error(0, "Cannot cancel a past booking.");
+    public static Error CancellationTooLate() => new Error(0, "Cancellation is too late. Bookings can only be cancelled at least one hour before start time.");
 }
