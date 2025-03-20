@@ -1,5 +1,6 @@
 ﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
+using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
 using VIAPadelClub.Core.Tools.OperationResult;
 // ReSharper disable ParameterHidesMember
@@ -12,7 +13,7 @@ using Players;
 
 public class DailySchedule : AggregateRoot
 {
-    public Guid scheduleId;
+    internal Guid scheduleId;
     internal DateOnly scheduleDate;
     internal TimeOnly availableFrom;
     internal TimeOnly availableUntil;
@@ -36,6 +37,9 @@ public class DailySchedule : AggregateRoot
         isDeleted = false;
     }
 
+    public Guid Id => scheduleId;
+    public List<Booking> listOfbookings => listOfBookings;
+    public ScheduleStatus ScheduleStatus => status;
     public static Result<DailySchedule> CreateSchedule(IDateProvider dateProvider)
     {
         var today = dateProvider.Today();
@@ -91,33 +95,45 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
     
-    public Result removeAvailableCourt(Court court, IDateProvider dateProvider, IScheduleFinder scheduleFinder)
+    public Result RemoveAvailableCourt(Court court, IDateProvider dateProvider)
     {
-        var scheduleResult = scheduleFinder.FindSchedule(scheduleId);
-        if (!scheduleResult.Success)
-        {
-            return Result.Fail(scheduleResult.ErrorMessage);
-        }
-
-        var schedule = scheduleResult.Data;
-        
-        if (schedule.scheduleDate < dateProvider.Today() && (schedule.status == ScheduleStatus.Draft || schedule.status == ScheduleStatus.Active))
+        if (scheduleDate < dateProvider.Today() && (status == ScheduleStatus.Draft || status == ScheduleStatus.Active))
         {
             return Result.Fail(ErrorMessage.PastScheduleCannotBeUpdated()._message);
         }
         
-        if (!schedule.listOfAvailableCourts.Contains(court))
+        if (!listOfAvailableCourts.Contains(court))
         {
             return Result.Fail(ErrorMessage.NoCourtAvailable()._message);
         }
-        //Todo : F3 and F5 for UC 8 can be only done after create booking is done
-        if (schedule.scheduleId != scheduleId)
-        {
-            return Result.Fail(ErrorMessage.ScheduleNotFound()._message);
-        }
-        //Todo : S5 and S2 can only be done after create booking is done
         
-        schedule.listOfAvailableCourts.Remove(court);
+        // Fetch all bookings for the given court on the schedule date
+        var bookingsResult = listOfbookings.Where(booking => booking.Court.Name.Equals(court.Name));
+    
+        var bookings = bookingsResult.ToList();
+        var currentTime = TimeOnly.FromDateTime(DateTime.Now);
+
+        
+        // F3 – Booking is ongoing
+        var bookingsList = bookings.ToList();
+        if (bookingsList.Any(booking => booking.StartTime < currentTime && booking.EndTime > currentTime))
+        {
+            return Result.Fail(ErrorMessage.ActiveCourtCannotBeRemoved()._message);
+        }
+        
+        // F5 – Bookings later on the same day
+        if (bookingsList.Any(booking => booking.StartTime >= currentTime))
+        {
+            return Result.Fail(ErrorMessage.CourtWithLaterBookingsCannotBeRemoved()._message);
+        }
+
+        if (bookingsList.All(booking => booking.EndTime <= currentTime))
+        {
+            listOfAvailableCourts.Remove(court);
+            return Result.Ok();
+        }
+        listOfAvailableCourts.Remove(court);
+        listOfCourts.Remove(court);
         return Result.Ok();
     }
 
@@ -197,7 +213,8 @@ public class DailySchedule : AggregateRoot
         
         if (isDeleted)
             return Result.Fail(ErrorMessage.ScheduleIsDeleted()._message);
-        
+
+        listOfAvailableCourts = listOfCourts;
         status = ScheduleStatus.Active;
         return Result.Ok();
     }
@@ -248,9 +265,9 @@ public class DailySchedule : AggregateRoot
 
         return Result.Ok();
     }
-    public Result<Booking> BookCourt (Player player, Court court, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider)
+    public Result<Booking> BookCourt (Email bookedByPlayer, Court court, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider, IPlayerFinder playerFinder, IScheduleFinder scheduleFinder)
     {
-        if (isDeleted || status != ScheduleStatus.Active) //F1 and 2
+        /*if (isDeleted || status != ScheduleStatus.Active) //F1 and 2
             return Result<Booking>.Fail(ErrorMessage.ScheduleNotActive()._message);
 
         if (!listOfCourts.Contains(court)) //F4
@@ -276,7 +293,8 @@ public class DailySchedule : AggregateRoot
         
         //create booking using the booking entity. S-1
         
+        return Result<Booking>.Ok(booking);*/
+        var booking = Booking.Create(scheduleId, court, startTime, endTime,bookedByPlayer, scheduleFinder, playerFinder).Data;
         return Result<Booking>.Ok(booking);
     }
-
 }
