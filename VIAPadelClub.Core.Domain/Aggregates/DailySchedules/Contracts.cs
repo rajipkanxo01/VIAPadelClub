@@ -1,4 +1,6 @@
-﻿using VIAPadelClub.Core.Tools.OperationResult;
+﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
+using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 
