@@ -268,40 +268,12 @@ public class DailySchedule : AggregateRoot
 
   public Result<Booking> BookCourt (Email bookedByPlayer, Court court, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider, IPlayerFinder playerFinder, IScheduleFinder scheduleFinder)
     {
-        /*if (isDeleted || status != ScheduleStatus.Active) //F1 and 2
-            return Result<Booking>.Fail(ErrorMessage.ScheduleNotActive()._message);
-
-        if (!listOfCourts.Contains(court)) //F4
-            return Result<Booking>.Fail(ErrorMessage.CourtDoesntExistInSchedule()._message); 
-        
-        if ((startTime.Minute != 0 && startTime.Minute != 30) || (endTime.Minute != 0 && endTime.Minute != 30))  //F9
-            return Result<Booking>.Fail(ErrorMessage.InvalidBookingTimeSpan()._message);
-        
-        var duration = endTime - startTime; //F10 and F12
-        if (duration < TimeSpan.FromHours(1) || duration > TimeSpan.FromHours(3)) 
-            return Result<Booking>.Fail(ErrorMessage.BookingDurationError()._message);
-        
-        if (listOfBookings.Any(b =>  //F11
-                b.Court == court &&
-                !(endTime <= b.StartTime || startTime >= b.EndTime)))
-        {
-            return Result<Booking>.Fail(ErrorMessage.BookingTimeConflict()._message);
-        }
-        
-        if (listOfBookings.Count(b => b.BookedBy.Value == player.email.Value && b.BookedDate == scheduleDate) >= 2) //F17
-            return Result<Booking>.Fail(ErrorMessage.BookingLimitExceeded()._message);
-        
-        
-        //create booking using the booking entity. S-1
-        
-        return Result<Booking>.Ok(booking);*/
         var booking = Booking.Create(scheduleId, court, startTime, endTime,bookedByPlayer, scheduleFinder, playerFinder).Data;
         return Result<Booking>.Ok(booking);
 
     }
- 
 
-    public Result CancelBooking(Guid bookingId, IDateProvider dateProvider, ITimeProvider timeProvider, Email playerMakingCancel)
+  public Result CancelBooking(Guid bookingId, IDateProvider dateProvider, ITimeProvider timeProvider, Email playerMakingCancel)
     {
         var booking = listOfBookings.FirstOrDefault(booking => booking.BookingId == bookingId);
 

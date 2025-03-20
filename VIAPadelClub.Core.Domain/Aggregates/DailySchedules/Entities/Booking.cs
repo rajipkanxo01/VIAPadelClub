@@ -120,9 +120,9 @@ public class Booking : Entity
             }
         }
         
-        if (schedule.listOfbookings.Count(b => b.BookedBy.Value == player.Data.email.Value && b.BookedDate == schedule.scheduleDate) > 2) //F17
+        if (schedule.listOfbookings.Count(b => b.BookedBy.Value == player.Data.email.Value && b.BookedDate == schedule.scheduleDate) >= 1) //F17
             return Result<Booking>.Fail(ErrorMessage.BookingLimitExceeded()._message);
-        
+
         //F18- Booking leave hole less than one hour
 
         var existingBookings = schedule.listOfBookings.Where(booking => booking.Court.Name.Equals(court.Name));
