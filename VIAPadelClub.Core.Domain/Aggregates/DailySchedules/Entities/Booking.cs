@@ -3,14 +3,24 @@ using VIAPadelClub.Core.Domain.Common.BaseClasses;
 
 namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 
+using Players.Values;
+
 public class Booking : Entity
 {
     internal Guid BookingId { get; }
-    internal Player BookedBy { get; }
-    protected Booking(Guid id, Player bookedBy) : base(id)
+    internal Email BookedBy { get; }
+    internal Court Court { get; }
+    internal TimeOnly StartTime { get; }
+    internal TimeOnly EndTime { get; }
+    internal DateOnly BookedDate { get; }
+    
+    protected Booking(Guid bookingId, Player player, Court court, TimeOnly startTime, TimeOnly endTime, DateOnly bookedDate) : base(bookingId)
     {
-        BookingId = id;
-        BookedBy = bookedBy;
+        BookedBy = player.email;
+        Court = court;
+        StartTime = startTime;
+        EndTime = endTime;
+        BookedDate = bookedDate;
     }
 
     public void CancelBooking()

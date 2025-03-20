@@ -8,18 +8,21 @@ using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 
+using Players;
+
 public class DailySchedule : AggregateRoot
 {
     public Guid scheduleId;
     internal DateOnly scheduleDate;
     internal TimeOnly availableFrom;
     internal TimeOnly availableUntil;
-    internal List<(TimeOnly start, TimeOnly end)> vipTimeRanges = new();
     internal ScheduleStatus status;
+    internal bool isDeleted;
+
     internal List<Court> listOfCourts;
     internal List<Court> listOfAvailableCourts;
     internal List<Booking> listOfBookings;
-    internal bool isDeleted;
+    internal List<(TimeOnly start, TimeOnly end)> vipTimeRanges = new();
 
     private DailySchedule()
     {
@@ -27,9 +30,9 @@ public class DailySchedule : AggregateRoot
         availableFrom = new TimeOnly(15, 0, 0);
         availableUntil = new TimeOnly(22, 0, 0);
         status = ScheduleStatus.Draft;
-        listOfCourts = [];
+        listOfCourts = new List<Court>();
         listOfAvailableCourts = [];
-        listOfBookings = [];
+        listOfBookings = new List<Booking>();
         isDeleted = false;
     }
 
@@ -237,7 +240,7 @@ public class DailySchedule : AggregateRoot
             return Result.Fail(ErrorMessage.InvalidScheduleUpdateStatus()._message);
 
         if ((startTime.Minute != 0 && startTime.Minute != 30) || (endTime.Minute != 0 && endTime.Minute != 30))
-            return Result.Fail(ErrorMessage.InvalidScheduleTimeSpan()._message);
+            return Result.Fail(ErrorMessage.ScheduleInvalidTimeSpan()._message);
 
         scheduleDate = date;
         availableFrom = startTime;
@@ -245,4 +248,35 @@ public class DailySchedule : AggregateRoot
 
         return Result.Ok();
     }
+    public Result<Booking> BookCourt (Player player, Court court, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider)
+    {
+        if (isDeleted || status != ScheduleStatus.Active) //F1 and 2
+            return Result<Booking>.Fail(ErrorMessage.ScheduleNotActive()._message);
+
+        if (!listOfCourts.Contains(court)) //F4
+            return Result<Booking>.Fail(ErrorMessage.CourtDoesntExistInSchedule()._message); 
+        
+        if ((startTime.Minute != 0 && startTime.Minute != 30) || (endTime.Minute != 0 && endTime.Minute != 30))  //F9
+            return Result<Booking>.Fail(ErrorMessage.InvalidBookingTimeSpan()._message);
+        
+        var duration = endTime - startTime; //F10 and F12
+        if (duration < TimeSpan.FromHours(1) || duration > TimeSpan.FromHours(3)) 
+            return Result<Booking>.Fail(ErrorMessage.BookingDurationError()._message);
+        
+        if (listOfBookings.Any(b =>  //F11
+                b.Court == court &&
+                !(endTime <= b.StartTime || startTime >= b.EndTime)))
+        {
+            return Result<Booking>.Fail(ErrorMessage.BookingTimeConflict()._message);
+        }
+        
+        if (listOfBookings.Count(b => b.BookedBy.Value == player.email.Value && b.BookedDate == scheduleDate) >= 2) //F17
+            return Result<Booking>.Fail(ErrorMessage.BookingLimitExceeded()._message);
+        
+        
+        //create booking using the booking entity. S-1
+        
+        return Result<Booking>.Ok(booking);
+    }
+
 }

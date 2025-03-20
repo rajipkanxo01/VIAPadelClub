@@ -35,5 +35,12 @@ public static class ErrorMessage
     public static Error ScheduleEndDateMustBeAfterStartDate() => new Error(0, "The end time must be after the start time.");
     public static Error ScheduleInvalidTimeSpan() => new Error(0, "The time interval must span 60 minutes or more.");
     public static Error InvalidScheduleUpdateStatus() => new Error(0, "An active daily schedule cannot be modified, only deleted.");
-    public static Error InvalidScheduleTimeSpan() => new Error(0, "The minutes of the times must be half or whole hours.");
+    
+    // Booking Errors
+    public static Error ScheduleNotActive() => new Error(0, "courts cannot be booked if the Schedule is not active");
+    public static Error CourtDoesntExistInSchedule() => new Error(0, "The selected court does not exist in this schedule.");
+    public static Error InvalidBookingTimeSpan() => new Error(0, "The minutes of the times must be half or whole hours.");
+    public static Error BookingTimeConflict() => new Error(0, "Selected time conflicts with an existing booking.");
+    public static Error BookingLimitExceeded() => new Error(0, "Players can only have up to two bookings per day.");
+    public static Error BookingDurationError() => new Error(0, "Booking duration must be between 1 and 3 hours.");
 }
