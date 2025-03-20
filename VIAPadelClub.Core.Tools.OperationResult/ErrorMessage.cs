@@ -50,5 +50,13 @@ public static class ErrorMessage
     public static Error OneHourGapBetweenScheduleStartTimeAndBookingStartTime() => new Error(0, "There should be a one-hour gap between the schedule start time and the booking start time.");
     public static Error OneHourGapBetweenScheduleEndTimeAndBookingEndTime() => new Error(0, "There should be a one-hour gap between the schedule end time and the booking end time.");
     public static Error ActiveCourtCannotBeRemoved() => new Error(0, "Active court cannot be removed.");
-    public static Error CourtWithLaterBookingsCannotBeRemoved() => new Error(0, "Court with later bookings cannot be removed.");
+    public static Error CourtWithLaterBookingsCannotBeRemoved() => new Error(0, "Court with later bookings cannot be removed.");7
+      
+    // Booking Errors
+    public static Error ScheduleNotActive() => new Error(0, "courts cannot be booked if the Schedule is not active");
+    public static Error CourtDoesntExistInSchedule() => new Error(0, "The selected court does not exist in this schedule.");
+    public static Error InvalidBookingTimeSpan() => new Error(0, "The minutes of the times must be half or whole hours.");
+    public static Error BookingTimeConflict() => new Error(0, "Selected time conflicts with an existing booking.");
+    public static Error BookingLimitExceeded() => new Error(0, "Players can only have up to two bookings per day.");
+    public static Error BookingDurationError() => new Error(0, "Booking duration must be between 1 and 3 hours.");
 }

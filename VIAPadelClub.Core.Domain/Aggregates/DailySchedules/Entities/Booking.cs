@@ -6,20 +6,17 @@ using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 
+using Players.Values;
+
 public class Booking : Entity
 {
     internal Guid BookingId { get; }
     internal Email Email { get; }
     internal Court Court { get; }
     internal int Duration{ get; }
-    internal DateOnly BookedDate { get; }
     internal TimeOnly StartTime { get; }    
     internal TimeOnly EndTime { get; }
-    protected Booking(Guid id, Email email) : base(id)
-    {
-        BookingId = id;
-        Email = email;
-    }
+    internal DateOnly BookedDate { get; }
 
     private Booking(Guid id,Email email, Court court, int duration, DateOnly bookedDate, TimeOnly startTime, TimeOnly endTime) : base(id)
     {
