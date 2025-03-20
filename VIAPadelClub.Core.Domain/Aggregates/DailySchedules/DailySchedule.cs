@@ -1,5 +1,6 @@
 ﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
+using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
 using VIAPadelClub.Core.Tools.OperationResult;
 // ReSharper disable ParameterHidesMember
@@ -198,7 +199,7 @@ public class DailySchedule : AggregateRoot
         status = ScheduleStatus.Active;
         return Result.Ok();
     }
-    public Result DeleteSchedule(IDateProvider dateProvider)
+    public Result DeleteSchedule(IDateProvider dateProvider, ITimeProvider timeProvider)
     {
         if (isDeleted)
             return Result.Fail(ErrorMessage.ScheduleAlreadyDeleted()._message);
@@ -213,7 +214,7 @@ public class DailySchedule : AggregateRoot
 
         foreach (var booking in listOfBookings)
         {
-            booking.CancelBooking();
+            booking.Cancel(dateProvider, timeProvider, booking.BookedBy);
             Console.WriteLine($"**NOTIFICATION** Your booking on {scheduleDate} has been canceled due to schedule deletion.");
         }
             
@@ -244,5 +245,24 @@ public class DailySchedule : AggregateRoot
         availableUntil = endTime;
 
         return Result.Ok();
+    }
+
+    public Result<Booking> CreateBooking(Guid id, string courtName, TimeOnly bookingStartTime, TimeOnly bookingEndTime, DateOnly bookingDate, Email playerEmail, IScheduleFinder scheduleFinder)
+    {
+        var booking = Booking.Create(id, courtName, bookingStartTime, bookingEndTime, bookingDate, playerEmail, scheduleFinder).Data;
+        listOfBookings.Add(booking);
+        return Result<Booking>.Ok(booking);
+    }
+
+    public Result CancelBooking(Guid bookingId, IDateProvider dateProvider, ITimeProvider timeProvider, Email playerMakingCancel)
+    {
+        var booking = listOfBookings.FirstOrDefault(booking => booking.BookingId == bookingId);
+
+        if (booking == null)
+        {
+            return Result.Fail(ErrorMessage.BookingNotFound()._message);
+        }
+
+        return booking.Cancel(dateProvider,timeProvider, playerMakingCancel);
     }
 }

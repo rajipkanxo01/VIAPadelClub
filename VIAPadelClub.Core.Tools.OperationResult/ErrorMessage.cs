@@ -36,4 +36,13 @@ public static class ErrorMessage
     public static Error ScheduleInvalidTimeSpan() => new Error(0, "The time interval must span 60 minutes or more.");
     public static Error InvalidScheduleUpdateStatus() => new Error(0, "An active daily schedule cannot be modified, only deleted.");
     public static Error InvalidScheduleTimeSpan() => new Error(0, "The minutes of the times must be half or whole hours.");
+
+    // Booking Error Message
+    public static Error BookingNotFound() => new Error(0, "Booking Not Found");
+    public static Error BookingOwnershipViolation() => new Error(0, "Player does not own this booking");
+    public static Error CannotCancelPastBooking() => new Error(0, "Cannot cancel a past booking.");
+    public static Error CancellationTooLate() => new Error(0, "Cancellation is too late. Bookings can only be cancelled at least one hour before start time.");
+
+
+
 }

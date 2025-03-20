@@ -12,3 +12,8 @@ public interface IScheduleFinder
     Result<DailySchedule> FindSchedule(Guid scheduleId);
     void AddSchedule(DailySchedule schedule);    //Todo: Remove Add schedule after session 6
 }
+
+public interface ITimeProvider
+{
+    TimeOnly CurrentTime();
+}
