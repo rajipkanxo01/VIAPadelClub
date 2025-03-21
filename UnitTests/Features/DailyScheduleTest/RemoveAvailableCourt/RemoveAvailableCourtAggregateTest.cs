@@ -31,7 +31,7 @@ public class RemoveAvailableCourtAggregateTest
         schedule.Activate(fakeDateProvider);
         var booking = Booking.Create(schedule.scheduleId, court, new TimeOnly(15, 0), new TimeOnly(16, 0), player.email,fakeScheduleFinder, fakePlayerFinder).Data;
         
-        schedule.listOfbookings.Add(booking);
+        schedule.listOfBookings.Add(booking);
         
         // Act
         var result = schedule.RemoveAvailableCourt(court, fakeDateProvider,new TimeOnly(9,0));
@@ -109,7 +109,7 @@ public class RemoveAvailableCourtAggregateTest
         
         var booking = Booking.Create(schedule.scheduleId, court, new TimeOnly(10, 0), new TimeOnly(11, 0), player.Data.Email, fakeScheduleFinder, playerFinder).Data;
 
-        schedule.listOfbookings.Add(booking);
+        schedule.listOfBookings.Add(booking);
         
         // Act
         var result = schedule.RemoveAvailableCourt(court, fakeDateProvider,new TimeOnly(9,0));
@@ -143,7 +143,7 @@ public class RemoveAvailableCourtAggregateTest
         schedule.Activate(fakeDateProvider);
         
         var existingBooking = Booking.Create(schedule.Id, court, new TimeOnly(15, 0), new TimeOnly(16, 0), player.email, fakeScheduleFinder, playerFinder);
-        schedule.listOfbookings.Add(existingBooking.Data);
+        schedule.listOfBookings.Add(existingBooking.Data);
 
         // Act
         var result = schedule.RemoveAvailableCourt(court1, fakeDateProvider,new TimeOnly(15,0));

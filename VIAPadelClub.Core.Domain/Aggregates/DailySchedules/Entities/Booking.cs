@@ -33,7 +33,6 @@ public class Booking : Entity
         BookingStatus = BookingStatus.Active;
     }
 
-    public Court court => Court;
     public static Result<Booking> Create(Guid scheduleId,Court court,TimeOnly startTime, TimeOnly endTime,Email email,IScheduleFinder scheduleFinder,IPlayerFinder playerFinder)
     {
         var scheduleResult = scheduleFinder.FindSchedule(scheduleId);
@@ -44,7 +43,7 @@ public class Booking : Entity
         
         var schedule = scheduleResult.Data;
         
-        if (schedule.isDeleted || schedule.ScheduleStatus != ScheduleStatus.Active) //F1 and 2
+        if (schedule.isDeleted || schedule.status != ScheduleStatus.Active) //F1 and 2
             return Result<Booking>.Fail(ErrorMessage.ScheduleNotActive()._message);
 
         if (!schedule.listOfAvailableCourts.Contains(court)) //F4
@@ -88,7 +87,7 @@ public class Booking : Entity
         if (duration < TimeSpan.FromHours(1) || duration > TimeSpan.FromHours(3)) 
             return Result<Booking>.Fail(ErrorMessage.BookingDurationError()._message);
         
-        if (schedule.listOfbookings.Any(b =>  //F11
+        if (schedule.listOfBookings.Any(b =>  //F11
                 b.Court == court &&
                 !(endTime <= b.StartTime || startTime >= b.EndTime)))
         {
@@ -120,7 +119,7 @@ public class Booking : Entity
             }
         }
         
-        if (schedule.listOfbookings.Count(b => b.BookedBy.Value == player.Data.email.Value && b.BookedDate == schedule.scheduleDate) >= 1) //F17
+        if (schedule.listOfBookings.Count(b => b.BookedBy.Value == player.Data.email.Value && b.BookedDate == schedule.scheduleDate) >= 1) //F17
             return Result<Booking>.Fail(ErrorMessage.BookingLimitExceeded()._message);
 
         //F18- Booking leave hole less than one hour

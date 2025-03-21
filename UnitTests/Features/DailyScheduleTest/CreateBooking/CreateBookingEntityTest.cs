@@ -723,7 +723,7 @@ public class CreateBookingEntityTest
         _playerFinder.AddPlayer(player.Data);
 
         var firstBooking = Booking.Create(dailySchedule.Id, court, new TimeOnly(10, 0), new TimeOnly(11, 0), email, _scheduleFinder, _playerFinder);
-        dailySchedule.listOfbookings.Add(firstBooking.Data);
+        dailySchedule.listOfBookings.Add(firstBooking.Data);
         
         var result = Booking.Create(dailySchedule.Id, court, new TimeOnly(14, 0), new TimeOnly(15, 0), email, _scheduleFinder, _playerFinder);
 
