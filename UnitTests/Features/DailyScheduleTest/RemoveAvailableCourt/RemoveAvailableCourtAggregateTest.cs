@@ -34,7 +34,7 @@ public class RemoveAvailableCourtAggregateTest
         schedule.listOfbookings.Add(booking);
         
         // Act
-        var result = schedule.RemoveAvailableCourt(court, fakeDateProvider);
+        var result = schedule.RemoveAvailableCourt(court, fakeDateProvider,new TimeOnly(9,0));
 
         // Assert
         result.Success.Should().BeTrue();
@@ -55,7 +55,7 @@ public class RemoveAvailableCourtAggregateTest
         schedule.status = ScheduleStatus.Draft;
 
         // Act
-        var result = schedule.RemoveAvailableCourt(court, fakeDateProvider);
+        var result = schedule.RemoveAvailableCourt(court, fakeDateProvider,new TimeOnly(15,0));
 
         // Assert
         result.Success.Should().BeFalse();
@@ -78,7 +78,7 @@ public class RemoveAvailableCourtAggregateTest
         var fakeCurrentDateProvider= new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
         // Act
-        var result = schedule.RemoveAvailableCourt(court, fakeCurrentDateProvider);
+        var result = schedule.RemoveAvailableCourt(court, fakeCurrentDateProvider,new TimeOnly(15,0));
 
         // Assert
         result.Success.Should().BeFalse();
@@ -112,7 +112,7 @@ public class RemoveAvailableCourtAggregateTest
         schedule.listOfbookings.Add(booking);
         
         // Act
-        var result = schedule.RemoveAvailableCourt(court, fakeDateProvider);
+        var result = schedule.RemoveAvailableCourt(court, fakeDateProvider,new TimeOnly(9,0));
 
         // Assert
         result.Success.Should().BeTrue();
@@ -146,7 +146,7 @@ public class RemoveAvailableCourtAggregateTest
         schedule.listOfbookings.Add(existingBooking.Data);
 
         // Act
-        var result = schedule.RemoveAvailableCourt(court1, fakeDateProvider);
+        var result = schedule.RemoveAvailableCourt(court1, fakeDateProvider,new TimeOnly(15,0));
 
         // Assert
         result.Success.Should().BeTrue();

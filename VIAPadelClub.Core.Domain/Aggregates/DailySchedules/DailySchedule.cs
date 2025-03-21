@@ -95,47 +95,85 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
     
-    public Result RemoveAvailableCourt(Court court, IDateProvider dateProvider)
+    // public Result RemoveAvailableCourt(Court court, IDateProvider dateProvider)
+    // {
+    //     if (scheduleDate < dateProvider.Today() && (status == ScheduleStatus.Draft || status == ScheduleStatus.Active))
+    //     {
+    //         return Result.Fail(ErrorMessage.PastScheduleCannotBeUpdated()._message);
+    //     }
+    //     
+    //     if (!listOfAvailableCourts.Contains(court))
+    //     {
+    //         return Result.Fail(ErrorMessage.NoCourtAvailable()._message);
+    //     }
+    //     
+    //     // Fetch all bookings for the given court on the schedule date
+    //     var bookingsResult = listOfbookings.Where(booking => booking.Court.Name.Equals(court.Name));
+    //
+    //     var bookings = bookingsResult.ToList();
+    //     var currentTime = TimeOnly.FromDateTime(DateTime.Now);
+    //
+    //     
+    //     // F3 – Booking is ongoing
+    //     var bookingsList = bookings.ToList();
+    //     if (bookingsList.Any(booking => booking.StartTime < currentTime && booking.EndTime > currentTime))
+    //     {
+    //         return Result.Fail(ErrorMessage.ActiveCourtCannotBeRemoved()._message);
+    //     }
+    //     
+    //     // F5 – Bookings later on the same day
+    //     if (bookingsList.Any(booking => booking.StartTime >= currentTime))
+    //     {
+    //         return Result.Fail(ErrorMessage.CourtWithLaterBookingsCannotBeRemoved()._message);
+    //     }
+    //
+    //     if (bookingsList.All(booking => booking.EndTime <= currentTime))
+    //     {
+    //         listOfAvailableCourts.Remove(court);
+    //         return Result.Ok();
+    //     }
+    //     listOfAvailableCourts.Remove(court);
+    //     listOfCourts.Remove(court);
+    //     return Result.Ok();
+    // }
+    
+    public Result RemoveAvailableCourt(Court court, IDateProvider dateProvider, TimeOnly timeOfRemoval)
     {
+        // Ensure the schedule is for today or the future
         if (scheduleDate < dateProvider.Today() && (status == ScheduleStatus.Draft || status == ScheduleStatus.Active))
         {
             return Result.Fail(ErrorMessage.PastScheduleCannotBeUpdated()._message);
         }
-        
+
+        // Ensure the court exists in the schedule
         if (!listOfAvailableCourts.Contains(court))
         {
             return Result.Fail(ErrorMessage.NoCourtAvailable()._message);
         }
-        
-        // Fetch all bookings for the given court on the schedule date
-        var bookingsResult = listOfbookings.Where(booking => booking.Court.Name.Equals(court.Name));
-    
-        var bookings = bookingsResult.ToList();
-        var currentTime = TimeOnly.FromDateTime(DateTime.Now);
 
-        
-        // F3 – Booking is ongoing
-        var bookingsList = bookings.ToList();
-        if (bookingsList.Any(booking => booking.StartTime < currentTime && booking.EndTime > currentTime))
+        // Fetch all bookings for the given court on the schedule date
+        var bookings = listOfbookings
+            .Where(booking => booking.Court.Name.Equals(court.Name))
+            .ToList();
+
+        // F3 – Booking is ongoing (court is currently in use)
+        if (bookings.Any(booking => booking.StartTime < timeOfRemoval && booking.EndTime > timeOfRemoval))
         {
             return Result.Fail(ErrorMessage.ActiveCourtCannotBeRemoved()._message);
         }
-        
-        // F5 – Bookings later on the same day
-        if (bookingsList.Any(booking => booking.StartTime >= currentTime))
+
+        // F5 – Check if there are bookings later on the same day
+        if (bookings.Any(booking => booking.StartTime <= timeOfRemoval))
         {
             return Result.Fail(ErrorMessage.CourtWithLaterBookingsCannotBeRemoved()._message);
         }
 
-        if (bookingsList.All(booking => booking.EndTime <= currentTime))
-        {
-            listOfAvailableCourts.Remove(court);
-            return Result.Ok();
-        }
+        // If no future bookings exist, remove the court
         listOfAvailableCourts.Remove(court);
         listOfCourts.Remove(court);
         return Result.Ok();
     }
+
 
     private Result ValidateScheduleForCourtAddition(DateOnly today)
     {
