@@ -1,6 +1,8 @@
 using System.Runtime.CompilerServices;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Domain.Aggregates.Players;
+using VIAPadelClub.Core.Domain.Aggregates.Players.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
 using VIAPadelClub.Core.Tools.OperationResult;

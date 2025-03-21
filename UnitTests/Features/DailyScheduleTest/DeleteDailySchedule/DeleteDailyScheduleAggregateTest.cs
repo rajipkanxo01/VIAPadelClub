@@ -1,4 +1,5 @@
 ﻿using UnitTests.Features.Helpers;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
 
 namespace UnitTests.Features.DailyScheduleTest.DeleteDailySchedule;
 

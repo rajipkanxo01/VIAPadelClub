@@ -1,4 +1,5 @@
 ﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
 using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace UnitTests.Features.Helpers;
