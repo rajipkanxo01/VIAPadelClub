@@ -19,15 +19,16 @@ public class ManagerBlacklistPlayerAggregateTest
         var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
         var dailySchedules = new List<DailySchedule>();
 
+        var fakeScheduleFinder = new FakeScheduleFinder();
+
         // Act
-        var result = player.Data.Blacklist(dailySchedules);
+        var result = player.Data.Blacklist(fakeScheduleFinder);
 
         // Assert
         Assert.True(player.Data.isBlackListed);
         Assert.True(result.Success);
     }
 
-    // this test fails for now because quarantine player is not implemented yet!!
     [Theory]
     [InlineData("2025-03-15")]
     [InlineData("2025-04-22")]
@@ -42,11 +43,12 @@ public class ManagerBlacklistPlayerAggregateTest
         var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
         var dailySchedules = new List<DailySchedule>();
 
+        var fakeScheduleFinder = new FakeScheduleFinder();
 
         player.Data.Quarantine(DateOnly.Parse(startDate), dailySchedules);
 
         // Act
-        var result = player.Data.Blacklist(dailySchedules);
+        var result = player.Data.Blacklist(fakeScheduleFinder);
 
         // Assert
         Assert.True(result.Success);
@@ -63,12 +65,14 @@ public class ManagerBlacklistPlayerAggregateTest
         var fullName = FullName.Create("John", "Doe");
         var profileUri = ProfileUri.Create("http://example.com");
         var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+        
         var dailySchedules = new List<DailySchedule>();
-
-        player.Data.Blacklist(dailySchedules);
+        var fakeScheduleFinder = new FakeScheduleFinder();
+        
+        player.Data.Blacklist(fakeScheduleFinder);
 
         // Act
-        var result = player.Data.Blacklist(dailySchedules);
+        var result = player.Data.Blacklist(fakeScheduleFinder);
 
         // Assert
         Assert.False(result.Success);

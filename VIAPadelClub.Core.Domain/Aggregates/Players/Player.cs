@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
@@ -91,13 +92,15 @@ public class Player : AggregateRoot
     //     }
     // }
 
-    public Result Blacklist(List<DailySchedule> dailySchedules)
+    public Result Blacklist(IScheduleFinder scheduleFinder)
     {
         if (isBlackListed) return Result.Fail("Player Already Blacklisted. Cannot blacklist same player twice!!");
         
         isBlackListed = true;
         if (activeQuarantine is not null) activeQuarantine = null;
 
+        // need to black list player
+        
         return Result.Ok();
     }
 

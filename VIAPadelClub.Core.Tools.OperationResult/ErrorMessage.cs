@@ -65,4 +65,9 @@ public static class ErrorMessage
     public static Error BookingOwnershipViolation() => new Error(0, "Player does not own this booking");
     public static Error CannotCancelPastBooking() => new Error(0, "Cannot cancel a past booking.");
     public static Error CancellationTooLate() => new Error(0, "Cancellation is too late. Bookings can only be cancelled at least one hour before start time.");
+    
+    
+    // Guid Parsing Error Message
+    public static Error InvalidScheduleIdFormatWhileParsing() => new Error(0, "Invalid schedule ID format.");
+    public static Error InvalidPlayerIdFormatWhileParsing() => new Error(0, "Invalid player ID format.");
 }
