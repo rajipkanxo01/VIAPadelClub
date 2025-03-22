@@ -1,5 +1,6 @@
 ﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace UnitTests.Features.Helpers.Factory;
@@ -10,8 +11,12 @@ public class DailyScheduleBuilder
     private TimeOnly? _availableFrom;
     private TimeOnly? _availableUntil;
     private readonly List<(TimeOnly start, TimeOnly end)> _vipTimeRanges = new();
+    private bool _activate = false;
+    
+    private List<Court> _courts = new();
 
     private IDateProvider _dateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
+    private IScheduleFinder _scheduleFinder = new FakeScheduleFinder();
 
     private DailyScheduleBuilder()
     {
@@ -38,9 +43,27 @@ public class DailyScheduleBuilder
         return this;
     }
 
+    public DailyScheduleBuilder WithCourt(Court court)
+    {
+        _courts.Add(court);
+        return this;
+    }
+
     public DailyScheduleBuilder WithDateProvider(IDateProvider provider)
     {
         _dateProvider = provider;
+        return this;
+    }
+    
+    public DailyScheduleBuilder WithScheduleFinder(IScheduleFinder finder)
+    {
+        _scheduleFinder = finder;
+        return this;
+    }
+
+    public DailyScheduleBuilder Activate()
+    {
+        _activate = true;
         return this;
     }
 
@@ -54,6 +77,15 @@ public class DailyScheduleBuilder
 
         var schedule = result.Data;
 
+        if (_courts.Any())
+        {
+            foreach (var court in _courts)
+            {
+                schedule.listOfCourts.Add(court);
+                schedule.AddAvailableCourt(court, _dateProvider, _scheduleFinder);
+            }
+        }
+        
         if (_scheduleDate != null || _availableFrom != null || _availableUntil != null)
         {
             var updateResult = schedule.UpdateScheduleDateAndTime(
@@ -65,6 +97,11 @@ public class DailyScheduleBuilder
 
             if (!updateResult.Success)
                 return Result<DailySchedule>.Fail(updateResult.ErrorMessage);
+        }
+
+        if (_activate)
+        {
+            schedule.Activate(_dateProvider);
         }
 
         foreach (var vip in _vipTimeRanges)

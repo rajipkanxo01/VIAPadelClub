@@ -8,14 +8,15 @@ namespace UnitTests.Features.Helpers;
 public class FakePlayerFinder: IPlayerFinder
 {
     private readonly List<Player> _players = new();
-    public Result<Player> FindPlayer(string email)
+    public Result<Player> FindPlayer(Email email)
     {
-        var player = _players.FirstOrDefault(p => p.email.Value.Equals(email));
+        var player = _players.FirstOrDefault(p => p.email.Value.Equals(email.Value));
         return player != null ? Result<Player>.Ok(player) : Result<Player>.Fail(ErrorMessage.NoPlayerFound()._message);
     }
 
-    public void AddPlayer(Player player)
+    public Result AddPlayer(Player player)
     {
         _players.Add(player);
+        return Result.Ok();
     }
 }

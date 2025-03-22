@@ -37,4 +37,17 @@ public class FakeDailyScheduleRepository : IDailyScheduleRepository
         _listOfSchedules.Remove(schedule);
         return Task.FromResult(Result.Ok());
     }
+
+    public Task<Result> UpdateAsync(DailySchedule dailySchedule)
+    {
+        var exists = _listOfSchedules.Any(s => s.Id == dailySchedule.Id);
+        if (!exists)
+        {
+            return Task.FromResult(Result.Fail(ErrorMessage.ScheduleNotFound()._message));
+        }
+
+        // No need to replace it — it’s already tracked in memory
+        return Task.FromResult(Result.Ok());
+    }
+
 }

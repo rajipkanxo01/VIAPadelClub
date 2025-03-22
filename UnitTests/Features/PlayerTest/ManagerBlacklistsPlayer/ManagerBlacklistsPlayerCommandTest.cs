@@ -11,7 +11,7 @@ public class ManagerBlacklistsPlayerCommandTest
     {
         // Arrange
         var validScheduleId = Guid.NewGuid().ToString();
-        var validPlayerId = Guid.NewGuid().ToString();
+        var validPlayerId = "123456@via.dk";
 
         // Act
         var result = BlacklistsPlayerCommand.Create(validScheduleId, validPlayerId);
@@ -27,13 +27,13 @@ public class ManagerBlacklistsPlayerCommandTest
     {
         // Arrange
         var validScheduleId = Guid.NewGuid().ToString();
-        var invalidPlayerId = "not-a-guid";
+        var invalidPlayerId = "1@via.dk";
 
         // Act
         var result = BlacklistsPlayerCommand.Create(validScheduleId, invalidPlayerId);
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal(ErrorMessage.InvalidPlayerIdFormatWhileParsing()._message, result.ErrorMessage);
+        Assert.Equal(ErrorMessage.InvalidEmailFormat()._message, result.ErrorMessage);
     }
 }

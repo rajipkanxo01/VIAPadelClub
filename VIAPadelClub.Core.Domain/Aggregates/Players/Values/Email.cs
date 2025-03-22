@@ -53,5 +53,16 @@ namespace VIAPadelClub.Core.Domain.Aggregates.Players.Values
                 ? Result.Fail(ErrorMessage.EmailMustEndWithViaDk()._message)
                 : Result.Ok();
         }
+        
+        public override bool Equals(object? obj)
+        {
+            if (obj is not Email other) return false;
+            return Value.Equals(other.Value, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public override int GetHashCode()
+        {
+            return Value.ToLowerInvariant().GetHashCode();
+        }
     }
 }

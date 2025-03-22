@@ -21,11 +21,7 @@ public class BlacklistsPlayerCommand(Email playerId, Guid dailyScheduleId)
         {
             return Result<BlacklistsPlayerCommand>.Fail(emailResult.ErrorMessage);
         }
-
-        /*if (!Guid.TryParse(playerId, out var playerIdGuid))
-        {
-            return Result<BlacklistsPlayerCommand>.Fail(ErrorMessage.InvalidPlayerIdFormatWhileParsing()._message);
-        }*/
+        
 
         var command = new BlacklistsPlayerCommand( emailResult.Data, dailyScheduleIdGuid);
         return Result<BlacklistsPlayerCommand>.Ok(command);
