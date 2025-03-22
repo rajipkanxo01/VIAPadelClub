@@ -3,6 +3,7 @@ using UnitTests.Features.Helpers.Repository;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.Players;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
+using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 
 namespace UnitTests.Features.PlayerTest.ManagerLiftsBlacklist;
@@ -49,6 +50,6 @@ public class ManagerLiftsBlacklistAggregateTest
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal("Player is not blacklisted.", result.ErrorMessage);
+        Assert.Equal(ErrorMessage.PlayerIsNotBlacklisted()._message, result.ErrorMessage);
     }
 }

@@ -41,8 +41,6 @@ public class CancelsBookingHandlerTest
         var booking = dailySchedule.BookCourt(player.Email, court, bookingStartTime, bookingEndTime, fakeDateProvider,
             fakePlayerFinder, fakeScheduleFinder).Data;
         
-        fakeDailyScheduleRepository.UpdateAsync(dailySchedule);
-
         var cancelsBookingCommand = PlayerCancelsBookingCommand
             .Create(booking.BookingId.ToString(), player.Email.Value, dailySchedule.Id.ToString()).Data;
 

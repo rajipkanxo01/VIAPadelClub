@@ -2,6 +2,7 @@
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.Players;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
+using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 
 namespace UnitTests.Features.PlayerTest.ManagerBlacklistsPlayer;
@@ -76,7 +77,7 @@ public class ManagerBlacklistPlayerAggregateTest
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal("Player Already Blacklisted. Cannot blacklist same player twice!!", result.ErrorMessage);
+        Assert.Equal(ErrorMessage.PlayerAlreadyBlacklisted()._message, result.ErrorMessage);
     }
 
     [Theory]

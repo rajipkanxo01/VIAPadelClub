@@ -94,19 +94,19 @@ public class Player : AggregateRoot
 
     public Result Blacklist(IScheduleFinder scheduleFinder)
     {
-        if (isBlackListed) return Result.Fail("Player Already Blacklisted. Cannot blacklist same player twice!!");
+        if (isBlackListed) return Result.Fail(ErrorMessage.PlayerAlreadyBlacklisted()._message);
         
         isBlackListed = true;
         if (activeQuarantine is not null) activeQuarantine = null;
 
-        // need to black list player
+        // TODO: remove all bookings!!!
         
         return Result.Ok();
     }
 
     public Result LiftBlacklist()
     {
-        if (!isBlackListed) return Result.Fail("Player is not blacklisted.");
+        if (!isBlackListed) return Result.Fail(ErrorMessage.PlayerIsNotBlacklisted()._message);
 
         isBlackListed = false;
         return Result.Ok();
