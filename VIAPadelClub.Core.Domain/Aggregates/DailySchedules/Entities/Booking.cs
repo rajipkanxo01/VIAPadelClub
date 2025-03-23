@@ -78,7 +78,7 @@ public class Booking : Entity
         if ((startTime.Minute != 0 && startTime.Minute != 30) || (endTime.Minute != 0 && endTime.Minute != 30))  //F9
             return Result<Booking>.Fail(ErrorMessage.InvalidBookingTimeSpan()._message);
         
-        var player = playerFinder.FindPlayer(email.Value);
+        var player = playerFinder.FindPlayer(email);
         
         if (!player.Success)
         {
@@ -164,6 +164,7 @@ public class Booking : Entity
             return Result<Booking>.Fail(ErrorMessage.OneHourGapBetweenScheduleEndTimeAndBookingEndTime()._message);
         }
         var newBooking = new Booking(Guid.NewGuid(), email, court, (int)(endTime - startTime).TotalMinutes, schedule.scheduleDate, startTime, endTime);
+        schedule.listOfBookings.Add(newBooking);
         
         return Result<Booking>.Ok(newBooking);
     }
@@ -186,7 +187,7 @@ public class Booking : Entity
         }
 
         // Check if player owns the booking
-        if (playerMakingCancel != BookedBy)
+        if (!playerMakingCancel.Equals(BookedBy))
         {
             return Result.Fail(ErrorMessage.BookingOwnershipViolation()._message);
         }

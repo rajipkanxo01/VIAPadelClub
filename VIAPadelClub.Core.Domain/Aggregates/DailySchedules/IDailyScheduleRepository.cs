@@ -4,7 +4,7 @@ namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 
 public interface IDailyScheduleRepository
 {
-    Task<Result> AddAsync();
-    Task<Result> GetAsync();
-    Task<Result> RemoveAsync();
+    Task<Result> AddAsync(DailySchedule dailySchedule);
+    Task<Result<DailySchedule>> GetAsync(Guid scheduleId);
+    Task<Result> RemoveAsync(Guid scheduleId);
 }

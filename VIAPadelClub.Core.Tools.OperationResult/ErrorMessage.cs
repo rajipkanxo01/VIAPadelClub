@@ -12,6 +12,8 @@ public static class ErrorMessage
     public static Error InvalidLastName() => new Error(0, "Invalid last name. Must be 2-25 letters with no symbols or spaces.");
     public static Error InvalidProfileUri() => new Error(0, "Invalid profile uri. Must be a valid uri.");
     public static Error BlackListedCannotQuarantine() => new Error(0, "Player is already blacklisted and cannot be quarantined.");
+    public static Error PlayerAlreadyBlacklisted() => new Error(0, "Player Already Blacklisted. Cannot blacklist same player twice!!");
+    public static Error PlayerIsNotBlacklisted() => new Error(0, "Player is not blacklisted!!");
     
     // Daily Schedule Error Message
     public static Error InvalidStartingLetter() => new Error(0, "Invalid starting letter. Must start with 'S','s','D' or 'd'.");
@@ -65,4 +67,9 @@ public static class ErrorMessage
     public static Error BookingOwnershipViolation() => new Error(0, "Player does not own this booking");
     public static Error CannotCancelPastBooking() => new Error(0, "Cannot cancel a past booking.");
     public static Error CancellationTooLate() => new Error(0, "Cancellation is too late. Bookings can only be cancelled at least one hour before start time.");
+    
+    // Guid Parsing Error Message
+    public static Error InvalidScheduleIdFormatWhileParsing() => new Error(0, "Invalid schedule ID format.");
+    public static Error InvalidPlayerIdFormatWhileParsing() => new Error(0, "Invalid player ID format.");
+    public static Error InvalidTimeformatWhileParsing() => new Error(0, "Invalid time format while parsing.");    
 }
