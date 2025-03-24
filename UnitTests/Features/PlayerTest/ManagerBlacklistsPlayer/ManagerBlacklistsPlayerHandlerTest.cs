@@ -1,7 +1,7 @@
 ﻿using UnitTests.Features.Helpers;
 using UnitTests.Features.Helpers.Factory;
 using UnitTests.Features.Helpers.Repository;
-using VIAPadelClub.Core.Application.CommandDispatching.Commands.Booking;
+using VIAPadelClub.Core.Application.CommandDispatching.Commands.Player;
 using VIAPadelClub.Core.Application.Features.Booking;
 using Xunit;
 
@@ -21,7 +21,7 @@ public class BlacklistPlayerHandlerTests
         var scheduleRepo = new FakeDailyScheduleRepository();
         await scheduleRepo.AddAsync(schedule);
 
-        var fakeScheduleFinder = new FakeScheduleFinderNew(scheduleRepo);
+        var fakeScheduleFinder = new FakeScheduleFinder(scheduleRepo);
 
         var unitOfWork = new FakeUnitOfWork();
         var handler = new BlacklistsPlayerHandler(playerRepo, unitOfWork, fakeScheduleFinder);
@@ -49,7 +49,7 @@ public class BlacklistPlayerHandlerTests
         var scheduleRepo = new FakeDailyScheduleRepository();
         await scheduleRepo.AddAsync(schedule);
 
-        var fakeScheduleFinder = new FakeScheduleFinderNew(scheduleRepo);
+        var fakeScheduleFinder = new FakeScheduleFinder(scheduleRepo);
 
         var unitOfWork = new FakeUnitOfWork();
         var handler = new BlacklistsPlayerHandler(playerRepo, unitOfWork, fakeScheduleFinder);

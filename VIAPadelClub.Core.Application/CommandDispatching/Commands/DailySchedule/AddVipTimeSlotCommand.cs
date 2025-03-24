@@ -19,17 +19,17 @@ public class AddVipTimeSlotCommand
     {
         if (!Guid.TryParse(dailyScheduleIdStr, out var dailyScheduleId))
         {
-            return Result<AddVipTimeSlotCommand>.Fail(ErrorMessage.InvalidScheduleIdFormatWhileParsing()._message);
+            return Result<AddVipTimeSlotCommand>.Fail(DailyScheduleError.InvalidScheduleIdFormatWhileParsing()._message);
         }
         
         if (!TimeOnly.TryParse(startTimeStr, out var startTime))
         {
-            return Result<AddVipTimeSlotCommand>.Fail(ErrorMessage.InvalidTimeformatWhileParsing()._message);
+            return Result<AddVipTimeSlotCommand>.Fail(DailyScheduleError.InvalidTimeformatWhileParsing()._message);
         }
         
         if (!TimeOnly.TryParse(endTimeStr, out var endTime))
         {
-            return Result<AddVipTimeSlotCommand>.Fail(ErrorMessage.InvalidTimeformatWhileParsing()._message);
+            return Result<AddVipTimeSlotCommand>.Fail(DailyScheduleError.InvalidTimeformatWhileParsing()._message);
         }
         
         var setsPartOfDailyScheduleAsVipOnlyCommand = new AddVipTimeSlotCommand(dailyScheduleId, startTime, endTime);

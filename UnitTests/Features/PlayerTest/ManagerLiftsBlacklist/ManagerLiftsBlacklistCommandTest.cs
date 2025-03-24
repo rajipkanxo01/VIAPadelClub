@@ -1,4 +1,4 @@
-﻿using VIAPadelClub.Core.Application.CommandDispatching.Commands.Booking;
+﻿using VIAPadelClub.Core.Application.CommandDispatching.Commands.Player;
 using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 
@@ -30,6 +30,6 @@ public class ManagerLiftsBlacklistCommandTest
 
         // Assert
         Assert.False(blacklistsPlayerCommand.Success);
-        Assert.Equal(ErrorMessage.InvalidEmailFormat()._message, blacklistsPlayerCommand.ErrorMessage);
+        Assert.Equal(PlayerError.InvalidEmailFormat()._message, blacklistsPlayerCommand.ErrorMessage);
     }
 }

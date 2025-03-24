@@ -1,7 +1,7 @@
 ﻿using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Tools.OperationResult;
 
-namespace VIAPadelClub.Core.Application.CommandDispatching.Commands.Booking;
+namespace VIAPadelClub.Core.Application.CommandDispatching.Commands.Player;
 
 public class PlayerCancelsBookingCommand
 {
@@ -24,7 +24,7 @@ public class PlayerCancelsBookingCommand
 
         if (!scheduleIdParseResult)
         {
-            return Result<PlayerCancelsBookingCommand>.Fail(ErrorMessage.InvalidScheduleIdFormatWhileParsing()._message);
+            return Result<PlayerCancelsBookingCommand>.Fail(DailyScheduleError.InvalidScheduleIdFormatWhileParsing()._message);
         }
         
         if (!emailResult.Success)

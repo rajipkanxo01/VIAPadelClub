@@ -19,7 +19,7 @@ public class FakeDailyScheduleRepository : IDailyScheduleRepository
 
         if (schedule is null)
         {
-            return Task.FromResult(Result<DailySchedule>.Fail(ErrorMessage.ScheduleNotFound()._message));
+            return Task.FromResult(Result<DailySchedule>.Fail(DailyScheduleError.ScheduleNotFound()._message));
         }
 
         return Task.FromResult(Result<DailySchedule>.Ok(schedule));
@@ -31,7 +31,7 @@ public class FakeDailyScheduleRepository : IDailyScheduleRepository
 
         if (schedule is null)
         {
-            return Task.FromResult(Result.Fail(ErrorMessage.ScheduleNotFound()._message));
+            return Task.FromResult(Result.Fail(DailyScheduleError.ScheduleNotFound()._message));
         }
 
         _listOfSchedules.Remove(schedule);

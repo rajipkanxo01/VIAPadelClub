@@ -1,7 +1,7 @@
 ﻿using UnitTests.Features.Helpers;
 using UnitTests.Features.Helpers.Factory;
 using UnitTests.Features.Helpers.Repository;
-using VIAPadelClub.Core.Application.CommandDispatching.Commands.Booking;
+using VIAPadelClub.Core.Application.CommandDispatching.Commands.Player;
 using VIAPadelClub.Core.Application.Features.Booking;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
@@ -20,8 +20,8 @@ public class CancelsBookingHandlerTest
         var fakePlayerRepository = new FakePlayerRepository();
         
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-        var fakePlayerFinder = new FakePlayerFinderNew(fakePlayerRepository);
-        var fakeScheduleFinder = new FakeScheduleFinderNew(fakeDailyScheduleRepository);
+        var fakePlayerFinder = new FakePlayerFinder(fakePlayerRepository);
+        var fakeScheduleFinder = new FakeScheduleFinder(fakeDailyScheduleRepository);
         var fakeTimeProvider = new FakeTimeProvider(new TimeOnly(10, 0, 0));
         var unitOfWork = new FakeUnitOfWork();
         
@@ -60,10 +60,10 @@ public class CancelsBookingHandlerTest
     {
         // Arrange
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-        var fakePlayerFinder = new FakePlayerFinder();
         var fakeDailyScheduleRepository = new FakeDailyScheduleRepository();
         var fakePlayerRepository = new FakePlayerRepository();
-        var fakeScheduleFinder = new FakeScheduleFinderNew(fakeDailyScheduleRepository);
+        var fakePlayerFinder = new FakePlayerFinder(fakePlayerRepository);
+        var fakeScheduleFinder = new FakeScheduleFinder(fakeDailyScheduleRepository);
         var fakeTimeProvider = new FakeTimeProvider(new TimeOnly(10, 0, 0));
         var unitOfWork = new FakeUnitOfWork();
 
@@ -92,6 +92,6 @@ public class CancelsBookingHandlerTest
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal(ErrorMessage.BookingNotFound()._message, result.ErrorMessage);
+        Assert.Equal(DailyScheduleError.BookingNotFound()._message, result.ErrorMessage);
     }
 }

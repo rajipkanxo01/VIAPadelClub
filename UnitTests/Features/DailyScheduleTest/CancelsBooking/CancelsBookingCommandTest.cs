@@ -1,4 +1,4 @@
-﻿using VIAPadelClub.Core.Application.CommandDispatching.Commands.Booking;
+﻿using VIAPadelClub.Core.Application.CommandDispatching.Commands.Player;
 using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 
@@ -34,6 +34,6 @@ public class CancelsBookingCommandTest
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal(ErrorMessage.InvalidEmailFormat()._message, result.ErrorMessage);
+        Assert.Equal(PlayerError.InvalidEmailFormat()._message, result.ErrorMessage);
     }
 }
