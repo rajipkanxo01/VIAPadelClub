@@ -116,8 +116,8 @@ public class PlayerQuarantineTest {
     //     schedule1.scheduleDate = new DateTime(2025, 1, 20);
     //     schedule2.scheduleDate = new DateTime(2025, 1, 21);
     //
-    //     var booking1 = new Booking(Guid.NewGuid(), player, new Court(new CourtName("Court A")), schedule1.scheduleDate, new TimeSpan(2, 0, 0));
-    //     var booking2 = new Booking(Guid.NewGuid(), player, new Court(new CourtName("Court B")), schedule2.scheduleDate, new TimeSpan(1, 30, 0));
+    //     var booking1 = new Player(Guid.NewGuid(), player, new Court(new CourtName("Court A")), schedule1.scheduleDate, new TimeSpan(2, 0, 0));
+    //     var booking2 = new Player(Guid.NewGuid(), player, new Court(new CourtName("Court B")), schedule2.scheduleDate, new TimeSpan(1, 30, 0));
     //
     //     schedule1.listOfBookings.Add(booking1);
     //     schedule2.listOfBookings.Add(booking2);

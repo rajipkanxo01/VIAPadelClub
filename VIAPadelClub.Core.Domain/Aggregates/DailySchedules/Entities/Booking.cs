@@ -51,25 +51,25 @@ public class Booking : Entity
         if (!schedule.listOfAvailableCourts.Contains(court)) //F4
             return Result<Booking>.Fail(DailyScheduleError.CourtDoesntExistInSchedule()._message); 
         
-        //F5- Booking start time before schedule start time 
+        //F5- Player start time before schedule start time 
         if (startTime < schedule.availableFrom)
         {
             return Result<Booking>.Fail(DailyScheduleError.BookingStartTimeBeforeScheduleStartTime()._message);
         }
         
-        //F6- Booking end time after schedule start time
+        //F6- Player end time after schedule start time
         if (endTime < schedule.availableFrom)
         {
             return Result<Booking>.Fail(DailyScheduleError.BookingEndTimeAfterScheduleStartTime()._message);
         }
         
-        //F7- Booking start time after schedule's end time
+        //F7- Player start time after schedule's end time
         if (startTime > schedule.availableUntil)
         {
             return Result<Booking>.Fail(DailyScheduleError.BookingStartTimeAfterScheduleStartTime()._message);
         }
         
-        //F8- Booking end time after schedule's end time
+        //F8- Player end time after schedule's end time
         if (endTime > schedule.availableUntil)
         {
             return Result<Booking>.Fail(DailyScheduleError.BookingEndTimeAfterScheduleEndTime()._message);
@@ -124,7 +124,7 @@ public class Booking : Entity
         if (schedule.listOfBookings.Count(b => b.BookedBy.Value == player.Data.email.Value && b.BookedDate == schedule.scheduleDate) >= 1) //F17
             return Result<Booking>.Fail(DailyScheduleError.BookingLimitExceeded()._message);
 
-        //F18- Booking leave hole less than one hour
+        //F18- Player leave hole less than one hour
 
         var existingBookings = schedule.listOfBookings.Where(booking => booking.Court.Name.Equals(court.Name));
 

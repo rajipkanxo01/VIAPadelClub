@@ -1,5 +1,5 @@
 ﻿using VIAPadelClub.Core.Application.CommandDispatching;
-using VIAPadelClub.Core.Application.CommandDispatching.Commands.Booking;
+using VIAPadelClub.Core.Application.CommandDispatching.Commands.Player;
 using VIAPadelClub.Core.Domain.Aggregates.Players;
 using VIAPadelClub.Core.Tools.OperationResult;
 

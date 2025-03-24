@@ -1,4 +1,4 @@
-﻿using VIAPadelClub.Core.Application.CommandDispatching.Commands.Booking;
+﻿using VIAPadelClub.Core.Application.CommandDispatching.Commands.Player;
 using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 

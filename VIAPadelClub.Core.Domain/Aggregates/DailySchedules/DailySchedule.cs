@@ -114,7 +114,7 @@ public class DailySchedule : AggregateRoot
             .Where(booking => booking.Court.Name.Equals(court.Name))
             .ToList();
 
-        // F3 – Booking is ongoing (court is currently in use)
+        // F3 – Player is ongoing (court is currently in use)
         if (bookings.Any(booking => booking.StartTime < timeOfRemoval && booking.EndTime > timeOfRemoval))
         {
             return Result.Fail(DailyScheduleError.ActiveCourtCannotBeRemoved()._message);

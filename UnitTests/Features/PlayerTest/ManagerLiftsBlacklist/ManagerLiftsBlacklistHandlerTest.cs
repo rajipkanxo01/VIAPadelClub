@@ -1,6 +1,6 @@
 ﻿using UnitTests.Features.Helpers.Factory;
 using UnitTests.Features.Helpers.Repository;
-using VIAPadelClub.Core.Application.CommandDispatching.Commands.Booking;
+using VIAPadelClub.Core.Application.CommandDispatching.Commands.Player;
 using VIAPadelClub.Core.Application.Features;
 using VIAPadelClub.Core.Application.Features.Booking;
 using VIAPadelClub.Core.Tools.OperationResult;
