@@ -48,6 +48,6 @@ public class ManagerLiftsBlacklistHandlerTest
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal(ErrorMessage.PlayerIsNotBlacklisted()._message, result.ErrorMessage);
+        Assert.Equal(DailyScheduleError.PlayerIsNotBlacklisted()._message, result.ErrorMessage);
     }
 }

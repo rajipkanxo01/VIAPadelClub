@@ -46,37 +46,37 @@ public class Booking : Entity
         var schedule = scheduleResult.Data;
         
         if (schedule.isDeleted || schedule.status != ScheduleStatus.Active) //F1 and 2
-            return Result<Booking>.Fail(ErrorMessage.ScheduleNotActive()._message);
+            return Result<Booking>.Fail(DailyScheduleError.ScheduleNotActive()._message);
 
         if (!schedule.listOfAvailableCourts.Contains(court)) //F4
-            return Result<Booking>.Fail(ErrorMessage.CourtDoesntExistInSchedule()._message); 
+            return Result<Booking>.Fail(DailyScheduleError.CourtDoesntExistInSchedule()._message); 
         
         //F5- Booking start time before schedule start time 
         if (startTime < schedule.availableFrom)
         {
-            return Result<Booking>.Fail(ErrorMessage.BookingStartTimeBeforeScheduleStartTime()._message);
+            return Result<Booking>.Fail(DailyScheduleError.BookingStartTimeBeforeScheduleStartTime()._message);
         }
         
         //F6- Booking end time after schedule start time
         if (endTime < schedule.availableFrom)
         {
-            return Result<Booking>.Fail(ErrorMessage.BookingEndTimeAfterScheduleStartTime()._message);
+            return Result<Booking>.Fail(DailyScheduleError.BookingEndTimeAfterScheduleStartTime()._message);
         }
         
         //F7- Booking start time after schedule's end time
         if (startTime > schedule.availableUntil)
         {
-            return Result<Booking>.Fail(ErrorMessage.BookingStartTimeAfterScheduleStartTime()._message);
+            return Result<Booking>.Fail(DailyScheduleError.BookingStartTimeAfterScheduleStartTime()._message);
         }
         
         //F8- Booking end time after schedule's end time
         if (endTime > schedule.availableUntil)
         {
-            return Result<Booking>.Fail(ErrorMessage.BookingEndTimeAfterScheduleEndTime()._message);
+            return Result<Booking>.Fail(DailyScheduleError.BookingEndTimeAfterScheduleEndTime()._message);
         }
         
         if ((startTime.Minute != 0 && startTime.Minute != 30) || (endTime.Minute != 0 && endTime.Minute != 30))  //F9
-            return Result<Booking>.Fail(ErrorMessage.InvalidBookingTimeSpan()._message);
+            return Result<Booking>.Fail(DailyScheduleError.InvalidBookingTimeSpan()._message);
         
         var player = playerFinder.FindPlayer(email);
         
@@ -87,26 +87,26 @@ public class Booking : Entity
         
         var duration = endTime - startTime; //F10 and F12
         if (duration < TimeSpan.FromHours(1) || duration > TimeSpan.FromHours(3)) 
-            return Result<Booking>.Fail(ErrorMessage.BookingDurationError()._message);
+            return Result<Booking>.Fail(DailyScheduleError.BookingDurationError()._message);
         
         if (schedule.listOfBookings.Any(b =>  //F11
                 b.Court == court &&
                 !(endTime <= b.StartTime || startTime >= b.EndTime)))
         {
-            return Result<Booking>.Fail(ErrorMessage.BookingCannotBeOverlapped()._message);
+            return Result<Booking>.Fail(DailyScheduleError.BookingCannotBeOverlapped()._message);
         }
         
         var playerResult = player.Data;
         //F13- player is quarantined and the selected date of booking is before the quarantine is ended
         if (playerResult.isQuarantined && playerResult.activeQuarantine?.EndDate >= schedule.scheduleDate)
         {
-            return Result<Booking>.Fail(ErrorMessage.QuarantinePlayerCannotBookCourt()._message);
+            return Result<Booking>.Fail(DailyScheduleError.QuarantinePlayerCannotBookCourt()._message);
         }
         
         //F14- player is blacklisted
         if (playerResult.isBlackListed)
         {
-            return Result<Booking>.Fail(ErrorMessage.PlayerIsBlacklisted()._message);
+            return Result<Booking>.Fail(DailyScheduleError.PlayerIsBlacklisted()._message);
         }
         
         //F15- if non VIP player tries to book court in VIP time then should be rejected
@@ -116,13 +116,13 @@ public class Booking : Entity
             {
                 if (playerResult.vipMemberShip is null)
                 {
-                    return Result<Booking>.Fail(ErrorMessage.NonVipMemberCannotBookInVipTimeSlot()._message);
+                    return Result<Booking>.Fail(DailyScheduleError.NonVipMemberCannotBookInVipTimeSlot()._message);
                 }
             }
         }
         
         if (schedule.listOfBookings.Count(b => b.BookedBy.Value == player.Data.email.Value && b.BookedDate == schedule.scheduleDate) >= 1) //F17
-            return Result<Booking>.Fail(ErrorMessage.BookingLimitExceeded()._message);
+            return Result<Booking>.Fail(DailyScheduleError.BookingLimitExceeded()._message);
 
         //F18- Booking leave hole less than one hour
 
@@ -133,19 +133,19 @@ public class Booking : Entity
             //Ensure at least 1-hour gap before the new booking
             if (booking.EndTime <= startTime && (startTime - booking.EndTime).TotalMinutes < 60)
             {
-                return Result<Booking>.Fail(ErrorMessage.OneHourGapShouldBeBeforeNewBooking()._message);
+                return Result<Booking>.Fail(DailyScheduleError.OneHourGapShouldBeBeforeNewBooking()._message);
             }
 
             //Ensure at least 1-hour gap after the new booking
             if (booking.StartTime >= endTime && (booking.StartTime - endTime).TotalMinutes < 60)
             {
-                return Result<Booking>.Fail(ErrorMessage.OneHourGapShouldBeAfterAnotherBooking()._message);
+                return Result<Booking>.Fail(DailyScheduleError.OneHourGapShouldBeAfterAnotherBooking()._message);
             }
 
             //Check for any overlap
             if (startTime < booking.EndTime || endTime > booking.StartTime)
             {
-                return Result<Booking>.Fail(ErrorMessage.BookingCannotBeOverlapped()._message);
+                return Result<Booking>.Fail(DailyScheduleError.BookingCannotBeOverlapped()._message);
             }
         }
         
@@ -156,12 +156,12 @@ public class Booking : Entity
         // Check if booking creates small gaps with the daily schedule time
         if ((startTime - scheduleStart).TotalMinutes < 60 && startTime > scheduleStart)
         {
-            return Result<Booking>.Fail(ErrorMessage.OneHourGapBetweenScheduleStartTimeAndBookingStartTime()._message);
+            return Result<Booking>.Fail(DailyScheduleError.OneHourGapBetweenScheduleStartTimeAndBookingStartTime()._message);
         }
 
         if ((scheduleEnd - endTime).TotalMinutes < 60 && endTime < scheduleEnd)
         {
-            return Result<Booking>.Fail(ErrorMessage.OneHourGapBetweenScheduleEndTimeAndBookingEndTime()._message);
+            return Result<Booking>.Fail(DailyScheduleError.OneHourGapBetweenScheduleEndTimeAndBookingEndTime()._message);
         }
         var newBooking = new Booking(Guid.NewGuid(), email, court, (int)(endTime - startTime).TotalMinutes, schedule.scheduleDate, startTime, endTime);
         schedule.listOfBookings.Add(newBooking);
@@ -177,19 +177,19 @@ public class Booking : Entity
         // Check if the booking is already in the past
         if (currentDate > BookedDate || (currentDate == BookedDate && currentTime >= StartTime))
         {
-            return Result.Fail(ErrorMessage.CannotCancelPastBooking()._message);
+            return Result.Fail(DailyScheduleError.CannotCancelPastBooking()._message);
         }
 
         // Check if cancellation is too late (less than 1 hour before booking starts)
         if (currentDate == BookedDate && (StartTime.ToTimeSpan() - currentTime.ToTimeSpan()).TotalHours < 1)
         {
-            return Result.Fail(ErrorMessage.CancellationTooLate()._message);
+            return Result.Fail(DailyScheduleError.CancellationTooLate()._message);
         }
 
         // Check if player owns the booking
         if (!playerMakingCancel.Equals(BookedBy))
         {
-            return Result.Fail(ErrorMessage.BookingOwnershipViolation()._message);
+            return Result.Fail(DailyScheduleError.BookingOwnershipViolation()._message);
         }
 
         BookingStatus = BookingStatus.Cancelled;

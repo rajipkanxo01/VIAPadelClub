@@ -34,6 +34,6 @@ public class CancelsBookingCommandTest
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal(ErrorMessage.InvalidEmailFormat()._message, result.ErrorMessage);
+        Assert.Equal(PlayerError.InvalidEmailFormat()._message, result.ErrorMessage);
     }
 }

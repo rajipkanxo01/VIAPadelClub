@@ -5,18 +5,24 @@ using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace UnitTests.Features.Helpers;
 
-public class FakePlayerFinder: IPlayerFinder
+public class FakePlayerFinder : IPlayerFinder
 {
-    private readonly List<Player> _players = new();
+    private readonly IPlayerRepository _playerRepository;
+
+    public FakePlayerFinder(IPlayerRepository playerRepository)
+    {
+        _playerRepository = playerRepository;
+    }
+
     public Result<Player> FindPlayer(Email email)
     {
-        var player = _players.FirstOrDefault(p => p.email.Value.Equals(email.Value));
-        return player != null ? Result<Player>.Ok(player) : Result<Player>.Fail(ErrorMessage.NoPlayerFound()._message);
+        var player = _playerRepository.GetAsync(email).Result;
+        return player;
     }
 
     public Result AddPlayer(Player player)
     {
-        _players.Add(player);
-        return Result.Ok();
+        var result = _playerRepository.AddAsync(player).Result;
+        return result;
     }
 }

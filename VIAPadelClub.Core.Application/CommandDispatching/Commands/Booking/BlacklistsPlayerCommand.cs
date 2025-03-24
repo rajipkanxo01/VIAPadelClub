@@ -12,7 +12,7 @@ public class BlacklistsPlayerCommand(Email playerId, Guid dailyScheduleId)
     {
         if (!Guid.TryParse(scheduleId, out var dailyScheduleIdGuid))
         {
-            return Result<BlacklistsPlayerCommand>.Fail(ErrorMessage.InvalidScheduleIdFormatWhileParsing()._message);
+            return Result<BlacklistsPlayerCommand>.Fail(DailyScheduleError.InvalidScheduleIdFormatWhileParsing()._message);
         }
 
         var emailResult = Email.Create(playerId);

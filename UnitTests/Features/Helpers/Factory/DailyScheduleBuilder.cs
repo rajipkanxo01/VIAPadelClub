@@ -1,4 +1,5 @@
-﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+﻿using UnitTests.Features.Helpers.Repository;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Tools.OperationResult;
@@ -16,7 +17,8 @@ public class DailyScheduleBuilder
     private List<Court> _courts = new();
 
     private IDateProvider _dateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-    private IScheduleFinder _scheduleFinder = new FakeScheduleFinder();
+    private IScheduleFinder _scheduleFinder = new FakeScheduleFinder(daileScheduleRepository);
+    private static FakeDailyScheduleRepository daileScheduleRepository;
 
     private DailyScheduleBuilder()
     {

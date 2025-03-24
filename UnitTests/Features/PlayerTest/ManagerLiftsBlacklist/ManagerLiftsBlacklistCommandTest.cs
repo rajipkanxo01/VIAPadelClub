@@ -30,6 +30,6 @@ public class ManagerLiftsBlacklistCommandTest
 
         // Assert
         Assert.False(blacklistsPlayerCommand.Success);
-        Assert.Equal(ErrorMessage.InvalidEmailFormat()._message, blacklistsPlayerCommand.ErrorMessage);
+        Assert.Equal(PlayerError.InvalidEmailFormat()._message, blacklistsPlayerCommand.ErrorMessage);
     }
 }

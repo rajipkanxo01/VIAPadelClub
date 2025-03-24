@@ -4,22 +4,29 @@ using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace UnitTests.Features.Helpers;
 
-// better to use Moq instead of this
 public class FakeScheduleFinder : IScheduleFinder
 {
-    private readonly List<DailySchedule> _schedules = new();
-
+    private readonly IDailyScheduleRepository _dailyScheduleRepository;
+    
+    public FakeScheduleFinder(IDailyScheduleRepository dailyScheduleRepository)
+    {
+        _dailyScheduleRepository = dailyScheduleRepository;
+    }
+    
     public Result<DailySchedule> FindSchedule(Guid scheduleId)
     {
-        var schedule = _schedules.FirstOrDefault(s => s.scheduleId == scheduleId);
-        return schedule == null
-            ? Result<DailySchedule>.Fail(ErrorMessage.ScheduleNotFound()._message)
-            : Result<DailySchedule>.Ok(schedule);
+        var result = _dailyScheduleRepository.GetAsync(scheduleId).Result;
+        
+        if (!result.Success)
+        {
+            return Result<DailySchedule>.Fail(result.ErrorMessage);
+        }
+        
+        return result;
     }
 
     public void AddSchedule(DailySchedule schedule)
     {
-            _schedules.Add(schedule);
+        _dailyScheduleRepository.AddAsync(schedule);
     }
-    
 }

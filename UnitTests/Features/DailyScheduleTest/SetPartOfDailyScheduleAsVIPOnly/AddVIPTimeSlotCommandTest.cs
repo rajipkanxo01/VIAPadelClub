@@ -34,6 +34,6 @@ public class AddVipTimeSlotCommandTest
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal(ErrorMessage.InvalidTimeformatWhileParsing()._message, result.ErrorMessage);
+        Assert.Equal(DailyScheduleError.InvalidTimeformatWhileParsing()._message, result.ErrorMessage);
     }
 }

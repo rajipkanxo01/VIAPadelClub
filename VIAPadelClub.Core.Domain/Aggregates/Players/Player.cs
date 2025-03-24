@@ -35,28 +35,18 @@ public class Player : AggregateRoot
     {
         if (!await emailUniqueChecker.IsUnique(email.Value.ToLower()))
         {
-            return Result<Player>.Fail(ErrorMessage.DuplicateEmail()._message);
+            return Result<Player>.Fail(DailyScheduleError.DuplicateEmail()._message);
         }
         
-        var emailResult=Email.Create(email.Value.ToLower());
-        if (!emailResult.Success) return Result<Player>.Fail(emailResult.ErrorMessage);
-        
-        var fullNameResult=FullName.Create(fullName.FirstName, fullName.LastName);
-        if (!fullNameResult.Success) return Result<Player>.Fail(fullNameResult.ErrorMessage);
-        
-        var profileUriResult=ProfileUri.Create(profileUri.Value);
-        if (!profileUriResult.Success) return Result<Player>.Fail(profileUriResult.ErrorMessage);
-        
         emailUniqueChecker.AddEmail(email.Value.ToLower());
-        var playerResult = new Player(emailResult.Data, fullNameResult.Data, profileUriResult.Data);
-        
+        var playerResult = new Player(email, fullName, profileUri);
         return Result<Player>.Ok(playerResult);
     }
     
     public Result<Quarantine> Quarantine(DateOnly startDate, List<DailySchedule> schedules)
     {
         if (isBlackListed)
-            return Result<Quarantine>.Fail(ErrorMessage.BlackListedCannotQuarantine()._message);
+            return Result<Quarantine>.Fail(PlayerError.BlackListedCannotQuarantine()._message);
 
         var quarantine = Entities.Quarantine.CreateOrExtend(quarantines, startDate);
     
@@ -94,7 +84,7 @@ public class Player : AggregateRoot
 
     public Result Blacklist(IScheduleFinder scheduleFinder)
     {
-        if (isBlackListed) return Result.Fail(ErrorMessage.PlayerAlreadyBlacklisted()._message);
+        if (isBlackListed) return Result.Fail(DailyScheduleError.PlayerAlreadyBlacklisted()._message);
         
         isBlackListed = true;
         if (activeQuarantine is not null) activeQuarantine = null;
@@ -106,7 +96,7 @@ public class Player : AggregateRoot
 
     public Result LiftBlacklist()
     {
-        if (!isBlackListed) return Result.Fail(ErrorMessage.PlayerIsNotBlacklisted()._message);
+        if (!isBlackListed) return Result.Fail(DailyScheduleError.PlayerIsNotBlacklisted()._message);
 
         isBlackListed = false;
         return Result.Ok();

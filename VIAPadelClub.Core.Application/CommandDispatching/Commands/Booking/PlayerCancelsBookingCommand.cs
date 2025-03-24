@@ -24,7 +24,7 @@ public class PlayerCancelsBookingCommand
 
         if (!scheduleIdParseResult)
         {
-            return Result<PlayerCancelsBookingCommand>.Fail(ErrorMessage.InvalidScheduleIdFormatWhileParsing()._message);
+            return Result<PlayerCancelsBookingCommand>.Fail(DailyScheduleError.InvalidScheduleIdFormatWhileParsing()._message);
         }
         
         if (!emailResult.Success)

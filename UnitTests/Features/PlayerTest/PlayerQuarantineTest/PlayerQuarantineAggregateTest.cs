@@ -1,4 +1,5 @@
 ﻿using UnitTests.Features.Helpers;
+using UnitTests.Features.Helpers.Factory;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 
 namespace UnitTests.Features.PlayerTest.PlayerQuarantineTest;
@@ -18,21 +19,17 @@ public class PlayerQuarantineTest {
     public async Task Should_Quarantine_Player_Successfully(string startDateString)
     {
         // Arrange
-        var emailChecker = new FakeUniqueEmailChecker();
-        var email = Email.Create("test@via.dk");
-        var fullName = FullName.Create("John", "Doe");
-        var profileUri = ProfileUri.Create("http://example.com");
-        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+        var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         var startDate = DateOnly.Parse(startDateString);
         var schedules = new List<DailySchedule>();
 
         // Act
-        var result = player.Data.Quarantine(startDate, schedules);
+        var result = player.Quarantine(startDate, schedules);
 
         // Assert
         Assert.True(result.Success);
         Assert.NotNull(result.Data);
-        Assert.Single(player.Data.quarantines); // Only one quarantine should exist
+        Assert.Single(player.quarantines); // Only one quarantine should exist
         Assert.Equal(startDate, result.Data!.StartDate);
         Assert.Equal(startDate.AddDays(3), result.Data!.EndDate);
     }
@@ -43,25 +40,21 @@ public class PlayerQuarantineTest {
     public async Task Should_Extend_Existing_Quarantine(string startDateString)
     {
         // Arrange
-        var emailChecker = new FakeUniqueEmailChecker();
-        var email = Email.Create("test@via.dk");
-        var fullName = FullName.Create("John", "Doe");
-        var profileUri = ProfileUri.Create("http://example.com");
-        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+        var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         var startDate = DateOnly.Parse(startDateString);
         var schedules = new List<DailySchedule>();
 
 
         // First Quarantine
-        player.Data.Quarantine(startDate, schedules);
+        player.Quarantine(startDate, schedules);
 
         // Act - Quarantine again on the same date, should extend
-        var result = player.Data.Quarantine(startDate, schedules);
+        var result = player.Quarantine(startDate, schedules);
 
         // Assert
         Assert.True(result.Success);
         Assert.NotNull(result.Data);
-        Assert.Single(player.Data.quarantines); // No new quarantine, now we extended
+        Assert.Single(player.quarantines); // No new quarantine, now we extended
         Assert.Equal(startDate, result.Data.StartDate);
         Assert.Equal(startDate.AddDays(6), result.Data.EndDate); // Extended by another 3 days
     }
@@ -72,24 +65,20 @@ public class PlayerQuarantineTest {
     public async Task Should_Fail_To_Quarantine_Blacklisted_Player(string startDateString)
     {
         // Arrange
-        var emailChecker = new FakeUniqueEmailChecker();
-        var email = Email.Create("test@via.dk");
-        var fullName = FullName.Create("John", "Doe");
-        var profileUri = ProfileUri.Create("http://example.com");
-        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
-        player.Data.isBlackListed = true;
+        var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
+        player.isBlackListed = true;
         var startDate = DateOnly.Parse(startDateString);
         var schedules = new List<DailySchedule>();
 
 
         // Act
-        var result = player.Data.Quarantine(startDate, schedules);
+        var result = player.Quarantine(startDate, schedules);
 
         // Assert
         Assert.False(result.Success);
         Assert.Null(result.Data);
         Assert.Equal("Player is already blacklisted and cannot be quarantined.", result.ErrorMessage);
-        Assert.Empty(player.Data.quarantines);
+        Assert.Empty(player.quarantines);
     }
     
 

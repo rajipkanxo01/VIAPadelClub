@@ -15,7 +15,7 @@ public class ProfileUri
     {
         if (string.IsNullOrWhiteSpace(url))
         {
-            return Result<ProfileUri>.Fail(ErrorMessage.InvalidProfileUri()._message);
+            return Result<ProfileUri>.Fail(PlayerError.InvalidProfileUri()._message);
         }
         return Result<ProfileUri>.Ok(new ProfileUri(url));
     }

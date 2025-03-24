@@ -1,4 +1,5 @@
-﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+﻿using UnitTests.Features.Helpers.Repository;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.Players;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Contracts;
@@ -17,12 +18,14 @@ public class PlayerBuilder
     private bool _makeVip = false;
     private bool _blacklist = false;
     private bool _quarantine = false;
-
+    
+    
     private IEmailUniqueChecker _emailChecker = new FakeUniqueEmailChecker();
-    private IScheduleFinder _scheduleFinder = new FakeScheduleFinder();
+    private IScheduleFinder _scheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
 
     private DateOnly _quarantineStartDate = DateOnly.FromDateTime(DateTime.Today);
     private List<DailySchedule> _quarantineSchedules = new();
+    private static FakeDailyScheduleRepository dailyScheduleRepository;
 
     private PlayerBuilder() { }
 

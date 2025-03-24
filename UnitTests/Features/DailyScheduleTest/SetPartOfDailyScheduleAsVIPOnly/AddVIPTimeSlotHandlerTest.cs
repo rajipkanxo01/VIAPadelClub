@@ -45,6 +45,6 @@ public class AddVipTimeSlotHandlerTest
 
         // Assert
         Assert.False(result.Success);
-        Assert.Single(ErrorMessage.InvalidTimeSlot()._message);
+        Assert.Single(DailyScheduleError.InvalidTimeSlot()._message);
     }
 }

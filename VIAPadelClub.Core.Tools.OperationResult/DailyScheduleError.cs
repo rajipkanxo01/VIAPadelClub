@@ -2,19 +2,8 @@
 
 namespace VIAPadelClub.Core.Tools.OperationResult;
 
-public static class ErrorMessage
+public static class DailyScheduleError
 {
-    // Player Error Message
-    public static Error InvalidEmailFormat() => new Error(0, "Invalid email format.");
-    public static Error EmailCannotBeEmpty()=> new Error(0, "Email cannot be empty.");
-    public static Error EmailMustEndWithViaDk() => new Error(0, "Email must end with @via.dk");
-    public static Error InvalidFirstName() => new Error(0, "Invalid first name. Must be 2-25 letters with no symbols or spaces.");
-    public static Error InvalidLastName() => new Error(0, "Invalid last name. Must be 2-25 letters with no symbols or spaces.");
-    public static Error InvalidProfileUri() => new Error(0, "Invalid profile uri. Must be a valid uri.");
-    public static Error BlackListedCannotQuarantine() => new Error(0, "Player is already blacklisted and cannot be quarantined.");
-    public static Error PlayerAlreadyBlacklisted() => new Error(0, "Player Already Blacklisted. Cannot blacklist same player twice!!");
-    public static Error PlayerIsNotBlacklisted() => new Error(0, "Player is not blacklisted!!");
-    
     // Daily Schedule Error Message
     public static Error InvalidStartingLetter() => new Error(0, "Invalid starting letter. Must start with 'S','s','D' or 'd'.");
     public static Error InvalidEndingNumber() => new Error(0, "Invalid ending number. Must end with number between 1-10.");
@@ -56,6 +45,8 @@ public static class ErrorMessage
     public static Error ActiveCourtCannotBeRemoved() => new Error(0, "Active court cannot be removed.");
     public static Error CourtWithLaterBookingsCannotBeRemoved() => new Error(0, "Court with later bookings cannot be removed.");
       
+    public static Error PlayerAlreadyBlacklisted() => new Error(0, "Player Already Blacklisted. Cannot blacklist same player twice!!");
+    public static Error PlayerIsNotBlacklisted() => new Error(0, "Player is not blacklisted!!");
     public static Error ScheduleNotActive() => new Error(0, "courts cannot be booked if the Schedule is not active");
     public static Error CourtDoesntExistInSchedule() => new Error(0, "The selected court does not exist in this schedule.");
     public static Error InvalidBookingTimeSpan() => new Error(0, "The minutes of the times must be half or whole hours.");
@@ -71,5 +62,6 @@ public static class ErrorMessage
     // Guid Parsing Error Message
     public static Error InvalidScheduleIdFormatWhileParsing() => new Error(0, "Invalid schedule ID format.");
     public static Error InvalidPlayerIdFormatWhileParsing() => new Error(0, "Invalid player ID format.");
-    public static Error InvalidTimeformatWhileParsing() => new Error(0, "Invalid time format while parsing.");    
+    public static Error InvalidTimeformatWhileParsing() => new Error(0, "Invalid time format while parsing.");
+    
 }

@@ -1,4 +1,5 @@
 ﻿using UnitTests.Features.Helpers;
+using UnitTests.Features.Helpers.Factory;
 using UnitTests.Features.Helpers.Repository;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.Players;
@@ -10,46 +11,40 @@ namespace UnitTests.Features.PlayerTest.ManagerLiftsBlacklist;
 
 public class ManagerLiftsBlacklistAggregateTest
 {
+    private readonly FakeDailyScheduleRepository dailyScheduleRepository = new FakeDailyScheduleRepository();
+    private readonly FakePlayerRepository playerRepository = new FakePlayerRepository();
     [Fact]
     public async Task Should_Lift_Blacklist_When_Selected()
     {
         // Arrange
-        var emailChecker = new FakeUniqueEmailChecker();
-        var email = Email.Create("test@via.dk");
-        var fullName = FullName.Create("John", "Doe");
-        var profileUri = ProfileUri.Create("http://example.com");
-        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+        var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
 
-        var fakeScheduleFinder = new FakeScheduleFinder();
+        var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
         var dailySchedules = new List<DailySchedule>();
 
-        player.Data.Blacklist(fakeScheduleFinder);
+        player.Blacklist(fakeScheduleFinder);
 
         // Act
-        var result = player.Data.LiftBlacklist();
+        var result = player.LiftBlacklist();
 
         // Assert
         Assert.True(result.Success);
         Assert.Empty(result.ErrorMessage);
-        Assert.False(player.Data.isBlackListed);
+        Assert.False(player.isBlackListed);
     }
 
     [Fact]
     public async Task Should_Fail_When_Unblacklisting_A_Player_Who_Is_Not_Blacklisted()
     {
         // Arrange
-        var emailChecker = new FakeUniqueEmailChecker();
-        var email = Email.Create("test@via.dk");
-        var fullName = FullName.Create("John", "Doe");
-        var profileUri = ProfileUri.Create("http://example.com");
-        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+        var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         var dailySchedules = new List<DailySchedule>();
 
         // Act
-        var result = player.Data.LiftBlacklist();
+        var result = player.LiftBlacklist();
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal(ErrorMessage.PlayerIsNotBlacklisted()._message, result.ErrorMessage);
+        Assert.Equal(DailyScheduleError.PlayerIsNotBlacklisted()._message, result.ErrorMessage);
     }
 }

@@ -89,7 +89,7 @@ public class DailySchedule : AggregateRoot
     {
         if (listOfAvailableCourts.Any(court => court.Name.Value == name.Value))
         {
-            return Result.Fail(ErrorMessage.CourtAlreadyExists()._message);
+            return Result.Fail(DailyScheduleError.CourtAlreadyExists()._message);
         }
 
         return Result.Ok();
@@ -100,13 +100,13 @@ public class DailySchedule : AggregateRoot
         // Ensure the schedule is for today or the future
         if (scheduleDate < dateProvider.Today() && (status == ScheduleStatus.Draft || status == ScheduleStatus.Active))
         {
-            return Result.Fail(ErrorMessage.PastScheduleCannotBeUpdated()._message);
+            return Result.Fail(DailyScheduleError.PastScheduleCannotBeUpdated()._message);
         }
 
         // Ensure the court exists in the schedule
         if (!listOfAvailableCourts.Contains(court))
         {
-            return Result.Fail(ErrorMessage.NoCourtAvailable()._message);
+            return Result.Fail(DailyScheduleError.NoCourtAvailable()._message);
         }
 
         // Fetch all bookings for the given court on the schedule date
@@ -117,13 +117,13 @@ public class DailySchedule : AggregateRoot
         // F3 – Booking is ongoing (court is currently in use)
         if (bookings.Any(booking => booking.StartTime < timeOfRemoval && booking.EndTime > timeOfRemoval))
         {
-            return Result.Fail(ErrorMessage.ActiveCourtCannotBeRemoved()._message);
+            return Result.Fail(DailyScheduleError.ActiveCourtCannotBeRemoved()._message);
         }
 
         // F5 – Check if there are bookings later on the same day
         if (bookings.Any(booking => booking.StartTime <= timeOfRemoval))
         {
-            return Result.Fail(ErrorMessage.CourtWithLaterBookingsCannotBeRemoved()._message);
+            return Result.Fail(DailyScheduleError.CourtWithLaterBookingsCannotBeRemoved()._message);
         }
 
         // If no future bookings exist, remove the court
@@ -137,12 +137,12 @@ public class DailySchedule : AggregateRoot
     {
         if (scheduleDate < today)
         {
-            return Result.Fail(ErrorMessage.PastScheduleCannotBeUpdated()._message);
+            return Result.Fail(DailyScheduleError.PastScheduleCannotBeUpdated()._message);
         }
 
         if (status != ScheduleStatus.Draft && status != ScheduleStatus.Active)
         {
-            return Result.Fail(ErrorMessage.InvalidScheduleStatus()._message);
+            return Result.Fail(DailyScheduleError.InvalidScheduleStatus()._message);
         }
 
         return Result.Ok();
@@ -162,14 +162,14 @@ public class DailySchedule : AggregateRoot
         if ((vipStartTime.Minute != 30 && vipStartTime.Minute != 0) ||
             (vipEndTime.Minute != 30 && vipEndTime.Minute != 0))
         {
-            return Result.Fail(ErrorMessage.InvalidTimeSlot()._message);
+            return Result.Fail(DailyScheduleError.InvalidTimeSlot()._message);
         }
 
         //  Chosen time span is outside of daily schedule time span 
         if (vipStartTime < availableFrom || vipEndTime < availableFrom || vipStartTime > availableUntil ||
             vipEndTime > availableUntil)
         {
-            return Result.Fail(ErrorMessage.VipTimeOutsideSchedule()._message);
+            return Result.Fail(DailyScheduleError.VipTimeOutsideSchedule()._message);
         }
 
         var timeRanges = vipTimeRanges.Where(vipRange =>
@@ -199,16 +199,16 @@ public class DailySchedule : AggregateRoot
     public Result Activate(IDateProvider dateProvider)
     {
         if(scheduleDate < dateProvider.Today())
-            return Result.Fail(ErrorMessage.PastScheduleCannotBeActivated()._message);
+            return Result.Fail(DailyScheduleError.PastScheduleCannotBeActivated()._message);
         
         if(listOfCourts.Count==0)
-            return Result.Fail(ErrorMessage.NoCourtAvailable()._message);
+            return Result.Fail(DailyScheduleError.NoCourtAvailable()._message);
 
         if (status == ScheduleStatus.Active)
-            return Result.Fail(ErrorMessage.ScheduleAlreadyActive()._message);
+            return Result.Fail(DailyScheduleError.ScheduleAlreadyActive()._message);
         
         if (isDeleted)
-            return Result.Fail(ErrorMessage.ScheduleIsDeleted()._message);
+            return Result.Fail(DailyScheduleError.ScheduleIsDeleted()._message);
 
         listOfAvailableCourts = listOfCourts;
         status = ScheduleStatus.Active;
@@ -217,13 +217,13 @@ public class DailySchedule : AggregateRoot
     public Result DeleteSchedule(IDateProvider dateProvider, ITimeProvider timeProvider)
     {
         if (isDeleted)
-            return Result.Fail(ErrorMessage.ScheduleAlreadyDeleted()._message);
+            return Result.Fail(DailyScheduleError.ScheduleAlreadyDeleted()._message);
 
         if (scheduleDate < dateProvider.Today())
-            return Result.Fail(ErrorMessage.PastScheduleCannotBeDeleted()._message);
+            return Result.Fail(DailyScheduleError.PastScheduleCannotBeDeleted()._message);
         
         if (scheduleDate == dateProvider.Today() && status == ScheduleStatus.Active)
-            return Result.Fail(ErrorMessage.SameDayActiveScheduleCannotBeDeleted()._message);
+            return Result.Fail(DailyScheduleError.SameDayActiveScheduleCannotBeDeleted()._message);
 
         isDeleted = true;
 
@@ -241,19 +241,19 @@ public class DailySchedule : AggregateRoot
     public Result UpdateScheduleDateAndTime(DateOnly date, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider)
     {
         if (date <= dateProvider.Today())
-            return Result.Fail(ErrorMessage.ScheduleCannotBeUpdatedWithPastDate()._message);
+            return Result.Fail(DailyScheduleError.ScheduleCannotBeUpdatedWithPastDate()._message);
 
         if (endTime <= startTime)
-            return Result.Fail(ErrorMessage.ScheduleEndDateMustBeAfterStartDate()._message);
+            return Result.Fail(DailyScheduleError.ScheduleEndDateMustBeAfterStartDate()._message);
 
         if ((endTime - startTime) < TimeSpan.FromMinutes(60))
-            return Result.Fail(ErrorMessage.ScheduleInvalidTimeSpan()._message);
+            return Result.Fail(DailyScheduleError.ScheduleInvalidTimeSpan()._message);
         
         if (status == ScheduleStatus.Active)
-            return Result.Fail(ErrorMessage.InvalidScheduleUpdateStatus()._message);
+            return Result.Fail(DailyScheduleError.InvalidScheduleUpdateStatus()._message);
 
         if ((startTime.Minute != 0 && startTime.Minute != 30) || (endTime.Minute != 0 && endTime.Minute != 30))
-            return Result.Fail(ErrorMessage.ScheduleInvalidTimeSpan()._message);
+            return Result.Fail(DailyScheduleError.ScheduleInvalidTimeSpan()._message);
 
         scheduleDate = date;
         availableFrom = startTime;
@@ -264,9 +264,12 @@ public class DailySchedule : AggregateRoot
 
   public Result<Booking> BookCourt (Email bookedByPlayer, Court court, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider, IPlayerFinder playerFinder, IScheduleFinder scheduleFinder)
     {
-        var booking = Booking.Create(scheduleId, court, startTime, endTime,bookedByPlayer, scheduleFinder, playerFinder).Data;
-        return Result<Booking>.Ok(booking);
-
+        var booking = Booking.Create(scheduleId, court, startTime, endTime,bookedByPlayer, scheduleFinder, playerFinder);
+        if (!booking.Success)
+        {
+            return Result<Booking>.Fail(booking.ErrorMessage);
+        }
+        return Result<Booking>.Ok(booking.Data);
     }
 
   public Result CancelBooking(Guid bookingId, IDateProvider dateProvider, ITimeProvider timeProvider, Email playerMakingCancel)
@@ -275,7 +278,7 @@ public class DailySchedule : AggregateRoot
 
         if (booking == null)
         {
-            return Result.Fail(ErrorMessage.BookingNotFound()._message);
+            return Result.Fail(DailyScheduleError.BookingNotFound()._message);
         }
 
         return booking.Cancel(dateProvider,timeProvider, playerMakingCancel);

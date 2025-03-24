@@ -39,7 +39,7 @@ public class CourtName
             return Result.Ok();
         }
 
-        return Result.Fail(ErrorMessage.InvalidStartingLetter()._message);
+        return Result.Fail(DailyScheduleError.InvalidStartingLetter()._message);
     }
 
     private static Result ValidateEndingNumber(string name)
@@ -51,7 +51,7 @@ public class CourtName
             return Result.Ok();
         }
     
-        return Result.Fail(ErrorMessage.InvalidEndingNumber()._message);
+        return Result.Fail(DailyScheduleError.InvalidEndingNumber()._message);
     }
 
     
@@ -59,7 +59,7 @@ public class CourtName
     {
         return (name.Length == 2 || name.Length == 3)
             ? Result.Ok()
-            : Result.Fail(ErrorMessage.InvalidLength()._message);
+            : Result.Fail(DailyScheduleError.InvalidLength()._message);
     }
 
 }
