@@ -1,11 +1,12 @@
 ﻿using VIAPadelClub.Core.Application.CommandDispatching;
+using VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedule;
 using VIAPadelClub.Core.Application.CommandDispatching.Commands.Player;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
 using VIAPadelClub.Core.Domain.Common;
 using VIAPadelClub.Core.Tools.OperationResult;
 
-namespace VIAPadelClub.Core.Application.Features.Booking;
+namespace VIAPadelClub.Core.Application.Features.DailySchedule;
 
 public class PlayerCancelsBookingHandler: ICommandHandler<PlayerCancelsBookingCommand>
 {

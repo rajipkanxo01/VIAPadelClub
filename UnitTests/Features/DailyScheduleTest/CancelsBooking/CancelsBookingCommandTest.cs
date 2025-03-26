@@ -1,4 +1,5 @@
-﻿using VIAPadelClub.Core.Application.CommandDispatching.Commands.Player;
+﻿using VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedule;
+using VIAPadelClub.Core.Application.CommandDispatching.Commands.Player;
 using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 

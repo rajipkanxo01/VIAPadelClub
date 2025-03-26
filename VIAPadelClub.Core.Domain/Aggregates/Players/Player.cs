@@ -64,7 +64,7 @@ public class Player : AggregateRoot
     }
     
     //TODO: TODO: Uncomment below once Cancellation of booking and Player entity is available 
-    // private void CancelBookingsDuringQuarantine(List<DailySchedule> schedules, Quarantine quarantine)
+    // private void CancelBookingsDuringQuarantine(List<Daily_Schedule> schedules, Quarantine quarantine)
     // {
     //     foreach (var schedule in schedules)
     //     {

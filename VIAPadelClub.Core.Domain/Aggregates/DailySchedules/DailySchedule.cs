@@ -80,7 +80,7 @@ public class DailySchedule : AggregateRoot
             return courtCheckResult;
         }
 
-        schedule.listOfAvailableCourts.Add(Court.Create(courtNameResult.Data));
+        schedule.listOfAvailableCourts.Add(Court.Create(courtNameResult.Data).Data);
         scheduleFinder.AddSchedule(schedule);
         return Result.Ok();
     }
@@ -104,7 +104,7 @@ public class DailySchedule : AggregateRoot
         }
 
         // Ensure the court exists in the schedule
-        if (!listOfAvailableCourts.Contains(court))
+        if (listOfAvailableCourts.All(c => c.Name.Value != court.Name.Value))
         {
             return Result.Fail(DailyScheduleError.NoCourtAvailable()._message);
         }

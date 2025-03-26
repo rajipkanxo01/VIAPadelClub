@@ -1,16 +1,14 @@
-﻿using UnitTests.Features.Helpers.Repository;
-using VIAPadelClub.Core.Domain.Aggregates.Players;
-using VIAPadelClub.Core.Domain.Aggregates.Players.Contracts;
+﻿using VIAPadelClub.Core.Domain.Aggregates.Players;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Tools.OperationResult;
 
-namespace UnitTests.Features.Helpers;
+namespace Services.Contracts;
 
-public class FakePlayerFinder : IPlayerFinder
+public class PlayerFinder
 {
-    private readonly FakePlayerRepository _playerRepository;
+    private readonly IPlayerRepository _playerRepository;
 
-    public FakePlayerFinder(FakePlayerRepository playerRepository)
+    public PlayerFinder(IPlayerRepository playerRepository)
     {
         _playerRepository = playerRepository;
     }

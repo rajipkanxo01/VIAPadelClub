@@ -33,7 +33,7 @@ public class CancelsBookingAggregateTest
         var fakePlayerFinder = new FakePlayerFinder(playerRepository);
         var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
 
-        var court = Court.Create(courtName);
+        var court = Court.Create(courtName).Data;
 
         var schedule = SetupDailySchedule(court, fakeScheduleFinder);
         var player = SetupPlayer("test@via.dk", "Test", "Player", fakePlayerFinder);
@@ -66,7 +66,7 @@ public class CancelsBookingAggregateTest
         var fakePlayerFinder = new FakePlayerFinder(playerRepository);
         var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
 
-        var court = Court.Create(courtName);
+        var court = Court.Create(courtName).Data;
     
         var schedule = SetupDailySchedule(court, fakeScheduleFinder);
         var player = SetupPlayer("test@via.dk", "Test", "Player", fakePlayerFinder);
@@ -102,7 +102,7 @@ public class CancelsBookingAggregateTest
         var fakePlayerFinder = new FakePlayerFinder(playerRepository);
         var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
 
-        var court = Court.Create(courtName);
+        var court = Court.Create(courtName).Data;
 
         var schedule = SetupDailySchedule(court, fakeScheduleFinder);
         var player = SetupPlayer("test@via.dk", "Test", "Player", fakePlayerFinder);
@@ -138,7 +138,7 @@ public class CancelsBookingAggregateTest
         var fakePlayerFinder = new FakePlayerFinder(playerRepository);
         var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
 
-        var court = Court.Create(courtName);
+        var court = Court.Create(courtName).Data;
 
         var schedule = SetupDailySchedule(court, fakeScheduleFinder);
         var player = SetupPlayer("test@via.dk", "Test", "Player", fakePlayerFinder);
@@ -167,7 +167,7 @@ public class CancelsBookingAggregateTest
         var fakePlayerFinder = new FakePlayerFinder(playerRepository);
         var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
 
-        var court = Court.Create(courtName);
+        var court = Court.Create(courtName).Data;
 
         var schedule = SetupDailySchedule(court, fakeScheduleFinder);
         var firstPlayer = SetupPlayer("111111@via.dk", "First", "Player", fakePlayerFinder);
@@ -199,7 +199,7 @@ public class CancelsBookingAggregateTest
         var fakePlayerFinder = new FakePlayerFinder(playerRepository);
         var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
 
-        var court = Court.Create(courtName);
+        var court = Court.Create(courtName).Data;
 
         var schedule = SetupDailySchedule(court, fakeScheduleFinder);
         var firstPlayer = SetupPlayer("111111@via.dk", "First", "Player", fakePlayerFinder);
