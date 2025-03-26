@@ -110,8 +110,8 @@ public class PlayerQuarantineTest {
     //     // Arrange
     //     var player = Player.Register("testing@via.dk", "Troles", "Larsen", "http://profile.uri").Data!;
     //     
-    //     var schedule1 = DailySchedule.CreateSchedule();
-    //     var schedule2 = DailySchedule.CreateSchedule();
+    //     var schedule1 = Daily_Schedule.CreateSchedule();
+    //     var schedule2 = Daily_Schedule.CreateSchedule();
     //
     //     schedule1.scheduleDate = new DateTime(2025, 1, 20);
     //     schedule2.scheduleDate = new DateTime(2025, 1, 21);
@@ -122,7 +122,7 @@ public class PlayerQuarantineTest {
     //     schedule1.listOfBookings.Add(booking1);
     //     schedule2.listOfBookings.Add(booking2);
     //
-    //     var schedules = new List<DailySchedule> { schedule1, schedule2 };
+    //     var schedules = new List<Daily_Schedule> { schedule1, schedule2 };
     //
     //     // Act
     //     var quarantineResult = player.Quarantine(new DateOnly(2025, 1, 20), schedules);

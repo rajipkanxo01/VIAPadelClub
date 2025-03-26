@@ -48,7 +48,7 @@ public class Booking : Entity
         if (schedule.isDeleted || schedule.status != ScheduleStatus.Active) //F1 and 2
             return Result<Booking>.Fail(DailyScheduleError.ScheduleNotActive()._message);
 
-        if (!schedule.listOfAvailableCourts.Contains(court)) //F4
+        if (schedule.listOfAvailableCourts.All(c => c.Name.Value != court.Name.Value)) //F4
             return Result<Booking>.Fail(DailyScheduleError.CourtDoesntExistInSchedule()._message); 
         
         //F5- Player start time before schedule start time 

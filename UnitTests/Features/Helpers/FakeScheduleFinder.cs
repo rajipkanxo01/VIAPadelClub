@@ -1,4 +1,5 @@
-﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+﻿using UnitTests.Features.Helpers.Repository;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
 using VIAPadelClub.Core.Tools.OperationResult;
 
@@ -6,9 +7,9 @@ namespace UnitTests.Features.Helpers;
 
 public class FakeScheduleFinder : IScheduleFinder
 {
-    private readonly IDailyScheduleRepository _dailyScheduleRepository;
+    private readonly FakeDailyScheduleRepository _dailyScheduleRepository;
     
-    public FakeScheduleFinder(IDailyScheduleRepository dailyScheduleRepository)
+    public FakeScheduleFinder(FakeDailyScheduleRepository dailyScheduleRepository)
     {
         _dailyScheduleRepository = dailyScheduleRepository;
     }

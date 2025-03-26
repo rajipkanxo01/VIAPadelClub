@@ -1,8 +1,11 @@
 ﻿using UnitTests.Features.Helpers;
 using UnitTests.Features.Helpers.Factory;
 using UnitTests.Features.Helpers.Repository;
+using VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedule;
 using VIAPadelClub.Core.Application.CommandDispatching.Commands.Player;
 using VIAPadelClub.Core.Application.Features.Booking;
+using VIAPadelClub.Core.Application.Features.Daily_Schedule;
+using VIAPadelClub.Core.Application.Features.DailySchedule;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Tools.OperationResult;
@@ -25,7 +28,7 @@ public class CancelsBookingHandlerTest
         var fakeTimeProvider = new FakeTimeProvider(new TimeOnly(10, 0, 0));
         var unitOfWork = new FakeUnitOfWork();
         
-        var court = Court.Create(CourtName.Create("D1").Data);
+        var court = Court.Create(CourtName.Create("D1").Data).Data;
 
         var player = PlayerBuilder.CreateValid().BuildAsync().Result.Data;
         var dailySchedule = DailyScheduleBuilder.CreateValid().WithDateProvider(fakeDateProvider).Activate().WithCourt(court)
@@ -73,7 +76,7 @@ public class CancelsBookingHandlerTest
         var bookingStartTime = new TimeOnly(15, 0, 0);
         var bookingEndTime = new TimeOnly(17, 0, 0);
 
-        var court = Court.Create(CourtName.Create("D1").Data);
+        var court = Court.Create(CourtName.Create("D1").Data).Data;
 
         var booking = dailySchedule.BookCourt(player.Email, court, bookingStartTime, bookingEndTime, fakeDateProvider,
             fakePlayerFinder, fakeScheduleFinder).Data;

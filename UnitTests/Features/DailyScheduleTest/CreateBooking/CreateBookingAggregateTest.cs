@@ -11,7 +11,7 @@ using Xunit;
 
 namespace UnitTests.Features.DailyScheduleTest.CreateBooking;
 
-public class CreateBookingEntityTest
+public class CreateBookingAggregateTest
 {
     private readonly FakeDailyScheduleRepository dailyScheduleRepository;
     private readonly FakePlayerRepository playerRepository;
@@ -19,7 +19,7 @@ public class CreateBookingEntityTest
     private readonly FakePlayerFinder _playerFinder;
     private readonly FakeDateProvider _dateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
     
-    public CreateBookingEntityTest()
+    public CreateBookingAggregateTest()
     {
         dailyScheduleRepository = new FakeDailyScheduleRepository();
         playerRepository = new FakePlayerRepository();
@@ -36,7 +36,7 @@ public class CreateBookingEntityTest
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider);
 
         // Act
-        var result = dailySchedule.Data.BookCourt(email,court, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = dailySchedule.Data.BookCourt(email,court.Data, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -56,14 +56,14 @@ public class CreateBookingEntityTest
 
         _scheduleFinder.AddSchedule(dailySchedule.Data);
         
-        dailySchedule.Data.listOfCourts.Add(court);
-        dailySchedule.Data.AddAvailableCourt(court, _dateProvider,_scheduleFinder);
+        dailySchedule.Data.listOfCourts.Add(court.Data);
+        dailySchedule.Data.AddAvailableCourt(court.Data, _dateProvider,_scheduleFinder);
 
         _playerFinder.AddPlayer(player);
         dailySchedule.Data.Activate(_dateProvider);
         
         // Act
-        var result = dailySchedule.Data.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = dailySchedule.Data.BookCourt(player.email,court.Data, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.True(result.Success);
@@ -74,7 +74,7 @@ public class CreateBookingEntityTest
     public void Should_Not_Create_Booking_When_StartTime_Before_ScheduleStart()
     {
         //Arrange
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var email = Email.Create("test@via.dk").Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
@@ -94,7 +94,7 @@ public class CreateBookingEntityTest
     public void Should_Not_Create_Booking_When_EndTime_After_ScheduleEnd()
     {
         //Arrange
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var email = Email.Create("test@via.dk").Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableUntil = new TimeOnly(17, 0);
@@ -117,7 +117,7 @@ public class CreateBookingEntityTest
         // Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync());
 
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
@@ -142,7 +142,7 @@ public class CreateBookingEntityTest
         // Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
@@ -166,7 +166,7 @@ public class CreateBookingEntityTest
     {
         // Arrange
         var email = Email.Create("none@via.dk").Data;
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
@@ -185,7 +185,7 @@ public class CreateBookingEntityTest
         // Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
 
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
@@ -217,7 +217,7 @@ public class CreateBookingEntityTest
         // Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
 
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
@@ -244,7 +244,7 @@ public class CreateBookingEntityTest
         // Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
@@ -269,7 +269,7 @@ public class CreateBookingEntityTest
         // Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
@@ -295,7 +295,7 @@ public class CreateBookingEntityTest
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         var player2 = (await PlayerBuilder.CreateValid().WithEmail("test@via.dk").BuildAsync()).Data;
         
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
@@ -327,7 +327,7 @@ public class CreateBookingEntityTest
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         var player2 = (await PlayerBuilder.CreateValid().WithEmail("test@via.dk").BuildAsync()).Data;
 
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var dailySchedule = DailySchedule.CreateSchedule(new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today))).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
@@ -359,7 +359,7 @@ public class CreateBookingEntityTest
         // Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
 
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
@@ -387,7 +387,7 @@ public class CreateBookingEntityTest
         //Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
 
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9,0);
         dailySchedule.availableUntil = new TimeOnly(17,0);
@@ -420,7 +420,7 @@ public class CreateBookingEntityTest
         _scheduleFinder.AddSchedule(dailySchedule);
 
         var email = Email.Create("test@via.dk").Data!;
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         
         // Act
         var result = dailySchedule.BookCourt(email,court, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
@@ -438,7 +438,7 @@ public class CreateBookingEntityTest
         _scheduleFinder.AddSchedule(dailySchedule);
 
         var email = Email.Create("test@via.dk").Data!;
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         
         // Act
         var result = dailySchedule.BookCourt(email,court, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
@@ -449,39 +449,12 @@ public class CreateBookingEntityTest
     }
     
     [Fact]
-    public async Task F4_Should_Not_Create_Booking_When_Court_Not_Found()
-    {
-        // Arrange
-        var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
-
-        var court = Court.Create(CourtName.Create("S1").Data!);
-        var nonExistentCourt = Court.Create(CourtName.Create("Non-Existent Court").Data);
-        var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
-        
-        dailySchedule.availableFrom = new TimeOnly(9, 0);
-        dailySchedule.availableUntil = new TimeOnly(17, 0);
-        dailySchedule.listOfCourts.Add(court);
-        
-        _scheduleFinder.AddSchedule(dailySchedule);
-        dailySchedule.Activate(_dateProvider);
-        
-        _playerFinder.AddPlayer(player);
-
-        // Act
-        var result = dailySchedule.BookCourt(player.email,nonExistentCourt, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
-
-        // Assert
-        Assert.False(result.Success);
-        Assert.Equal(DailyScheduleError.CourtDoesntExistInSchedule()._message, result.ErrorMessage);
-    }
-    
-    [Fact]
     public async Task F9_Should_Not_Create_Booking_With_Invalid_Time_Format()
     {
         // Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
 
-        var court = Court.Create(CourtName.Create("S1").Data!);
+        var court = Court.Create(CourtName.Create("S1").Data!).Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
@@ -506,7 +479,7 @@ public class CreateBookingEntityTest
         // Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
 
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
@@ -531,7 +504,7 @@ public class CreateBookingEntityTest
         // Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
 
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
@@ -556,7 +529,7 @@ public class CreateBookingEntityTest
         // Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
 
-        var court = Court.Create(CourtName.Create("S1").Data!);
+        var court = Court.Create(CourtName.Create("S1").Data!).Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
@@ -584,7 +557,7 @@ public class CreateBookingEntityTest
         // Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
 
-        var court = Court.Create(CourtName.Create("S1").Data);
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);

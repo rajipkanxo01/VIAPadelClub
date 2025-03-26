@@ -1,7 +1,7 @@
 ﻿using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Tools.OperationResult;
 
-namespace VIAPadelClub.Core.Application.CommandDispatching.Commands.Player;
+namespace VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedule;
 
 public class PlayerCancelsBookingCommand
 {

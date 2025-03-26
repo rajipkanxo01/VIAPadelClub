@@ -13,6 +13,7 @@ public class AddAvailableCourtAggregateTest
 {
     private readonly FakeDailyScheduleRepository dailyScheduleRepository = new FakeDailyScheduleRepository();
     private readonly FakePlayerRepository playerRepository = new FakePlayerRepository();
+    
     //CourtName tests
     [Theory]
     [InlineData("A1")]
@@ -119,7 +120,7 @@ public class AddAvailableCourtAggregateTest
         Assert.Contains(DailyScheduleError.InvalidLength()._message, result.ErrorMessage);
     }
     
-    //DailySchedule tests
+    //Daily_Schedule tests
     [Fact]
      public void Should_Fail_When_Schedule_Not_Found()
      {
@@ -130,7 +131,7 @@ public class AddAvailableCourtAggregateTest
          string courtName = "D1";
 
          // Act
-         var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data), fakeDateProvider, fakeScheduleRepo);
+         var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
     
          // Assert
          result.Success.Should().BeFalse();
@@ -150,7 +151,7 @@ public class AddAvailableCourtAggregateTest
         string courtName = "D1";
     
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data), fakeDateProvider, fakeScheduleRepo);
+        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
 
         // Assert
         result.Success.Should().BeFalse();
@@ -167,7 +168,7 @@ public class AddAvailableCourtAggregateTest
         string invalidCourtName = "F1";
         
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(invalidCourtName).Data), fakeDateProvider, fakeScheduleRepo);
+        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(invalidCourtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
 
         // Assert
         result.Success.Should().BeFalse();
@@ -183,10 +184,10 @@ public class AddAvailableCourtAggregateTest
         fakeScheduleRepo.AddSchedule(scheduleResult.Data);
         string courtName = "D1";
 
-        scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data), fakeDateProvider, fakeScheduleRepo);
+        scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
     
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data), fakeDateProvider, fakeScheduleRepo);
+        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
     
         // Assert
         result.Success.Should().BeFalse();
@@ -204,7 +205,7 @@ public class AddAvailableCourtAggregateTest
         string courtName = "D1";
         
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data), fakeDateProvider, fakeScheduleRepo);
+        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
     
         // Assert
         result.Success.Should().BeTrue();

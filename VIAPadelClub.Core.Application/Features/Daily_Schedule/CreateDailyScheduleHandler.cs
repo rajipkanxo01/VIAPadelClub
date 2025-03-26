@@ -22,7 +22,7 @@ public class CreateDailyScheduleHandler : ICommandHandler<CreateDailyScheduleCom
 
     public async Task<Result> HandleAsync(CreateDailyScheduleCommand command)
     {
-        var scheduleResult = DailySchedule.CreateSchedule(_dateProvider);
+        var scheduleResult = Domain.Aggregates.DailySchedules.DailySchedule.CreateSchedule(_dateProvider);
 
         if (!scheduleResult.Success)
         {

@@ -2,6 +2,7 @@
 using UnitTests.Features.Helpers.Repository;
 using VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedule;
 using VIAPadelClub.Core.Application.Features.Daily_Schedule;
+using VIAPadelClub.Core.Application.Features.DailySchedule;
 using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 
