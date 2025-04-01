@@ -18,7 +18,6 @@ public class RemoveAvailableCourtHandlerTest
         var scheduleRepository = new FakeDailyScheduleRepository();
         var fakeScheduleFinder = new FakeScheduleFinder(scheduleRepository);
         var dateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-        var unitOfWork = new FakeUnitOfWork();
         
         var court = Court.Create(CourtName.Create("D1").Data).Data;
         var dailySchedule = DailyScheduleBuilder.CreateValid().WithDateProvider(dateProvider).Activate().WithCourt(court)
@@ -28,7 +27,7 @@ public class RemoveAvailableCourtHandlerTest
         scheduleRepository.AddAsync(dailySchedule);
         
         var command = RemoveAvailableCourtCommand.Create(dailySchedule.scheduleId.ToString(),court.Name.Value,timeOfRemoval.ToString()).Data;
-        var handler = new RemoveAvailableCourtHandler(scheduleRepository,dateProvider,unitOfWork);
+        var handler = new RemoveAvailableCourtHandler(scheduleRepository,dateProvider);
         
         // Act
         var result = handler.HandleAsync(command).Result;

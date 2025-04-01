@@ -28,7 +28,7 @@ public class AddAvailableCourtHandlerTest
         var command = AddAvailableCourtCommand.Create(dailySchedule.Id.ToString(),court.Name.Value ).Data;
         scheduleRepository.AddAsync(dailySchedule);
         
-        var handler = new AddAvailableCourtHandler(scheduleRepository,dateProvider,scheduleFinder,unitOfWork);
+        var handler = new AddAvailableCourtHandler(scheduleRepository,dateProvider,scheduleFinder);
         
         // Act
         var result = handler.HandleAsync(command).Result;
@@ -44,7 +44,6 @@ public class AddAvailableCourtHandlerTest
         var scheduleRepository = new FakeDailyScheduleRepository();
         var dateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
         var scheduleFinder = new FakeScheduleFinder(scheduleRepository);
-        var unitOfWork = new FakeUnitOfWork();
         
         var dailySchedule = DailyScheduleBuilder.CreateValid().Activate().BuildAsync().Data;
         var court = Court.Create(CourtName.Create("D1").Data).Data;
@@ -54,7 +53,7 @@ public class AddAvailableCourtHandlerTest
         var command = AddAvailableCourtCommand.Create(dailySchedule.Id.ToString(),court.Name.Value).Data;
         scheduleRepository.AddAsync(dailySchedule);
         
-        var handler = new AddAvailableCourtHandler(scheduleRepository,dateProvider,scheduleFinder,unitOfWork);
+        var handler = new AddAvailableCourtHandler(scheduleRepository,dateProvider,scheduleFinder);
         
         // Act
         var result = handler.HandleAsync(command).Result;

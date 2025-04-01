@@ -16,7 +16,6 @@ public class ActivateDailyScheduleHandlerTest
     public void ShouldSucceed_WhenValidCommandIsProvided()
     {
         // Arrange
-        var unitOfWork=new FakeUnitOfWork();
         var scheduleRepository = new FakeDailyScheduleRepository();
         var fakeScheduleFinder = new FakeScheduleFinder(scheduleRepository);
         var dateProvider=new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
@@ -27,7 +26,7 @@ public class ActivateDailyScheduleHandlerTest
         
         scheduleRepository.AddAsync(dailySchedule);
         
-        var handler = new ActivateDailyScheduleHandler(scheduleRepository,unitOfWork,dateProvider);
+        var handler = new ActivateDailyScheduleHandler(scheduleRepository,dateProvider);
         var command = ActivateDailyScheduleCommand.Create(dailySchedule.Id.ToString()).Data;
         
         // Act

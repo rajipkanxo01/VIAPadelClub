@@ -11,15 +11,13 @@ namespace VIAPadelClub.Core.Application.Features.Daily_Schedule;
 public class CreateBookingHandler : ICommandHandler<CreateBookingCommand>
 {
     private readonly IDailyScheduleRepository _dailyScheduleRepository;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IDateProvider _dateProvider;
     private readonly IPlayerFinder _playerFinder;
     private readonly IScheduleFinder _scheduleFinder;
 
-    public CreateBookingHandler(IDailyScheduleRepository dailyScheduleRepository, IUnitOfWork unitOfWork, IDateProvider dateProvider, IPlayerFinder playerFinder, IScheduleFinder scheduleFinder)
+    public CreateBookingHandler(IDailyScheduleRepository dailyScheduleRepository, IDateProvider dateProvider, IPlayerFinder playerFinder, IScheduleFinder scheduleFinder)
     {
         _dailyScheduleRepository = dailyScheduleRepository;
-        _unitOfWork = unitOfWork;
         _dateProvider = dateProvider;
         _playerFinder = playerFinder;
         _scheduleFinder = scheduleFinder;
@@ -42,7 +40,6 @@ public class CreateBookingHandler : ICommandHandler<CreateBookingCommand>
             return await Task.FromResult(Result.Fail(bookingResult.ErrorMessage));
         }
 
-        await _unitOfWork.SaveChangesAsync();
         return await Task.FromResult(Result.Ok());
     }
 }

@@ -11,13 +11,11 @@ public class RemoveAvailableCourtHandler: ICommandHandler<RemoveAvailableCourtCo
 {
     private readonly IDailyScheduleRepository _dailyScheduleRepository;
     private readonly IDateProvider _dateProvider;
-    private readonly IUnitOfWork _unitOfWork;
     
-    public RemoveAvailableCourtHandler(IDailyScheduleRepository dailyScheduleRepository, IDateProvider dateProvider, IUnitOfWork unitOfWork)
+    public RemoveAvailableCourtHandler(IDailyScheduleRepository dailyScheduleRepository, IDateProvider dateProvider)
     {
         _dailyScheduleRepository = dailyScheduleRepository;
         _dateProvider = dateProvider;
-        _unitOfWork = unitOfWork;
     }
 
     public Task<Result> HandleAsync(RemoveAvailableCourtCommand command)
@@ -30,7 +28,6 @@ public class RemoveAvailableCourtHandler: ICommandHandler<RemoveAvailableCourtCo
         }
 
         var result = dailyScheduleResult.Data.RemoveAvailableCourt(command.Court,_dateProvider,command.TimeOfRemoval);
-        _unitOfWork.SaveChangesAsync();
         return Task.FromResult(result);
     }
 }
