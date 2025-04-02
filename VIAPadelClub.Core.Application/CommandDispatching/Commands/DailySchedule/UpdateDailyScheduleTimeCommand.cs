@@ -21,22 +21,22 @@ public class UpdateDailyScheduleTimeCommand
     {
         if (!Guid.TryParse(scheduleIdStr, out var scheduleId))
         {
-            return Result<UpdateDailyScheduleTimeCommand>.Fail("Invalid Schedule ID format.");
+            return Result<UpdateDailyScheduleTimeCommand>.Fail(DailyScheduleError.InvalidScheduleIdFormatWhileParsing()._message);
         }
 
         if (!DateOnly.TryParse(dateStr, out var date))
         {
-            return Result<UpdateDailyScheduleTimeCommand>.Fail("Invalid date format.");
+            return Result<UpdateDailyScheduleTimeCommand>.Fail(DailyScheduleError.InvalidDateformatWhileParsing()._message);
         }
 
         if (!TimeOnly.TryParse(startTimeStr, out var startTime))
         {
-            return Result<UpdateDailyScheduleTimeCommand>.Fail("Invalid start time format.");
+            return Result<UpdateDailyScheduleTimeCommand>.Fail(DailyScheduleError.InvalidTimeformatWhileParsing()._message);
         }
 
         if (!TimeOnly.TryParse(endTimeStr, out var endTime))
         {
-            return Result<UpdateDailyScheduleTimeCommand>.Fail("Invalid end time format.");
+            return Result<UpdateDailyScheduleTimeCommand>.Fail(DailyScheduleError.InvalidTimeformatWhileParsing()._message);
         }
 
         var command = new UpdateDailyScheduleTimeCommand(scheduleId, date, startTime, endTime);

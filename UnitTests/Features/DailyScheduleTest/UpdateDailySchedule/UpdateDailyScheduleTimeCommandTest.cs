@@ -1,4 +1,5 @@
 ﻿using VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedule;
+using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 
 namespace UnitTests.Features.DailyScheduleTest.UpdateDailySchedule;
@@ -35,6 +36,6 @@ public class UpdateDailyScheduleTimeCommandTest
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal("Invalid end time format.", result.ErrorMessage);
+        Assert.Equal(DailyScheduleError.InvalidTimeformatWhileParsing()._message, result.ErrorMessage);
     }
 }
