@@ -1,5 +1,7 @@
 ﻿using UnitTests.Features.Helpers;
 using UnitTests.Features.Helpers.Factory;
+using UnitTests.Features.Helpers.Repository;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 
 namespace UnitTests.Features.PlayerTest.PlayerQuarantineTest;
@@ -101,42 +103,45 @@ public class PlayerQuarantineTest {
         Assert.Null(result.Data);
         Assert.Equal("Player not found.", result.ErrorMessage);
     }
-    
-    //TODO: Following - To be uncommented once we have booking entity created.
-    
-    // [Fact]
-    // public void Should_Cancel_Bookings_During_Quarantine()
-    // {
-    //     // Arrange
-    //     var player = Player.Register("testing@via.dk", "Troles", "Larsen", "http://profile.uri").Data!;
-    //     
-    //     var schedule1 = Daily_Schedule.CreateSchedule();
-    //     var schedule2 = Daily_Schedule.CreateSchedule();
-    //
-    //     schedule1.scheduleDate = new DateTime(2025, 1, 20);
-    //     schedule2.scheduleDate = new DateTime(2025, 1, 21);
-    //
-    //     var booking1 = new Player(Guid.NewGuid(), player, new Court(new CourtName("Court A")), schedule1.scheduleDate, new TimeSpan(2, 0, 0));
-    //     var booking2 = new Player(Guid.NewGuid(), player, new Court(new CourtName("Court B")), schedule2.scheduleDate, new TimeSpan(1, 30, 0));
-    //
-    //     schedule1.listOfBookings.Add(booking1);
-    //     schedule2.listOfBookings.Add(booking2);
-    //
-    //     var schedules = new List<Daily_Schedule> { schedule1, schedule2 };
-    //
-    //     // Act
-    //     var quarantineResult = player.Quarantine(new DateOnly(2025, 1, 20), schedules);
-    //
-    //     // Assert
-    //     Assert.True(quarantineResult.Success);
-    //     Assert.NotNull(quarantineResult.Data);
-    //     
-    //     // Check that the bookings were canceled
-    //     Assert.DoesNotContain(schedule1.listOfBookings, b => b.bookedBy.email == player.email);
-    //     Assert.DoesNotContain(schedule2.listOfBookings, b => b.bookedBy.email == player.email);
-    // }
-    
-    
-    //TODO: - Once we have the booking entity. Add a test to verify that the booking that fall outside of the quarentine period aren't cancelled. 
 
+    [Theory(Skip = "Skipping this test as it needs to be fixed.")]
+    [InlineData("2025-01-20")]
+    [InlineData("2025-02-10")]
+    public async Task Should_Cancel_Booking_When_Player_Is_Quarantined(string startDateString)
+    {
+        // Arrange
+        var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
+        var startDate = DateOnly.Parse(startDateString);
+        
+        // Create a daily schedule with a booking
+        var court = Court.Create(CourtName.Create("S1").Data).Data;
+        var dailySchedule = DailySchedule.CreateSchedule(new FakeDateProvider(startDate)).Data;
+        dailySchedule.availableFrom = new TimeOnly(9, 0);
+        dailySchedule.availableUntil = new TimeOnly(17, 0);
+        dailySchedule.listOfCourts.Add(court);
+        dailySchedule.Activate(new FakeDateProvider(startDate));
+        
+        // Create a booking for the player
+        var booking = dailySchedule.BookCourt(
+            player.email,
+            court,
+            new TimeOnly(10, 0),
+            new TimeOnly(11, 0),
+            new FakeDateProvider(startDate),
+            new FakePlayerFinder(new FakePlayerRepository()),
+            new FakeScheduleFinder(new FakeDailyScheduleRepository())
+        ).Data;
+        
+        dailySchedule.listOfBookings.Add(booking);
+        var schedules = new List<DailySchedule> { dailySchedule };
+
+        // Act
+        var result = player.Quarantine(startDate, schedules);
+
+        // Assert
+        Assert.True(result.Success);
+        Assert.NotNull(result.Data);
+        Assert.Single(player.quarantines);
+        Assert.Equal(BookingStatus.Cancelled, booking.BookingStatus);
+    }
 }
