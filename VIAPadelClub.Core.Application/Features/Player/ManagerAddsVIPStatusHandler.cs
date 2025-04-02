@@ -10,12 +10,10 @@ namespace VIAPadelClub.Core.Application.Features.Booking;
 public class ChangePlayerToVipCommandHandler : ICommandHandler<ChangePlayerToVipStatusCommand>
 {
     private readonly IPlayerRepository _playerRepository;
-    private readonly IUnitOfWork _unitOfWork;
 
-    public ChangePlayerToVipCommandHandler(IPlayerRepository playerRepository, IUnitOfWork unitOfWork)
+    public ChangePlayerToVipCommandHandler(IPlayerRepository playerRepository)
     {
         _playerRepository = playerRepository;
-        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> HandleAsync(ChangePlayerToVipStatusCommand statusCommand)
@@ -34,7 +32,6 @@ public class ChangePlayerToVipCommandHandler : ICommandHandler<ChangePlayerToVip
             return Result.Fail(vipResult.ErrorMessage);
         }
 
-        await _unitOfWork.SaveChangesAsync();
         return Result.Ok();
     }
 }

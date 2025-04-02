@@ -15,13 +15,12 @@ public class CreatePlayerHandlerTest
         // Arrange
         var fakePlayerRepository = new FakePlayerRepository();
         var fakeEmailUniqueChecker = new FakeUniqueEmailChecker();
-        var unitOfWork = new FakeUnitOfWork();
         
         var player = PlayerBuilder.CreateValid().WithBlacklisted().BuildAsync().Result.Data;
         fakePlayerRepository.AddAsync(player);
         
         var command = CreatePlayerCommand.Create(player.email.Value, player.fullName.FirstName, player.fullName.LastName, player.url.Value).Data;
-        var handler = new CreatePlayerHandler(fakePlayerRepository,unitOfWork,fakeEmailUniqueChecker);
+        var handler = new CreatePlayerHandler(fakePlayerRepository,fakeEmailUniqueChecker);
         
         // Act
         var result = handler.HandleAsync(command).Result;

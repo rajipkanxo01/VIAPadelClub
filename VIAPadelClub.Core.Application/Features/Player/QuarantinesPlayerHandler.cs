@@ -13,16 +13,13 @@ public class QuarantinesPlayerCommandHandler : ICommandHandler<QuarantinesPlayer
 {
     private readonly IPlayerRepository _playerRepository;
     private readonly IDailyScheduleRepository _dailyScheduleRepository;
-    private readonly IUnitOfWork _unitOfWork;
 
     public QuarantinesPlayerCommandHandler(
         IPlayerRepository playerRepository,
-        IDailyScheduleRepository dailyScheduleRepository,
-        IUnitOfWork unitOfWork)
+        IDailyScheduleRepository dailyScheduleRepository)
     {
         _playerRepository = playerRepository;
         _dailyScheduleRepository = dailyScheduleRepository;
-        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> HandleAsync(QuarantinesPlayerCommand command)
@@ -51,9 +48,7 @@ public class QuarantinesPlayerCommandHandler : ICommandHandler<QuarantinesPlayer
         {
             return Result.Fail(quarantineResult.ErrorMessage);
         }
-
-        // Save changes
-        await _unitOfWork.SaveChangesAsync();
+        
         return Result.Ok();
     }
 }

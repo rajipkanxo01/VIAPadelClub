@@ -12,12 +12,10 @@ public class BlacklistsPlayerHandler: ICommandHandler<BlacklistsPlayerCommand>
 {
     private readonly IPlayerRepository _playerRepository;
     private readonly IScheduleFinder _scheduleFinder;
-    private readonly IUnitOfWork _unitOfWork;
     
-    public BlacklistsPlayerHandler(IPlayerRepository playerRepo, IUnitOfWork unitOfWork, IScheduleFinder scheduleFinder)
+    public BlacklistsPlayerHandler(IPlayerRepository playerRepo, IScheduleFinder scheduleFinder)
     {
         _playerRepository = playerRepo;
-        _unitOfWork = unitOfWork;
         _scheduleFinder = scheduleFinder;
     }
 
@@ -32,7 +30,6 @@ public class BlacklistsPlayerHandler: ICommandHandler<BlacklistsPlayerCommand>
             return result;
         }
 
-        await _unitOfWork.SaveChangesAsync();
         return Result.Ok();
     }
 }

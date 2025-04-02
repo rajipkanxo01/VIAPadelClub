@@ -25,6 +25,9 @@ public static class ApplicationExtensions
         serviceCollection.AddSingleton<ICommandHandler<BlacklistsPlayerCommand>, BlacklistsPlayerHandler>();
         serviceCollection.AddSingleton<ICommandHandler<LiftsBlacklistsPlayerCommand>, LiftsBlacklistsPlayerHandler>();
         serviceCollection.AddSingleton<ICommandHandler<CreatePlayerCommand>, CreatePlayerHandler>();
+        serviceCollection.AddSingleton<ICommandHandler<DeleteDailyScheduleCommand>, DeleteDailyScheduleCommandHandler>();
+        serviceCollection.AddSingleton<ICommandHandler<UpdateDailyScheduleTimeCommand>, UpdateDailyScheduleTimeHandler>();
+        serviceCollection.AddSingleton<ICommandHandler<QuarantinesPlayerCommand>, QuarantinesPlayerCommandHandler>();
     }
 
     public static void RegisterDispatcher(this IServiceCollection serviceCollection)

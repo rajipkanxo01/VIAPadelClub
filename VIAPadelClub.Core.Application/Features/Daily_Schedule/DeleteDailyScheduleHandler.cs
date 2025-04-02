@@ -10,18 +10,15 @@ namespace VIAPadelClub.Core.Application.Features.Daily_Schedule;
 public class DeleteDailyScheduleCommandHandler : ICommandHandler<DeleteDailyScheduleCommand>
 {
     private readonly IDailyScheduleRepository _scheduleRepository;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IDateProvider _dateProvider;
     private readonly ITimeProvider _timeProvider;
 
     public DeleteDailyScheduleCommandHandler(
         IDailyScheduleRepository scheduleRepository,
-        IUnitOfWork unitOfWork,
         IDateProvider dateProvider,
         ITimeProvider timeProvider)
     {
         _scheduleRepository = scheduleRepository;
-        _unitOfWork = unitOfWork;
         _dateProvider = dateProvider;
         _timeProvider = timeProvider;
     }
@@ -42,7 +39,6 @@ public class DeleteDailyScheduleCommandHandler : ICommandHandler<DeleteDailySche
             return Result.Fail(deleteResult.ErrorMessage);
         }
 
-        await _unitOfWork.SaveChangesAsync();
         return Result.Ok();
     }
 }
