@@ -57,30 +57,25 @@ public class Player : AggregateRoot
             activeQuarantine=quarantine;
         }
         
-        //TODO: Uncomment below once Player entity is available
-        //CancelBookingsDuringQuarantine(schedules, quarantine);
+        CancelBookingsDuringQuarantine(schedules);
         
         return Result<Quarantine>.Ok(quarantine);
     }
     
-    //TODO: TODO: Uncomment below once Cancellation of booking and Player entity is available 
-    // private void CancelBookingsDuringQuarantine(List<Daily_Schedule> schedules, Quarantine quarantine)
-    // {
-    //     foreach (var schedule in schedules)
-    //     {
-    //         var bookingsToCancel = schedule.listOfBookings
-    //             .Where(b => b.bookedBy.email == this.email && 
-    //                         b.startTime.Date >= quarantine.StartDate && 
-    //                         b.startTime.Date <= quarantine.EndDate)
-    //             .ToList();
-    //
-    //         foreach (var booking in bookingsToCancel)
-    //         {
-    //             Console.WriteLine($"Player for {booking.court.courtName.Value} on {booking.startTime} canceled due to quarantine.");
-    //             schedule.cancelBooking(booking.bookingId);
-    //         }
-    //     }
-    // }
+    private void CancelBookingsDuringQuarantine(List<DailySchedule> schedules)
+    {
+        foreach (var schedule in schedules)
+        {
+            var bookingsToCancel = schedule.listOfBookings
+                .Where(b => b.BookedBy.Equals(email))
+                .ToList();
+
+            foreach (var booking in bookingsToCancel)
+            {
+                booking.CancelDueToQuarantine();
+            }
+        }
+    }
 
     public Result Blacklist(IScheduleFinder scheduleFinder)
     {
