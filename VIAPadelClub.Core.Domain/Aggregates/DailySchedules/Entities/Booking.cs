@@ -195,4 +195,13 @@ public class Booking : Entity
         BookingStatus = BookingStatus.Cancelled;
         return Result.Ok();
     }
+    
+    internal void CancelDueToQuarantine()
+    {
+        if (BookingStatus == BookingStatus.Active)
+        {
+            BookingStatus = BookingStatus.Cancelled;
+            Console.WriteLine($"**NOTIFICATION** Booking on {BookedDate} at {StartTime} was cancelled due to quarantine.");
+        }
+    }
 }

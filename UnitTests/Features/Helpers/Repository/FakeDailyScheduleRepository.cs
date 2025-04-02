@@ -37,4 +37,9 @@ public class FakeDailyScheduleRepository : IDailyScheduleRepository
         _listOfSchedules.Remove(schedule);
         return Task.FromResult(Result.Ok());
     }
+    
+    public Task<Result<List<DailySchedule>>> GetAllAsync()
+    {
+        return Task.FromResult(Result<List<DailySchedule>>.Ok(_listOfSchedules));
+    }
 }

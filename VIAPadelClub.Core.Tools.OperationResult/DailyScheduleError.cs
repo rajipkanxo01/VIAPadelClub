@@ -63,5 +63,6 @@ public static class DailyScheduleError
     public static Error InvalidScheduleIdFormatWhileParsing() => new Error(0, "Invalid schedule ID format.");
     public static Error InvalidPlayerIdFormatWhileParsing() => new Error(0, "Invalid player ID format.");
     public static Error InvalidTimeformatWhileParsing() => new Error(0, "Invalid time format while parsing.");
+    public static Error InvalidDateformatWhileParsing() => new Error(0, "Invalid date format while parsing.");
     
 }
