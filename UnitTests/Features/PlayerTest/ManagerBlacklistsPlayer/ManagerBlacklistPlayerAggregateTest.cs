@@ -1,33 +1,35 @@
 ﻿using UnitTests.Features.Helpers;
+using UnitTests.Features.Helpers.Factory;
+using UnitTests.Features.Helpers.Repository;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.Players;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
+using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 
 namespace UnitTests.Features.PlayerTest.ManagerBlacklistsPlayer;
 
 public class ManagerBlacklistPlayerAggregateTest
 {
+    private readonly FakeDailyScheduleRepository dailyScheduleRepository = new();
+    private readonly FakePlayerRepository playerRepository = new();
     [Fact]
     public async Task Should_Blacklist_Player_When_Selected()
     {
         // Arrange
-        var emailChecker = new FakeUniqueEmailChecker();
-        var email = Email.Create("test@via.dk");
-        var fullName = FullName.Create("John", "Doe");
-        var profileUri = ProfileUri.Create("http://example.com");
-        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+        var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         var dailySchedules = new List<DailySchedule>();
 
+        var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
+
         // Act
-        var result = player.Data.Blacklist(dailySchedules);
+        var result = player.Blacklist(fakeScheduleFinder);
 
         // Assert
-        Assert.True(player.Data.isBlackListed);
+        Assert.True(player.isBlackListed);
         Assert.True(result.Success);
     }
 
-    // this test fails for now because quarantine player is not implemented yet!!
     [Theory]
     [InlineData("2025-03-15")]
     [InlineData("2025-04-22")]
@@ -35,44 +37,39 @@ public class ManagerBlacklistPlayerAggregateTest
     public async Task Should_Remove_Quarantine_When_Player_Is_Blacklisted(string startDate)
     {
         // Arrange
-        var emailChecker = new FakeUniqueEmailChecker();
-        var email = Email.Create("test@via.dk");
-        var fullName = FullName.Create("John", "Doe");
-        var profileUri = ProfileUri.Create("http://example.com");
-        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+        var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         var dailySchedules = new List<DailySchedule>();
 
+        var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
 
-        player.Data.Quarantine(DateOnly.Parse(startDate), dailySchedules);
+        player.Quarantine(DateOnly.Parse(startDate), dailySchedules);
 
         // Act
-        var result = player.Data.Blacklist(dailySchedules);
+        var result = player.Blacklist(fakeScheduleFinder);
 
         // Assert
         Assert.True(result.Success);
-        Assert.True(player.Data.isBlackListed);
-        Assert.Null(player.Data.activeQuarantine);
+        Assert.True(player.isBlackListed);
+        Assert.Null(player.activeQuarantine);
     }
 
     [Fact]
     public async Task Should_Fail_If_Player_Is_Already_Blacklisted()
     {
         // Arrange
-        var emailChecker = new FakeUniqueEmailChecker();
-        var email = Email.Create("test@via.dk");
-        var fullName = FullName.Create("John", "Doe");
-        var profileUri = ProfileUri.Create("http://example.com");
-        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+        var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
+        
         var dailySchedules = new List<DailySchedule>();
-
-        player.Data.Blacklist(dailySchedules);
+        var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
+        
+        player.Blacklist(fakeScheduleFinder);
 
         // Act
-        var result = player.Data.Blacklist(dailySchedules);
+        var result = player.Blacklist(fakeScheduleFinder);
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal("Player Already Blacklisted. Cannot blacklist same player twice!!", result.ErrorMessage);
+        Assert.Equal(DailyScheduleError.PlayerAlreadyBlacklisted()._message, result.ErrorMessage);
     }
 
     [Theory]

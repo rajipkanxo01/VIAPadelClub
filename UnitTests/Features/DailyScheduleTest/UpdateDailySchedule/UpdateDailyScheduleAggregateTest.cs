@@ -145,6 +145,6 @@ public class UpdateDailyScheduleAggregateTest {
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal(ErrorMessage.ScheduleInvalidTimeSpan()._message, result.ErrorMessage);
+        Assert.Equal(DailyScheduleError.ScheduleInvalidTimeSpan()._message, result.ErrorMessage);
     }
 }

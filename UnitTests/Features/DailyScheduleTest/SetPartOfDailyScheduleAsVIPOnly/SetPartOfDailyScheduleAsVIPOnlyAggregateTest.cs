@@ -141,7 +141,7 @@ public class SetPartOfDailyScheduleAsVipOnlyAggregateTest
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal(ErrorMessage.VipTimeOutsideSchedule()._message, result.ErrorMessage);
+        Assert.Equal(DailyScheduleError.VipTimeOutsideSchedule()._message, result.ErrorMessage);
     }
 
 
@@ -168,6 +168,6 @@ public class SetPartOfDailyScheduleAsVipOnlyAggregateTest
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal(result.ErrorMessage, ErrorMessage.InvalidTimeSlot()._message);
+        Assert.Equal(result.ErrorMessage, DailyScheduleError.InvalidTimeSlot()._message);
     }
 }

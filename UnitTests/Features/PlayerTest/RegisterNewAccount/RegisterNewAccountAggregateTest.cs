@@ -54,7 +54,7 @@ public class RegisterNewAccountAggregateTest
         var result = Email.Create(email);
         Assert.False(result.Success);
         Assert.NotNull(result.ErrorMessage);
-        Assert.Contains(ErrorMessage.EmailMustEndWithViaDk()._message, result.ErrorMessage);
+        Assert.Contains(PlayerError.EmailMustEndWithViaDk()._message, result.ErrorMessage);
     }
     
     [Theory]
@@ -69,7 +69,7 @@ public class RegisterNewAccountAggregateTest
         var result = Email.Create(email);
         Assert.False(result.Success);
         Assert.NotNull(result.ErrorMessage);
-        Assert.Contains(ErrorMessage.InvalidEmailFormat()._message, result.ErrorMessage);
+        Assert.Contains(PlayerError.InvalidEmailFormat()._message, result.ErrorMessage);
     }
     
     [Theory]
@@ -79,7 +79,7 @@ public class RegisterNewAccountAggregateTest
         var result = Email.Create(email);
         Assert.False(result.Success);
         Assert.NotNull(result.ErrorMessage);
-        Assert.Contains(ErrorMessage.EmailCannotBeEmpty()._message, result.ErrorMessage);
+        Assert.Contains(PlayerError.EmailCannotBeEmpty()._message, result.ErrorMessage);
     }
     
     [Theory]
@@ -132,6 +132,6 @@ public class RegisterNewAccountAggregateTest
         var result = ProfileUri.Create(url);
         Assert.False(result.Success);
         Assert.NotNull(result.ErrorMessage);
-        Assert.Contains(ErrorMessage.InvalidProfileUri()._message, result.ErrorMessage);
+        Assert.Contains(PlayerError.InvalidProfileUri()._message, result.ErrorMessage);
     }
 }

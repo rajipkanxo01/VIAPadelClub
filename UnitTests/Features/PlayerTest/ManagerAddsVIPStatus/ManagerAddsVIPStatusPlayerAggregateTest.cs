@@ -1,4 +1,5 @@
 ﻿using UnitTests.Features.Helpers;
+using UnitTests.Features.Helpers.Factory;
 using VIAPadelClub.Core.Domain.Aggregates.Players;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using Xunit;
@@ -10,36 +11,28 @@ public class ManagerAddsVipStatusPlayerAggregateTest {
     public async Task Should_Mark_Player_As_VIP()
     {
         // Arrange
-        var emailChecker = new FakeUniqueEmailChecker();
-        var email = Email.Create("test@via.dk");
-        var fullName = FullName.Create("John", "Doe");
-        var profileUri = ProfileUri.Create("http://example.com");
-        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+        var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         
         // Act
-        var result = player.Data.ChangeToVIPStatus();
+        var result = player.ChangeToVIPStatus();
 
         // Assert
         Assert.True(result.Success);
-        Assert.NotNull(player.Data.vipMemberShip);
-        Assert.True(player.Data.vipMemberShip.IsVIP);
+        Assert.NotNull(player.vipMemberShip);
+        Assert.True(player.vipMemberShip.IsVIP);
     }
     
     [Fact]
     public async Task Should_Reject_If_Player_Is_Already_VIP()
     {
         // Arrange
-        var emailChecker = new FakeUniqueEmailChecker();
-        var email = Email.Create("test@via.dk");
-        var fullName = FullName.Create("John", "Doe");
-        var profileUri = ProfileUri.Create("http://example.com");
-        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
+        var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         
         // First VIP upgrade
-        player.Data.ChangeToVIPStatus();
+        player.ChangeToVIPStatus();
 
         // Act
-        var result = player.Data.ChangeToVIPStatus(); //We try again
+        var result = player.ChangeToVIPStatus(); //We try again
 
         // Assert
         Assert.False(result.Success); // It shouldn't upgrade again
@@ -50,15 +43,11 @@ public class ManagerAddsVipStatusPlayerAggregateTest {
     public async Task Should_Reject_If_Player_Is_Quarantined()
     {
         // Arrange
-        var emailChecker = new FakeUniqueEmailChecker();
-        var email = Email.Create("test@via.dk");
-        var fullName = FullName.Create("John", "Doe");
-        var profileUri = ProfileUri.Create("http://example.com");
-        var player =await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
-        player.Data.isQuarantined = true;
+        var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
+        player.isQuarantined = true;
         
         // Act
-        var result = player.Data.ChangeToVIPStatus();
+        var result = player.ChangeToVIPStatus();
 
         // Assert
         Assert.False(result.Success);
@@ -69,15 +58,11 @@ public class ManagerAddsVipStatusPlayerAggregateTest {
     public async Task Should_Reject_If_Player_Is_Blacklisted()
     {
         // Arrange
-        var emailChecker = new FakeUniqueEmailChecker();
-        var email = Email.Create("test@via.dk");
-        var fullName = FullName.Create("John", "Doe");
-        var profileUri = ProfileUri.Create("http://example.com");
-        var player = await Player.Register(email.Data, fullName.Data, profileUri.Data,emailChecker);
-        player.Data.isBlackListed = true;
+        var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
+        player.isBlackListed = true;
         
         // Act
-        var result = player.Data.ChangeToVIPStatus();
+        var result = player.ChangeToVIPStatus();
 
         // Assert
         Assert.False(result.Success);

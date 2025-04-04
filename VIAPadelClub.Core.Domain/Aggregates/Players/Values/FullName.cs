@@ -17,11 +17,11 @@ public class FullName
     {   
         if (string.IsNullOrWhiteSpace(firstName) || firstName.Length < 2 || firstName.Length > 25 || !firstName.All(char.IsLetter))
         {
-            return Result<FullName>.Fail(ErrorMessage.InvalidFirstName()._message);
+            return Result<FullName>.Fail(PlayerError.InvalidFirstName()._message);
         }
         if (string.IsNullOrWhiteSpace(lastName) || lastName.Length < 2 || lastName.Length > 25 || !lastName.All(char.IsLetter))
         {
-            return Result<FullName>.Fail(ErrorMessage.InvalidLastName()._message);
+            return Result<FullName>.Fail(PlayerError.InvalidLastName()._message);
         }
         return Result<FullName>.Ok(new FullName(firstName, lastName));
     }

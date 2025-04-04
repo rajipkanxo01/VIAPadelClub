@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
-
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
+using VIAPadelClub.Core.Domain.Aggregates.Players.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
@@ -34,28 +35,18 @@ public class Player : AggregateRoot
     {
         if (!await emailUniqueChecker.IsUnique(email.Value.ToLower()))
         {
-            return Result<Player>.Fail(ErrorMessage.DuplicateEmail()._message);
+            return Result<Player>.Fail(DailyScheduleError.DuplicateEmail()._message);
         }
         
-        var emailResult=Email.Create(email.Value.ToLower());
-        if (!emailResult.Success) return Result<Player>.Fail(emailResult.ErrorMessage);
-        
-        var fullNameResult=FullName.Create(fullName.FirstName, fullName.LastName);
-        if (!fullNameResult.Success) return Result<Player>.Fail(fullNameResult.ErrorMessage);
-        
-        var profileUriResult=ProfileUri.Create(profileUri.Value);
-        if (!profileUriResult.Success) return Result<Player>.Fail(profileUriResult.ErrorMessage);
-        
         emailUniqueChecker.AddEmail(email.Value.ToLower());
-        var playerResult = new Player(emailResult.Data, fullNameResult.Data, profileUriResult.Data);
-        
+        var playerResult = new Player(email, fullName, profileUri);
         return Result<Player>.Ok(playerResult);
     }
     
     public Result<Quarantine> Quarantine(DateOnly startDate, List<DailySchedule> schedules)
     {
         if (isBlackListed)
-            return Result<Quarantine>.Fail(ErrorMessage.BlackListedCannotQuarantine()._message);
+            return Result<Quarantine>.Fail(PlayerError.BlackListedCannotQuarantine()._message);
 
         var quarantine = Entities.Quarantine.CreateOrExtend(quarantines, startDate);
     
@@ -66,44 +57,41 @@ public class Player : AggregateRoot
             activeQuarantine=quarantine;
         }
         
-        //TODO: Uncomment below once Booking entity is available
-        //CancelBookingsDuringQuarantine(schedules, quarantine);
+        CancelBookingsDuringQuarantine(schedules);
         
         return Result<Quarantine>.Ok(quarantine);
     }
     
-    //TODO: TODO: Uncomment below once Cancellation of booking and Booking entity is available 
-    // private void CancelBookingsDuringQuarantine(List<DailySchedule> schedules, Quarantine quarantine)
-    // {
-    //     foreach (var schedule in schedules)
-    //     {
-    //         var bookingsToCancel = schedule.listOfBookings
-    //             .Where(b => b.bookedBy.email == this.email && 
-    //                         b.startTime.Date >= quarantine.StartDate && 
-    //                         b.startTime.Date <= quarantine.EndDate)
-    //             .ToList();
-    //
-    //         foreach (var booking in bookingsToCancel)
-    //         {
-    //             Console.WriteLine($"Booking for {booking.court.courtName.Value} on {booking.startTime} canceled due to quarantine.");
-    //             schedule.cancelBooking(booking.bookingId);
-    //         }
-    //     }
-    // }
-
-    public Result Blacklist(List<DailySchedule> dailySchedules)
+    private void CancelBookingsDuringQuarantine(List<DailySchedule> schedules)
     {
-        if (isBlackListed) return Result.Fail("Player Already Blacklisted. Cannot blacklist same player twice!!");
+        foreach (var schedule in schedules)
+        {
+            var bookingsToCancel = schedule.listOfBookings
+                .Where(b => b.BookedBy.Equals(email))
+                .ToList();
+
+            foreach (var booking in bookingsToCancel)
+            {
+                booking.CancelDueToQuarantine();
+            }
+        }
+    }
+
+    public Result Blacklist(IScheduleFinder scheduleFinder)
+    {
+        if (isBlackListed) return Result.Fail(DailyScheduleError.PlayerAlreadyBlacklisted()._message);
         
         isBlackListed = true;
         if (activeQuarantine is not null) activeQuarantine = null;
 
+        // TODO: remove all bookings!!!
+        
         return Result.Ok();
     }
 
     public Result LiftBlacklist()
     {
-        if (!isBlackListed) return Result.Fail("Player is not blacklisted.");
+        if (!isBlackListed) return Result.Fail(DailyScheduleError.PlayerIsNotBlacklisted()._message);
 
         isBlackListed = false;
         return Result.Ok();

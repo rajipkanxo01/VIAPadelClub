@@ -35,7 +35,7 @@ namespace VIAPadelClub.Core.Domain.Aggregates.Players.Values
         private static Result ValidateEmailNotEmpty(string email)
         {
             return string.IsNullOrWhiteSpace(email)
-                ? Result.Fail(ErrorMessage.EmailCannotBeEmpty()._message)
+                ? Result.Fail(PlayerError.EmailCannotBeEmpty()._message)
                 : Result.Ok();
         }
 
@@ -43,15 +43,26 @@ namespace VIAPadelClub.Core.Domain.Aggregates.Players.Values
         {
             const string emailPattern = @"^(?:(?:[a-zA-Z]{3,4})|\d{6})@via\.dk$";
             return !Regex.IsMatch(email, emailPattern)
-                ? Result.Fail(ErrorMessage.InvalidEmailFormat()._message)
+                ? Result.Fail(PlayerError.InvalidEmailFormat()._message)
                 : Result.Ok();
         }
 
         private static Result ValidateEmailEndsWithViaDk(string email)
         {
             return !email.EndsWith("@via.dk")
-                ? Result.Fail(ErrorMessage.EmailMustEndWithViaDk()._message)
+                ? Result.Fail(PlayerError.EmailMustEndWithViaDk()._message)
                 : Result.Ok();
+        }
+        
+        public override bool Equals(object? obj)
+        {
+            if (obj is not Email other) return false;
+            return Value.Equals(other.Value, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public override int GetHashCode()
+        {
+            return Value.ToLowerInvariant().GetHashCode();
         }
     }
 }

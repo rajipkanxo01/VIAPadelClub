@@ -1,4 +1,5 @@
 ﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
+using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 
@@ -11,8 +12,9 @@ public class Court
         Name = name;
     }
 
-    public static Court Create(CourtName name)
+    public static Result<Court> Create(CourtName name)
     {
-        return new Court(name);
+        var court = new Court(name);
+        return Result<Court>.Ok(court);
     }
 }

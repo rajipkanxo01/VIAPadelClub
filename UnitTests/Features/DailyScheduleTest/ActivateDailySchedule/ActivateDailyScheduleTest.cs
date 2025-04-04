@@ -18,7 +18,7 @@ public class DailyScheduleTests
         var schedule = scheduleResult.Data;
 
         var courtNameResult = CourtName.Create("S1");
-        schedule.listOfCourts.Add(Court.Create(courtNameResult.Data));
+        schedule.listOfCourts.Add(Court.Create(courtNameResult.Data).Data);
 
         // Act
         schedule.Activate(fakeDateProvider);
@@ -40,7 +40,7 @@ public class DailyScheduleTests
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal(ErrorMessage.PastScheduleCannotBeActivated()._message, result.ErrorMessage);
+        Assert.Equal(DailyScheduleError.PastScheduleCannotBeActivated()._message, result.ErrorMessage);
     }
     
     [Fact]
@@ -55,7 +55,7 @@ public class DailyScheduleTests
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal(ErrorMessage.NoCourtAvailable()._message, result.ErrorMessage);
+        Assert.Equal(DailyScheduleError.NoCourtAvailable()._message, result.ErrorMessage);
     }
     
 
@@ -66,7 +66,7 @@ public class DailyScheduleTests
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
         var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         var courtNameResult = CourtName.Create("S1");
-        schedule.listOfCourts.Add(Court.Create(courtNameResult.Data));
+        schedule.listOfCourts.Add(Court.Create(courtNameResult.Data).Data);
         schedule.status = ScheduleStatus.Active;
 
         // Act
@@ -74,7 +74,7 @@ public class DailyScheduleTests
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal(ErrorMessage.ScheduleAlreadyActive()._message, result.ErrorMessage);
+        Assert.Equal(DailyScheduleError.ScheduleAlreadyActive()._message, result.ErrorMessage);
     }
     
     [Fact]
@@ -84,7 +84,7 @@ public class DailyScheduleTests
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
         var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
         var courtNameResult = CourtName.Create("S1");
-        schedule.listOfCourts.Add(Court.Create(courtNameResult.Data));
+        schedule.listOfCourts.Add(Court.Create(courtNameResult.Data).Data);
         schedule.isDeleted = true;
 
         // Act
@@ -92,6 +92,6 @@ public class DailyScheduleTests
 
         // Assert
         Assert.False(result.Success);
-        Assert.Equal(ErrorMessage.ScheduleIsDeleted()._message, result.ErrorMessage);
+        Assert.Equal(DailyScheduleError.ScheduleIsDeleted()._message, result.ErrorMessage);
     }
 }

@@ -1,20 +1,29 @@
-﻿using VIAPadelClub.Core.Domain.Aggregates.Players;
+﻿using UnitTests.Features.Helpers.Repository;
+using VIAPadelClub.Core.Domain.Aggregates.Players;
+using VIAPadelClub.Core.Domain.Aggregates.Players.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace UnitTests.Features.Helpers;
 
-public class FakePlayerFinder: IPlayerFinder
+public class FakePlayerFinder : IPlayerFinder
 {
-    private readonly List<Player> _players = new();
-    public Result<Player> FindPlayer(string email)
+    private readonly FakePlayerRepository _playerRepository;
+
+    public FakePlayerFinder(FakePlayerRepository playerRepository)
     {
-        var player = _players.FirstOrDefault(p => p.email.Value.Equals(email));
-        return player != null ? Result<Player>.Ok(player) : Result<Player>.Fail(ErrorMessage.NoPlayerFound()._message);
+        _playerRepository = playerRepository;
     }
 
-    public void AddPlayer(Player player)
+    public Result<Player> FindPlayer(Email email)
     {
-        _players.Add(player);
+        var player = _playerRepository.GetAsync(email).Result;
+        return player;
+    }
+
+    public Result AddPlayer(Player player)
+    {
+        var result = _playerRepository.AddAsync(player).Result;
+        return result;
     }
 }

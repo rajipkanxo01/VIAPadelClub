@@ -4,17 +4,24 @@ using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace Services.Contracts;
 
-public class PlayerFinder: IPlayerFinder
+public class PlayerFinder
 {
-    private readonly List<Player> _players = new();
-    public Result<Player> FindPlayer(string email)
+    private readonly IPlayerRepository _playerRepository;
+
+    public PlayerFinder(IPlayerRepository playerRepository)
     {
-        var player = _players.FirstOrDefault(p => p.Email.Equals(email));
-        return player != null ? Result<Player>.Ok(player) : Result<Player>.Fail(ErrorMessage.NoPlayerFound()._message);
+        _playerRepository = playerRepository;
     }
 
-    public void AddPlayer(Player player)
+    public Result<Player> FindPlayer(Email email)
     {
-        _players.Add(player);
+        var player = _playerRepository.GetAsync(email).Result;
+        return player;
+    }
+
+    public Result AddPlayer(Player player)
+    {
+        var result = _playerRepository.AddAsync(player).Result;
+        return result;
     }
 }

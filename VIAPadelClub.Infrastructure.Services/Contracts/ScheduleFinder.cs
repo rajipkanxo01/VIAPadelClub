@@ -1,4 +1,5 @@
 ﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
 using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace Services.Contracts;
@@ -11,7 +12,7 @@ public class ScheduleFinder : IScheduleFinder
     {
         var schedule = _schedules.FirstOrDefault(s => s.Id == scheduleId);
         return schedule == null
-            ? Result<DailySchedule>.Fail(ErrorMessage.ScheduleNotFound()._message)
+            ? Result<DailySchedule>.Fail(DailyScheduleError.ScheduleNotFound()._message)
             : Result<DailySchedule>.Ok(schedule);
     }
 
