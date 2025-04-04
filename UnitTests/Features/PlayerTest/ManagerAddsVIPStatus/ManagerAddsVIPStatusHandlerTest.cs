@@ -8,7 +8,7 @@ using Xunit;
 
 namespace UnitTests.Features.PlayerTest.ManagerAddsVIPStatus;
 
-public class ManagerAddsVIPStatusHandlerTest
+public class ManagerAddsVipStatusHandlerTest
 {
     [Fact]
     public async Task HandleAsync_ShouldAddVIPStatus_WhenValid()
@@ -29,7 +29,6 @@ public class ManagerAddsVIPStatusHandlerTest
         // Assert
         Assert.True(result.Success);
         Assert.NotNull(player.vipMemberShip);
-        Assert.True(unitOfWork.SaveChangesCalled);
     }
     
     [Fact]

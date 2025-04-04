@@ -7,6 +7,10 @@ public class Court
 {
     internal CourtName Name { get; }
 
+    private Court() // for efc
+    {
+    }
+
     private Court(CourtName name)
     {
         Name = name;

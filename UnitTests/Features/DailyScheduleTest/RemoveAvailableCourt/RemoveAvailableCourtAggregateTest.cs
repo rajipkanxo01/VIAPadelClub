@@ -20,10 +20,12 @@ public class RemoveAvailableCourtAggregateTest
     public async Task Should_Remove_Court_Successfully_When_Valid() 
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+        
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
         var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
 
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data;
         fakeScheduleFinder.AddSchedule(schedule);
         
         var court = Court.Create(CourtName.Create("S1").Data).Data;
@@ -45,8 +47,9 @@ public class RemoveAvailableCourtAggregateTest
         // Arrange
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
         var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
         
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data;
         fakeScheduleFinder.AddSchedule(schedule);
         
         var court = Court.Create(CourtName.Create("S1").Data).Data;
@@ -65,7 +68,8 @@ public class RemoveAvailableCourtAggregateTest
     {
         // Arrange
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)));
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data;
         var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
         fakeScheduleFinder.AddSchedule(schedule);
         
@@ -90,8 +94,9 @@ public class RemoveAvailableCourtAggregateTest
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
         var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
         var playerFinder = new FakePlayerFinder(playerRepository);
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
 
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data;
 
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         playerFinder.AddPlayer(player);
@@ -122,7 +127,9 @@ public class RemoveAvailableCourtAggregateTest
         var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
         var playerFinder = new FakePlayerFinder(playerRepository);
         
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data;
         fakeScheduleFinder.AddSchedule(schedule);
 
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;

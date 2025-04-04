@@ -1,15 +1,16 @@
-﻿using VIAPadelClub.Core.Tools.OperationResult;
+﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
+using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedule;
 
 public class UpdateDailyScheduleTimeCommand
 {
-    internal Guid ScheduleId { get; private set; }
+    internal ScheduleId ScheduleId { get; private set; }
     internal DateOnly NewDate { get; private set; }
     internal TimeOnly NewStartTime { get; private set; }
     internal TimeOnly NewEndTime { get; private set; }
 
-    private UpdateDailyScheduleTimeCommand(Guid scheduleId, DateOnly newDate, TimeOnly newStartTime, TimeOnly newEndTime)
+    private UpdateDailyScheduleTimeCommand(ScheduleId scheduleId, DateOnly newDate, TimeOnly newStartTime, TimeOnly newEndTime)
     {
         ScheduleId = scheduleId;
         NewDate = newDate;
@@ -39,7 +40,7 @@ public class UpdateDailyScheduleTimeCommand
             return Result<UpdateDailyScheduleTimeCommand>.Fail(DailyScheduleError.InvalidTimeformatWhileParsing()._message);
         }
 
-        var command = new UpdateDailyScheduleTimeCommand(scheduleId, date, startTime, endTime);
+        var command = new UpdateDailyScheduleTimeCommand(ScheduleId.FromGuid(scheduleId), date, startTime, endTime);
         return Result<UpdateDailyScheduleTimeCommand>.Ok(command);
     }
 }

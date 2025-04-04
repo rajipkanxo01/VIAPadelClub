@@ -17,7 +17,7 @@ public class DeleteDailyScheduleHandlerTest
         var repo = new FakeDailyScheduleRepository();
         await repo.AddAsync(schedule);
 
-        var command = DeleteDailyScheduleCommand.Create(schedule.Id.ToString()).Data;
+        var command = DeleteDailyScheduleCommand.Create(schedule.scheduleId.ToString()).Data;
         var handler = new DeleteDailyScheduleCommandHandler(
             repo,
             new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)),

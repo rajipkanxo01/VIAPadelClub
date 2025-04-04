@@ -11,10 +11,12 @@ public class CreateDailyScheduleAggregateTests
     public void Should_Create_DailySchedule_With_Default_Values()
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
         
         // Act
-        var dailySchedule = DailySchedule.CreateSchedule(fakeDateProvider);
+        var dailySchedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId);
         var data = dailySchedule.Data;
 
         // Assert

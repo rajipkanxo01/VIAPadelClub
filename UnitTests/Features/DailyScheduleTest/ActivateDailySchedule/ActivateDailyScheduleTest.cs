@@ -13,8 +13,10 @@ public class DailyScheduleTests
     public void Activate_ShouldSetStatusToActive_WhenConditionsAreMet()
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-        var scheduleResult = DailySchedule.CreateSchedule(fakeDateProvider);
+        var scheduleResult = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId);
         var schedule = scheduleResult.Data;
 
         var courtNameResult = CourtName.Create("S1");
@@ -31,8 +33,11 @@ public class DailyScheduleTests
     public void Activate_ShouldFail_WhenScheduleIsInPast()
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
+        
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data;
         schedule.scheduleDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
 
         // Act
@@ -47,8 +52,10 @@ public class DailyScheduleTests
     public void Activate_ShouldFail_WhenNoCourtsAvailable()
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+        
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data;
 
         // Act
         var result = schedule.Activate(fakeDateProvider);
@@ -63,8 +70,10 @@ public class DailyScheduleTests
     public void Activate_ShouldFail_WhenScheduleAlreadyActive()
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+        
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data;
         var courtNameResult = CourtName.Create("S1");
         schedule.listOfCourts.Add(Court.Create(courtNameResult.Data).Data);
         schedule.status = ScheduleStatus.Active;
@@ -81,8 +90,10 @@ public class DailyScheduleTests
     public void Activate_ShouldFail_WhenScheduleIsDeleted()
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider,scheduleId).Data;
         var courtNameResult = CourtName.Create("S1");
         schedule.listOfCourts.Add(Court.Create(courtNameResult.Data).Data);
         schedule.isDeleted = true;

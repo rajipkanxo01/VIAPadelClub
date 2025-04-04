@@ -2,6 +2,7 @@
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace UnitTests.Features.Helpers.Factory;
@@ -13,6 +14,7 @@ public class DailyScheduleBuilder
     private TimeOnly? _availableUntil;
     private readonly List<(TimeOnly start, TimeOnly end)> _vipTimeRanges = new();
     private bool _activate = false;
+    private ScheduleId scheduleId = ScheduleId.Create();
     
     private List<Court> _courts = new();
 
@@ -71,7 +73,7 @@ public class DailyScheduleBuilder
 
     public Result<DailySchedule> BuildAsync()
     {
-        var result = DailySchedule.CreateSchedule(_dateProvider);
+        var result = DailySchedule.CreateSchedule(_dateProvider, scheduleId);
         if (!result.Success)
         {
             return Result<DailySchedule>.Fail(result.ErrorMessage);
@@ -108,7 +110,8 @@ public class DailyScheduleBuilder
 
         foreach (var vip in _vipTimeRanges)
         {
-            var vipResult = schedule.AddVipTimeSlots(vip.start, vip.end);
+            var range = VipTimeRange.Create(vip.start, vip.end).Data;
+            var vipResult = schedule.AddVipTimeSlots(range);
             if (!vipResult.Success)
                 return Result<DailySchedule>.Fail(vipResult.ErrorMessage);
         }

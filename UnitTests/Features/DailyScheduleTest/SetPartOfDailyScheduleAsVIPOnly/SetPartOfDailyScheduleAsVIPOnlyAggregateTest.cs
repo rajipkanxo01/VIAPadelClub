@@ -1,4 +1,5 @@
 ﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 
@@ -17,18 +18,22 @@ public class SetPartOfDailyScheduleAsVipOnlyAggregateTest
         var endTime = new TimeOnly(14, 0);
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data;
+
         schedule.UpdateSchedule(scheduleDate, startTime, endTime);
 
         var vipStartTime = new TimeOnly(11, 00);
         var vipEndTime = new TimeOnly(13, 00);
 
+        var range = VipTimeRange.Create(vipStartTime, vipEndTime).Data;
+
         // Act
-        var result = schedule.AddVipTimeSlots(vipStartTime, vipEndTime);
+        var result = schedule.AddVipTimeSlots(range);
 
         // Assert
         Assert.True(result.Success);
-        Assert.Contains((vipStartTime, vipEndTime), schedule.vipTimeRanges);
+        Assert.Contains(range, schedule.vipTimeRanges);
         Assert.Single(schedule.vipTimeRanges);
     }
 
@@ -40,8 +45,10 @@ public class SetPartOfDailyScheduleAsVipOnlyAggregateTest
         var startTime = new TimeOnly(10, 00);
         var endTime = new TimeOnly(18, 00);
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
+        
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
 
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data;
         schedule.UpdateSchedule(scheduleDate, startTime, endTime);
 
         var firstVipStartTime = new TimeOnly(11, 00);
@@ -49,16 +56,19 @@ public class SetPartOfDailyScheduleAsVipOnlyAggregateTest
 
         var secondVipStartTime = new TimeOnly(15, 00);
         var secondVipEndTime = new TimeOnly(17, 00);
+        
+        var firstRange = VipTimeRange.Create(firstVipStartTime, firstVipEndTime).Data;
+        var secondRange = VipTimeRange.Create(secondVipStartTime, secondVipEndTime).Data;
 
         // Act
-        var firstResult = schedule.AddVipTimeSlots(firstVipStartTime, firstVipEndTime);
-        var secondResult = schedule.AddVipTimeSlots(secondVipStartTime, secondVipEndTime);
+        var firstResult = schedule.AddVipTimeSlots(firstRange);
+        var secondResult = schedule.AddVipTimeSlots(secondRange);
 
         // Assert
         Assert.True(firstResult.Success);
         Assert.True(secondResult.Success);
-        Assert.Contains((firstVipStartTime, firstVipEndTime), schedule.vipTimeRanges);
-        Assert.Contains((secondVipStartTime, secondVipEndTime), schedule.vipTimeRanges);
+        Assert.Contains(firstRange, schedule.vipTimeRanges);
+        Assert.Contains(secondRange, schedule.vipTimeRanges);
         Assert.Equal(2, schedule.vipTimeRanges.Count);
     }
 
@@ -80,40 +90,33 @@ public class SetPartOfDailyScheduleAsVipOnlyAggregateTest
         var scheduleDate = new DateOnly(2025, 03, 10);
         var startTime = new TimeOnly(10, 00);
         var endTime = new TimeOnly(18, 00);
+        
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
 
         var expectedStart = new TimeOnly(expectedStartHour, expectedStartMinute);
         var expectedEnd = new TimeOnly(expectedEndHour, expectedEndMinute);
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data;
         schedule.UpdateSchedule(scheduleDate, startTime, endTime);
 
         var existingVipStart = new TimeOnly(existingStartHour, existingStartMinute);
         var existingVipEnd = new TimeOnly(existingEndHour, existingEndMinute);
-        schedule.AddVipTimeSlots(existingVipStart, existingVipEnd);
+        schedule.AddVipTimeSlots(VipTimeRange.Create(existingVipStart, existingVipEnd).Data);
 
         var newVipStart = new TimeOnly(newStartHour, newStartMinute);
         var newVipEnd = new TimeOnly(newEndHour, newEndMinute);
 
+        var range = VipTimeRange.Create(newVipStart, newVipEnd).Data;
+
         // Act
-        var result = schedule.AddVipTimeSlots(newVipStart, newVipEnd);
+        var result = schedule.AddVipTimeSlots(range);
 
         // Assert
         Assert.True(result.Success);
         Assert.Single(schedule.vipTimeRanges);
 
-        Assert.Contains((expectedStart, expectedEnd), schedule.vipTimeRanges);
-    }
-
-
-    [Fact]
-    public void Should_Set_VIP_Only_TimeSpan_When_Overlapping_With_Multiple_PreExisting_TimeSpans()
-    {
-    }
-
-    [Fact]
-    public void Should_Fail_When_Selected_VIP_TimeSpan_Overlaps_With_NonVIP_Bookings()
-    {
+        Assert.Contains(range, schedule.vipTimeRanges);
     }
 
     [Theory]
@@ -129,15 +132,19 @@ public class SetPartOfDailyScheduleAsVipOnlyAggregateTest
         var startTime = new TimeOnly(10, 00);
         var endTime = new TimeOnly(14, 00);
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
+        
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
 
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data;
         schedule.UpdateSchedule(scheduleDate, startTime, endTime);
 
         var vipStartTime = new TimeOnly(vipStartHour, vipStartMinute);
         var vipEndTime = new TimeOnly(vipEndHour, vipEndMinute);
 
+        var range = VipTimeRange.Create(vipStartTime, vipEndTime).Data;
+
         // Act
-        var result = schedule.AddVipTimeSlots(vipStartTime, vipEndTime);
+        var result = schedule.AddVipTimeSlots(range);
 
         // Assert
         Assert.False(result.Success);
@@ -152,19 +159,23 @@ public class SetPartOfDailyScheduleAsVipOnlyAggregateTest
         int vipEndMinute)
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+        
         var scheduleDate = new DateOnly(2025, 03, 10);
         var startTime = new TimeOnly(10, 30);
         var endTime = new TimeOnly(14, 00);
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data;
         schedule.UpdateSchedule(scheduleDate, startTime, endTime);
 
         var vipStartTime = new TimeOnly(11, 15);
         var vipEndTime = new TimeOnly(13, 45);
 
+        var range = VipTimeRange.Create(vipStartTime, vipEndTime).Data;
+
         // Act
-        var result = schedule.AddVipTimeSlots(vipStartTime, vipEndTime);
+        var result = schedule.AddVipTimeSlots(range);
 
         // Assert
         Assert.False(result.Success);

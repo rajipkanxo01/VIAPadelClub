@@ -15,7 +15,7 @@ public class UpdateDailyScheduleTimeHandlerTest
         // Arrange
         var dailySchedule = DailyScheduleBuilder.CreateValid().BuildAsync().Data;
         var command = UpdateDailyScheduleTimeCommand.Create(
-            dailySchedule.Id.ToString(),
+            dailySchedule.scheduleId.ToString(),
             DateOnly.FromDateTime(DateTime.Today.AddDays(1)).ToString(),
             "10:00", "12:00"
         ).Data;
@@ -39,7 +39,7 @@ public class UpdateDailyScheduleTimeHandlerTest
         // Arrange
         var dailySchedule = DailyScheduleBuilder.CreateValid().BuildAsync().Data;
         var command = UpdateDailyScheduleTimeCommand.Create(
-            dailySchedule.Id.ToString(),
+            dailySchedule.scheduleId.ToString(),
             DateOnly.FromDateTime(DateTime.Today.AddDays(-1)).ToString(), // past
             "10:00", "12:00"
         ).Data;

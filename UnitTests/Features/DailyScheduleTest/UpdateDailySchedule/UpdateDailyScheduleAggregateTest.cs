@@ -13,12 +13,14 @@ public class UpdateDailyScheduleAggregateTest {
     public void Should_Update_Schedule_Date_When_Valid()
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
         var today = new DateOnly(2025, 08, 10);
         var futureDate = new DateOnly(2025, 08, 11);
         
         var fakeDateProvider = new FakeDateProvider(today);
         
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data!;
         schedule.status = ScheduleStatus.Draft;
 
         // Act
@@ -35,12 +37,14 @@ public class UpdateDailyScheduleAggregateTest {
     public void Should_Update_Time_When_Valid()
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
         var today = new DateOnly(2025, 08, 10);
         var futureDate = new DateOnly(2025, 08, 11);
         
         var fakeDateProvider = new FakeDateProvider(today);
         
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data!;
         schedule.status = ScheduleStatus.Draft;
 
         // Act
@@ -56,12 +60,14 @@ public class UpdateDailyScheduleAggregateTest {
     public void Should_Fail_When_Date_Is_In_The_Past()
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
         var today = new DateOnly(2025, 08, 10);
         var pastDate = new DateOnly(2025, 08, 09);
         
         var fakeDateProvider = new FakeDateProvider(today);
         
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data!;
 
         // Act
         var result = schedule.UpdateScheduleDateAndTime(pastDate, new TimeOnly(10, 0), new TimeOnly(14, 0), fakeDateProvider);
@@ -75,12 +81,14 @@ public class UpdateDailyScheduleAggregateTest {
     public void Should_Fail_When_End_Time_Is_Before_Start_Time()
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
         var today = new DateOnly(2025, 08, 10);
         var futureDate = new DateOnly(2025, 08, 11);
         
         var fakeDateProvider = new FakeDateProvider(today);
         
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data!;
 
         // Act
         var result = schedule.UpdateScheduleDateAndTime(futureDate, new TimeOnly(14, 0), new TimeOnly(10, 0), fakeDateProvider);
@@ -94,12 +102,14 @@ public class UpdateDailyScheduleAggregateTest {
     public void Should_Fail_When_Time_Interval_Is_Less_Than_60_Minutes()
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
         var today = new DateOnly(2025, 08, 10);
         var futureDate = new DateOnly(2025, 08, 11);
         
         var fakeDateProvider = new FakeDateProvider(today);
         
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data!;
 
         // Act
         var result = schedule.UpdateScheduleDateAndTime(futureDate, new TimeOnly(10, 0), new TimeOnly(10, 30), fakeDateProvider);
@@ -113,12 +123,14 @@ public class UpdateDailyScheduleAggregateTest {
     public void Should_Fail_When_Schedule_Is_Active()
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
         var today = new DateOnly(2025, 08, 10);
         var futureDate = new DateOnly(2025, 08, 11);
         
         var fakeDateProvider = new FakeDateProvider(today);
         
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data!;
         schedule.status = ScheduleStatus.Active;
 
         // Act
@@ -133,12 +145,14 @@ public class UpdateDailyScheduleAggregateTest {
     public void Should_Fail_When_Minutes_Are_Not_00_Or_30()
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
         var today = new DateOnly(2025, 08, 10);
         var futureDate = new DateOnly(2025, 08, 11);
         
         var fakeDateProvider = new FakeDateProvider(today);
         
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data!;
 
         // Act
         var result = schedule.UpdateScheduleDateAndTime(futureDate, new TimeOnly(10, 02), new TimeOnly(14, 06), fakeDateProvider);

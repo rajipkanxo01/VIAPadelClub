@@ -11,11 +11,9 @@ using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 
-using Players;
-
 public class DailySchedule : AggregateRoot
 {
-    internal Guid scheduleId;
+    public ScheduleId scheduleId { get; private set; }
     internal DateOnly scheduleDate;
     internal TimeOnly availableFrom;
     internal TimeOnly availableUntil;
@@ -25,11 +23,15 @@ public class DailySchedule : AggregateRoot
     internal List<Court> listOfCourts;
     internal List<Court> listOfAvailableCourts;
     internal List<Booking> listOfBookings;
-    internal List<(TimeOnly start, TimeOnly end)> vipTimeRanges = new();
+    internal List<VipTimeRange> vipTimeRanges = new();
 
-    private DailySchedule()
+    public DailySchedule() // for efc
     {
-        scheduleId = Guid.NewGuid();
+    }
+
+    private DailySchedule(ScheduleId id)
+    {
+        scheduleId = id;
         availableFrom = new TimeOnly(15, 0, 0);
         availableUntil = new TimeOnly(22, 0, 0);
         status = ScheduleStatus.Draft;
@@ -38,13 +40,15 @@ public class DailySchedule : AggregateRoot
         listOfBookings = new List<Booking>();
         isDeleted = false;
     }
+   
 
-    public Guid Id => scheduleId;
-    public static Result<DailySchedule> CreateSchedule(IDateProvider dateProvider)
+    // public ScheduleId Id => scheduleId;
+    public static Result<DailySchedule> CreateSchedule(IDateProvider dateProvider, ScheduleId id)
     {
         var today = dateProvider.Today();
-        
-        var dailySchedule = new DailySchedule()
+        // var id = ScheduleId.Create();
+
+        var dailySchedule = new DailySchedule(id)
         {
             scheduleDate = today
         };
@@ -156,8 +160,11 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
 
-    public Result AddVipTimeSlots(TimeOnly vipStartTime, TimeOnly vipEndTime)
+    public Result AddVipTimeSlots(VipTimeRange timeRange)
     {
+        var vipStartTime = timeRange.Start;
+        var vipEndTime = timeRange.End;
+
         //  Incorrect format of .00 or .30 
         if ((vipStartTime.Minute != 30 && vipStartTime.Minute != 0) ||
             (vipEndTime.Minute != 30 && vipEndTime.Minute != 0))
@@ -173,24 +180,24 @@ public class DailySchedule : AggregateRoot
         }
 
         var timeRanges = vipTimeRanges.Where(vipRange =>
-            vipRange.end == vipStartTime || vipRange.start == vipEndTime || // checks for border existing
-            (vipRange.start <= vipStartTime && vipRange.end >= vipStartTime) || // new vip start inside existing
-            (vipRange.start <= vipEndTime && vipRange.end >= vipEndTime) || // new vip end inside existing
-            (vipStartTime <= vipRange.start && vipEndTime >= vipRange.end) // checks if both start and end time falls inside existing range
+            vipRange.End == vipStartTime || vipRange.Start == vipEndTime || // checks for border existing
+            (vipRange.Start <= vipStartTime && vipRange.End >= vipStartTime) || // new vip start inside existing
+            (vipRange.Start <= vipEndTime && vipRange.End >= vipEndTime) || // new vip end inside existing
+            (vipStartTime <= vipRange.Start && vipEndTime >= vipRange.End) // checks if both start and end time falls inside existing range
 
         ).ToList();
 
         if (timeRanges.Any())
         {
-            var newStartTime = timeRanges.Min(vip => vip.start < vipStartTime ? vip.start : vipStartTime);
-            var newEndTime = timeRanges.Max(vip => vip.end > vipEndTime ? vip.end : vipEndTime);
+            var newStartTime = timeRanges.Min(vip => vip.Start < vipStartTime ? vip.Start : vipStartTime);
+            var newEndTime = timeRanges.Max(vip => vip.End > vipEndTime ? vip.End : vipEndTime);
 
             vipTimeRanges.RemoveAll(vip => timeRanges.Contains(vip));
-            vipTimeRanges.Add((newStartTime, newEndTime));
+            vipTimeRanges.Add(VipTimeRange.Create(newStartTime, newEndTime).Data);
         }
         else
         {
-            vipTimeRanges.Add((vipStartTime, vipEndTime));
+            vipTimeRanges.Add(VipTimeRange.Create(vipStartTime, vipEndTime).Data);
         }
 
         return Result.Ok();

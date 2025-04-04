@@ -1,9 +1,6 @@
-using System.Runtime.CompilerServices;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
-using VIAPadelClub.Core.Domain.Aggregates.Players;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Contracts;
-using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
 using VIAPadelClub.Core.Tools.OperationResult;
 
@@ -22,6 +19,9 @@ public class Booking : Entity
     internal DateOnly BookedDate { get; }
     internal BookingStatus BookingStatus { get; private set; }
 
+    private Booking(Guid id) : base(id) // for efc
+    {
+    }
 
     private Booking(Guid id,Email bookedBy, Court court, int duration, DateOnly bookedDate, TimeOnly startTime, TimeOnly endTime) : base(id)
     {
@@ -35,7 +35,7 @@ public class Booking : Entity
         BookingStatus = BookingStatus.Active;
     }
 
-    public static Result<Booking> Create(Guid scheduleId,Court court,TimeOnly startTime, TimeOnly endTime,Email email,IScheduleFinder scheduleFinder,IPlayerFinder playerFinder)
+    public static Result<Booking> Create(ScheduleId scheduleId,Court court,TimeOnly startTime, TimeOnly endTime,Email email,IScheduleFinder scheduleFinder,IPlayerFinder playerFinder)
     {
         var scheduleResult = scheduleFinder.FindSchedule(scheduleId);
         if (!scheduleResult.Success)
@@ -112,7 +112,7 @@ public class Booking : Entity
         //F15- if non VIP player tries to book court in VIP time then should be rejected
         foreach (var vipTime in schedule.vipTimeRanges)
         {
-            if (startTime<vipTime.end && endTime>vipTime.start)
+            if (startTime<vipTime.End && endTime>vipTime.Start)
             {
                 if (playerResult.vipMemberShip is null)
                 {

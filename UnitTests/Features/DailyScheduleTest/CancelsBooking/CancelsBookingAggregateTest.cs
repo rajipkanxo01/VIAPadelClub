@@ -220,8 +220,9 @@ public class CancelsBookingAggregateTest
     {
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today).AddDays(3)); 
         var dateForDailySchedule = DateOnly.FromDateTime(DateTime.Today.AddDays(4));
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
         
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data;
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data;
 
         schedule.UpdateScheduleDateAndTime(dateForDailySchedule, new TimeOnly(10, 0), new TimeOnly(14, 0), fakeDateProvider);
         schedule.AddAvailableCourt(court, fakeDateProvider, fakeScheduleFinder);

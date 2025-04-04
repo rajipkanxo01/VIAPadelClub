@@ -1,4 +1,5 @@
 ﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace UnitTests.Features.Helpers.Repository;
@@ -13,9 +14,9 @@ public class FakeDailyScheduleRepository : IDailyScheduleRepository
         return Task.FromResult(Result.Ok());
     }
 
-    public Task<Result<DailySchedule>> GetAsync(Guid id)
+    public Task<Result<DailySchedule>> GetAsync(ScheduleId id)
     {
-        var schedule = _listOfSchedules.FirstOrDefault(s => s.Id == id);
+        var schedule = _listOfSchedules.FirstOrDefault(s => s.scheduleId.Equals(id));
 
         if (schedule is null)
         {
@@ -25,9 +26,9 @@ public class FakeDailyScheduleRepository : IDailyScheduleRepository
         return Task.FromResult(Result<DailySchedule>.Ok(schedule));
     }
 
-    public Task<Result> RemoveAsync(Guid id)
+    public Task<Result> RemoveAsync(ScheduleId id)
     {
-        var schedule = _listOfSchedules.FirstOrDefault(s => s.Id == id);
+        var schedule = _listOfSchedules.FirstOrDefault(s => s.scheduleId.Equals(id));
 
         if (schedule is null)
         {

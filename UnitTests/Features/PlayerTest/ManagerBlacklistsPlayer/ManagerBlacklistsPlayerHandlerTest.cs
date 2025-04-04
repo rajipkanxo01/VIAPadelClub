@@ -26,7 +26,7 @@ public class BlacklistPlayerHandlerTests
         var unitOfWork = new FakeUnitOfWork();
         var handler = new BlacklistsPlayerHandler(playerRepo, fakeScheduleFinder);
 
-        var command = BlacklistsPlayerCommand.Create(schedule.Id.ToString(), player.email.Value).Data;
+        var command = BlacklistsPlayerCommand.Create(schedule.scheduleId.ToString(), player.email.Value).Data;
 
         // Act
         var result = await handler.HandleAsync(command);
@@ -53,7 +53,7 @@ public class BlacklistPlayerHandlerTests
 
         var handler = new BlacklistsPlayerHandler(playerRepo, fakeScheduleFinder);
 
-        var command = BlacklistsPlayerCommand.Create(schedule.Id.ToString(), player.email.Value).Data;
+        var command = BlacklistsPlayerCommand.Create(schedule.scheduleId.ToString(), player.email.Value).Data;
 
         // first blacklist
         await handler.HandleAsync(command);

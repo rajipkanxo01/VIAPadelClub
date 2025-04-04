@@ -24,6 +24,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VIAPadelClub.Infrastructure
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VIAPadelClub.Core.Application", "VIAPadelClub.Core.Application\VIAPadelClub.Core.Application.csproj", "{6D8769AB-2DAD-4498-862F-34B28178F111}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VIAPadelClub.Infrastructure.EfcDmPersistence", "VIAPadelClub.Infrastructure.EfcDmPersistence\VIAPadelClub.Infrastructure.EfcDmPersistence.csproj", "{6DA433DF-B9DB-446F-9FE7-54FFED64F1B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{19184BD5-DE07-4ACE-814B-79CC4A7DB8F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,8 @@ Global
 		{DC198F9B-BF40-45E4-A57B-3C106D8AE041} = {B7924B68-B3FF-4362-80C1-6C3D95BCD0E2}
 		{24A3DC09-7C85-48C2-9B0C-F3D23E848CFB} = {DC198F9B-BF40-45E4-A57B-3C106D8AE041}
 		{6D8769AB-2DAD-4498-862F-34B28178F111} = {BC77821B-CAA3-498B-B1B0-B0093D6C821B}
+		{6DA433DF-B9DB-446F-9FE7-54FFED64F1B9} = {DC198F9B-BF40-45E4-A57B-3C106D8AE041}
+		{19184BD5-DE07-4ACE-814B-79CC4A7DB8F3} = {46FBDFBB-F4BE-4410-B02D-75B772C1563D}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{48FDF1A6-4D7A-43F9-9237-8CDF2CA8D115}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -65,5 +71,13 @@ Global
 		{6D8769AB-2DAD-4498-862F-34B28178F111}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D8769AB-2DAD-4498-862F-34B28178F111}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D8769AB-2DAD-4498-862F-34B28178F111}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DA433DF-B9DB-446F-9FE7-54FFED64F1B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DA433DF-B9DB-446F-9FE7-54FFED64F1B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DA433DF-B9DB-446F-9FE7-54FFED64F1B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DA433DF-B9DB-446F-9FE7-54FFED64F1B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19184BD5-DE07-4ACE-814B-79CC4A7DB8F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19184BD5-DE07-4ACE-814B-79CC4A7DB8F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19184BD5-DE07-4ACE-814B-79CC4A7DB8F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19184BD5-DE07-4ACE-814B-79CC4A7DB8F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

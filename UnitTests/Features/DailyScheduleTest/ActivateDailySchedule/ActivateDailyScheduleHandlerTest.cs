@@ -27,7 +27,7 @@ public class ActivateDailyScheduleHandlerTest
         scheduleRepository.AddAsync(dailySchedule);
         
         var handler = new ActivateDailyScheduleHandler(scheduleRepository,dateProvider);
-        var command = ActivateDailyScheduleCommand.Create(dailySchedule.Id.ToString()).Data;
+        var command = ActivateDailyScheduleCommand.Create(dailySchedule.scheduleId.ToString()).Data;
         
         // Act
         var result = handler.HandleAsync(command).Result;

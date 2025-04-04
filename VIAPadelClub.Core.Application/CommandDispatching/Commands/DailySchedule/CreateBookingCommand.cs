@@ -7,13 +7,13 @@ namespace VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedul
 
 public class CreateBookingCommand
 {
-    internal Guid DailyScheduleId { get; private set; }
+    internal ScheduleId DailyScheduleId { get; private set; }
     internal Email BookedBy { get; private set; }
     internal TimeOnly StartTime { get; private set; }
     internal TimeOnly EndTime { get; private set; }
     internal Court Court { get; private set; }
     
-    private CreateBookingCommand(Guid dailyScheduleId, Email bookedBy, TimeOnly startTime, TimeOnly endTime, Court court)
+    private CreateBookingCommand(ScheduleId dailyScheduleId, Email bookedBy, TimeOnly startTime, TimeOnly endTime, Court court)
     {
         DailyScheduleId = dailyScheduleId;
         BookedBy = bookedBy;
@@ -54,7 +54,7 @@ public class CreateBookingCommand
             return Result<CreateBookingCommand>.Fail(emailResult.ErrorMessage);
         }
         
-        var command = new CreateBookingCommand(dailyScheduleId, emailResult.Data, startTime, endTime, courtResult.Data);
+        var command = new CreateBookingCommand(ScheduleId.FromGuid(dailyScheduleId), emailResult.Data, startTime, endTime, courtResult.Data);
         return Result<CreateBookingCommand>.Ok(command);
     }
 }
