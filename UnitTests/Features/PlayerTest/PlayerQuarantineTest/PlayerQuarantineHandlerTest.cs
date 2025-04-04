@@ -24,7 +24,7 @@ public class PlayerQuarantineHandlerTest
         await scheduleRepo.AddAsync(schedule);
 
         var unitOfWork = new FakeUnitOfWork();
-        var handler = new QuarantinesPlayerCommandHandler(playerRepo, scheduleRepo, unitOfWork);
+        var handler = new QuarantinesPlayerCommandHandler(playerRepo, scheduleRepo);
 
         var command = QuarantinesPlayerCommand.Create(player.email.Value, DateOnly.FromDateTime(DateTime.Today.AddDays(1)).ToString()).Data;
 
@@ -52,8 +52,7 @@ public class PlayerQuarantineHandlerTest
         var scheduleRepo = new FakeDailyScheduleRepository();
         await scheduleRepo.AddAsync(schedule);
 
-        var unitOfWork = new FakeUnitOfWork();
-        var handler = new QuarantinesPlayerCommandHandler(playerRepo, scheduleRepo, unitOfWork);
+        var handler = new QuarantinesPlayerCommandHandler(playerRepo, scheduleRepo);
 
         var command = QuarantinesPlayerCommand.Create(player.email.Value, DateOnly.FromDateTime(DateTime.Today.AddDays(1)).ToString()).Data;
 

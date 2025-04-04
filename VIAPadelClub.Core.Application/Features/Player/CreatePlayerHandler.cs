@@ -10,13 +10,11 @@ namespace VIAPadelClub.Core.Application.Features.Booking;
 public class CreatePlayerHandler: ICommandHandler<CreatePlayerCommand>
 {
     private readonly IPlayerRepository _playerRepository;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IEmailUniqueChecker _emailUniqueChecker;
     
-    public CreatePlayerHandler(IPlayerRepository playerRepository, IUnitOfWork unitOfWork, IEmailUniqueChecker emailUniqueChecker)
+    public CreatePlayerHandler(IPlayerRepository playerRepository, IEmailUniqueChecker emailUniqueChecker)
     {
         _playerRepository = playerRepository;
-        _unitOfWork = unitOfWork;
         _emailUniqueChecker = emailUniqueChecker;
     }
 
@@ -31,7 +29,6 @@ public class CreatePlayerHandler: ICommandHandler<CreatePlayerCommand>
         }
         
         _playerRepository.AddAsync(playerResult.Result.Data);
-        _unitOfWork.SaveChangesAsync();
         
         return Task.FromResult(Result.Ok());
     }

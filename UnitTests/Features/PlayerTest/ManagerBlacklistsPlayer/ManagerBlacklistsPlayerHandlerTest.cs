@@ -24,7 +24,7 @@ public class BlacklistPlayerHandlerTests
         var fakeScheduleFinder = new FakeScheduleFinder(scheduleRepo);
 
         var unitOfWork = new FakeUnitOfWork();
-        var handler = new BlacklistsPlayerHandler(playerRepo, unitOfWork, fakeScheduleFinder);
+        var handler = new BlacklistsPlayerHandler(playerRepo, fakeScheduleFinder);
 
         var command = BlacklistsPlayerCommand.Create(schedule.Id.ToString(), player.email.Value).Data;
 
@@ -51,8 +51,7 @@ public class BlacklistPlayerHandlerTests
 
         var fakeScheduleFinder = new FakeScheduleFinder(scheduleRepo);
 
-        var unitOfWork = new FakeUnitOfWork();
-        var handler = new BlacklistsPlayerHandler(playerRepo, unitOfWork, fakeScheduleFinder);
+        var handler = new BlacklistsPlayerHandler(playerRepo, fakeScheduleFinder);
 
         var command = BlacklistsPlayerCommand.Create(schedule.Id.ToString(), player.email.Value).Data;
 

@@ -47,8 +47,7 @@ public class CancelsBookingHandlerTest
         var cancelsBookingCommand = PlayerCancelsBookingCommand
             .Create(booking.BookingId.ToString(), player.Email.Value, dailySchedule.Id.ToString()).Data;
 
-        var handler = new PlayerCancelsBookingHandler(fakeDailyScheduleRepository, fakeDateProvider, fakeTimeProvider,
-            unitOfWork);
+        var handler = new PlayerCancelsBookingHandler(fakeDailyScheduleRepository, fakeDateProvider, fakeTimeProvider);
 
         // Act
         var result = handler.HandleAsync(cancelsBookingCommand).Result;
@@ -68,7 +67,6 @@ public class CancelsBookingHandlerTest
         var fakePlayerFinder = new FakePlayerFinder(fakePlayerRepository);
         var fakeScheduleFinder = new FakeScheduleFinder(fakeDailyScheduleRepository);
         var fakeTimeProvider = new FakeTimeProvider(new TimeOnly(10, 0, 0));
-        var unitOfWork = new FakeUnitOfWork();
 
         var player = PlayerBuilder.CreateValid().BuildAsync().Result.Data;
         var dailySchedule = DailyScheduleBuilder.CreateValid().BuildAsync().Data;
@@ -87,8 +85,7 @@ public class CancelsBookingHandlerTest
         var cancelsBookingCommand = PlayerCancelsBookingCommand
             .Create(Guid.NewGuid().ToString(), player.Email.Value, dailySchedule.Id.ToString()).Data;
 
-        var handler = new PlayerCancelsBookingHandler(fakeDailyScheduleRepository, fakeDateProvider, fakeTimeProvider,
-            unitOfWork);
+        var handler = new PlayerCancelsBookingHandler(fakeDailyScheduleRepository, fakeDateProvider, fakeTimeProvider);
 
         // Act
         var result = handler.HandleAsync(cancelsBookingCommand).Result;

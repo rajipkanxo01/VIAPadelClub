@@ -19,7 +19,7 @@ public class ManagerAddsVIPStatusHandlerTest
         await playerRepo.AddAsync(player);
 
         var unitOfWork = new FakeUnitOfWork();
-        var handler = new ChangePlayerToVipCommandHandler(playerRepo, unitOfWork);
+        var handler = new ChangePlayerToVipCommandHandler(playerRepo);
 
         var command = ChangePlayerToVipStatusCommand.Create(player.email.Value).Data;
 
@@ -42,8 +42,7 @@ public class ManagerAddsVIPStatusHandlerTest
         var playerRepo = new FakePlayerRepository();
         await playerRepo.AddAsync(player);
 
-        var unitOfWork = new FakeUnitOfWork();
-        var handler = new ChangePlayerToVipCommandHandler(playerRepo, unitOfWork);
+        var handler = new ChangePlayerToVipCommandHandler(playerRepo);
 
         var command = ChangePlayerToVipStatusCommand.Create(player.email.Value).Data;
 

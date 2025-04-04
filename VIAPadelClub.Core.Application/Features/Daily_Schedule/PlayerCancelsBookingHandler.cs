@@ -13,14 +13,12 @@ public class PlayerCancelsBookingHandler: ICommandHandler<PlayerCancelsBookingCo
     private readonly IDailyScheduleRepository _dailyScheduleRepository;
     private readonly ITimeProvider _timeProvider;
     private readonly IDateProvider _dateProvider;
-    private readonly IUnitOfWork _unitOfWork;
 
-    public PlayerCancelsBookingHandler(IDailyScheduleRepository dailyScheduleRepository, IDateProvider dateProvider, ITimeProvider timeProvider, IUnitOfWork unitOfWork)
+    public PlayerCancelsBookingHandler(IDailyScheduleRepository dailyScheduleRepository, IDateProvider dateProvider, ITimeProvider timeProvider)
     {
         _dailyScheduleRepository = dailyScheduleRepository;
         _dateProvider = dateProvider;
         _timeProvider = timeProvider;
-        _unitOfWork = unitOfWork;
     }
 
     public Task<Result> HandleAsync(PlayerCancelsBookingCommand command)
@@ -40,8 +38,7 @@ public class PlayerCancelsBookingHandler: ICommandHandler<PlayerCancelsBookingCo
         {
             return Task.FromResult(Result.Fail(bookingResult.ErrorMessage));
         }
-
-        _unitOfWork.SaveChangesAsync();
+        
 
         return Task.FromResult(Result.Ok());
     }

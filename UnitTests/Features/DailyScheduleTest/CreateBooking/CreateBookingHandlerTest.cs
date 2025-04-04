@@ -23,7 +23,6 @@ public class CreateBookingHandlerTest
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
         var fakePlayerFinder = new FakePlayerFinder(fakePlayerRepository);
         var fakeScheduleFinder = new FakeScheduleFinder(fakeDailyScheduleRepository);
-        var unitOfWork = new FakeUnitOfWork();
 
         var court = Court.Create(CourtName.Create("D1").Data).Data;
 
@@ -40,7 +39,7 @@ public class CreateBookingHandlerTest
 
         var createBookingCommand = CreateBookingCommand.Create(dailySchedule.scheduleId.ToString(), player.email.Value,
             bookingStartTime.ToString(), bookingEndTime.ToString(), court.Name.Value).Data;
-        var handler = new CreateBookingHandler(fakeDailyScheduleRepository, unitOfWork, fakeDateProvider,
+        var handler = new CreateBookingHandler(fakeDailyScheduleRepository, fakeDateProvider,
             fakePlayerFinder, fakeScheduleFinder);
 
         //Act

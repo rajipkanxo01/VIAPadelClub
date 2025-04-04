@@ -10,13 +10,11 @@ namespace VIAPadelClub.Core.Application.Features.Daily_Schedule;
 public class CreateDailyScheduleHandler : ICommandHandler<CreateDailyScheduleCommand>
 {
     private readonly IDailyScheduleRepository _dailyScheduleRepository;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IDateProvider _dateProvider;
 
-    public CreateDailyScheduleHandler(IDailyScheduleRepository dailyScheduleRepository, IUnitOfWork unitOfWork, IDateProvider dateProvider)
+    public CreateDailyScheduleHandler(IDailyScheduleRepository dailyScheduleRepository, IDateProvider dateProvider)
     {
         _dailyScheduleRepository = dailyScheduleRepository;
-        _unitOfWork = unitOfWork;
         _dateProvider = dateProvider;
     }
 
@@ -30,7 +28,6 @@ public class CreateDailyScheduleHandler : ICommandHandler<CreateDailyScheduleCom
         }
 
         await _dailyScheduleRepository.AddAsync(scheduleResult.Data);
-        await _unitOfWork.SaveChangesAsync();
 
         return Result.Ok();
     }

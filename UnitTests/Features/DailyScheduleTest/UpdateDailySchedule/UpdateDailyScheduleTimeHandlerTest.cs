@@ -23,7 +23,7 @@ public class UpdateDailyScheduleTimeHandlerTest
         var repo = new FakeDailyScheduleRepository();
         repo.AddAsync(dailySchedule);
 
-        var handler = new UpdateDailyScheduleTimeHandler(repo, new FakeUnitOfWork(),
+        var handler = new UpdateDailyScheduleTimeHandler(repo,
             new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)));
 
         // Act
@@ -47,7 +47,7 @@ public class UpdateDailyScheduleTimeHandlerTest
         var repo = new FakeDailyScheduleRepository();
         repo.AddAsync(dailySchedule);
 
-        var handler = new UpdateDailyScheduleTimeHandler(repo, new FakeUnitOfWork(), new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)));
+        var handler = new UpdateDailyScheduleTimeHandler(repo,new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)));
 
         // Act
         var result = handler.HandleAsync(command).Result;

@@ -13,10 +13,9 @@ public class CreateDailyScheduleHandlerTest
     {
         // Arrange
         var scheduleRepo = new FakeDailyScheduleRepository();
-        var unitOfWork = new FakeUnitOfWork();
         var dateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
 
-        var handler = new CreateDailyScheduleHandler(scheduleRepo, unitOfWork, dateProvider);
+        var handler = new CreateDailyScheduleHandler(scheduleRepo, dateProvider);
         var commandResult = CreateDailyScheduleCommand.Create();
 
         Assert.True(commandResult.Success);
@@ -27,6 +26,5 @@ public class CreateDailyScheduleHandlerTest
 
         // Assert
         Assert.True(result.Success);
-        Assert.True(unitOfWork.SaveChangesCalled);
     }
 }

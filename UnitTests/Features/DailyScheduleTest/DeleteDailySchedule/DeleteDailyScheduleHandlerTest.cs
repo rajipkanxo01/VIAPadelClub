@@ -20,7 +20,6 @@ public class DeleteDailyScheduleHandlerTest
         var command = DeleteDailyScheduleCommand.Create(schedule.Id.ToString()).Data;
         var handler = new DeleteDailyScheduleCommandHandler(
             repo,
-            new FakeUnitOfWork(),
             new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today)),
             new FakeTimeProvider(TimeOnly.FromDateTime(DateTime.Now))
         );

@@ -12,14 +12,12 @@ public class AddAvailableCourtHandler:ICommandHandler<AddAvailableCourtCommand>
     private readonly IDailyScheduleRepository _dailyScheduleRepository;
     private readonly IDateProvider _dateProvider;
     private readonly IScheduleFinder _scheduleFinder;
-    private readonly IUnitOfWork _unitOfWork;
     
-    public AddAvailableCourtHandler(IDailyScheduleRepository dailyScheduleRepository, IDateProvider dateProvider, IScheduleFinder scheduleFinder,IUnitOfWork unitOfWork)
+    public AddAvailableCourtHandler(IDailyScheduleRepository dailyScheduleRepository, IDateProvider dateProvider, IScheduleFinder scheduleFinder)
     {
         _dailyScheduleRepository = dailyScheduleRepository;
         _dateProvider = dateProvider;
         _scheduleFinder = scheduleFinder;
-        _unitOfWork = unitOfWork;
     }
     
     public Task<Result> HandleAsync(AddAvailableCourtCommand command)
@@ -32,7 +30,6 @@ public class AddAvailableCourtHandler:ICommandHandler<AddAvailableCourtCommand>
         }
 
         var result = dailyScheduleResult.Data.AddAvailableCourt(command.Court,_dateProvider, _scheduleFinder);
-        _unitOfWork.SaveChangesAsync();
         return Task.FromResult(result);
     }
 }
