@@ -24,6 +24,7 @@ public class VipTimeRange : ValueObject
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        throw new NotImplementedException();
+        yield return Start;
+        yield return End;
     }
 }

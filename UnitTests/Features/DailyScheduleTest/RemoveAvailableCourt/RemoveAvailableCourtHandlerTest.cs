@@ -22,11 +22,12 @@ public class RemoveAvailableCourtHandlerTest
         var court = Court.Create(CourtName.Create("D1").Data).Data;
         var dailySchedule = DailyScheduleBuilder.CreateValid().WithDateProvider(dateProvider).Activate().WithCourt(court)
             .WithScheduleFinder(fakeScheduleFinder).BuildAsync().Data;
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.scheduleId.Value);
         
         var timeOfRemoval = new TimeOnly(9, 0, 0);
         scheduleRepository.AddAsync(dailySchedule);
         
-        var command = RemoveAvailableCourtCommand.Create(dailySchedule.scheduleId.ToString(),court.Name.Value,timeOfRemoval.ToString()).Data;
+        var command = RemoveAvailableCourtCommand.Create(scheduleId.Value.ToString(),court.Name.Value,timeOfRemoval.ToString()).Data;
         var handler = new RemoveAvailableCourtHandler(scheduleRepository,dateProvider);
         
         // Act

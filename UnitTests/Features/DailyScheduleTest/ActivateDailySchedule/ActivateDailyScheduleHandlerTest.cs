@@ -23,14 +23,14 @@ public class ActivateDailyScheduleHandlerTest
         var court = Court.Create(CourtName.Create("D1").Data).Data;
         var dailySchedule = DailyScheduleBuilder.CreateValid().WithDateProvider(dateProvider).WithCourt(court)
             .WithScheduleFinder(fakeScheduleFinder).BuildAsync().Data;
-        
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.scheduleId.Value);
         scheduleRepository.AddAsync(dailySchedule);
         
         var handler = new ActivateDailyScheduleHandler(scheduleRepository,dateProvider);
-        var command = ActivateDailyScheduleCommand.Create(dailySchedule.scheduleId.ToString()).Data;
+        var command = ActivateDailyScheduleCommand.Create(scheduleId.Value.ToString());
         
         // Act
-        var result = handler.HandleAsync(command).Result;
+        var result = handler.HandleAsync(command.Data).Result;
 
         // Assert
         Assert.True(result.Success);
