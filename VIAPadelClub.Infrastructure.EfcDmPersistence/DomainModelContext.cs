@@ -50,6 +50,44 @@ public class DomainModelContext(DbContextOptions options) : DbContext(options)
                 ownedBuilder.ToTable("VipTimeRanges");
                 ownedBuilder.HasKey("DailyScheduleId", "Start", "End"); // composite key
             });
+
+        entityBuilder.OwnsMany(
+            schedule => schedule.listOfCourts,
+            ownedBuilder =>
+            {
+                ownedBuilder.WithOwner().HasForeignKey("DailyScheduleId");
+
+                ownedBuilder
+                    .Property(p => p.Name)
+                    .HasConversion(
+                        v => v.Value,
+                        v => CourtName.Create(v).Data 
+                    )
+                    .HasColumnName("Name");
+
+                ownedBuilder.ToTable("Courts");
+                ownedBuilder.HasKey("DailyScheduleId", "Name"); // composite key
+            });
+        
+        entityBuilder.OwnsMany(
+            schedule => schedule.listOfAvailableCourts,
+            ownedBuilder =>
+            {
+                ownedBuilder.WithOwner().HasForeignKey("DailyScheduleId");
+
+                ownedBuilder
+                    .Property(p => p.Name)
+                    .HasConversion(
+                        v => v.Value,
+                        v => CourtName.Create(v).Data 
+                    )
+                    .HasColumnName("Name");
+
+                ownedBuilder.ToTable("AvailableCourts");
+                ownedBuilder.HasKey("DailyScheduleId", "Name"); // composite key
+            });
+        
+
     }
 
     private static void ConfigurePlayer(EntityTypeBuilder<Player> entityBuilder)

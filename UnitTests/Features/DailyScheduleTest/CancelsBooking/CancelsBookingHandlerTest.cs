@@ -25,13 +25,13 @@ public class CancelsBookingHandlerTest
         var fakePlayerFinder = new FakePlayerFinder(fakePlayerRepository);
         var fakeScheduleFinder = new FakeScheduleFinder(fakeDailyScheduleRepository);
         var fakeTimeProvider = new FakeTimeProvider(new TimeOnly(10, 0, 0));
-        var unitOfWork = new FakeUnitOfWork();
         
         var court = Court.Create(CourtName.Create("D1").Data).Data;
 
         var player = PlayerBuilder.CreateValid().BuildAsync().Result.Data;
         var dailySchedule = DailyScheduleBuilder.CreateValid().WithDateProvider(fakeDateProvider).Activate().WithCourt(court)
             .WithScheduleFinder(fakeScheduleFinder).BuildAsync().Data;
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.scheduleId.Value);
 
         fakeDailyScheduleRepository.AddAsync(dailySchedule);
         fakePlayerRepository.AddAsync(player);
@@ -44,7 +44,7 @@ public class CancelsBookingHandlerTest
             fakePlayerFinder, fakeScheduleFinder).Data;
         
         var cancelsBookingCommand = PlayerCancelsBookingCommand
-            .Create(booking.BookingId.ToString(), player.email.Value, dailySchedule.scheduleId.ToString()).Data;
+            .Create(booking.BookingId.ToString(), player.email.Value, scheduleId.Value.ToString()).Data;
 
         var handler = new PlayerCancelsBookingHandler(fakeDailyScheduleRepository, fakeDateProvider, fakeTimeProvider);
 
@@ -69,6 +69,7 @@ public class CancelsBookingHandlerTest
 
         var player = PlayerBuilder.CreateValid().BuildAsync().Result.Data;
         var dailySchedule = DailyScheduleBuilder.CreateValid().BuildAsync().Data;
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.scheduleId.Value);
 
         var bookingStartTime = new TimeOnly(15, 0, 0);
         var bookingEndTime = new TimeOnly(17, 0, 0);
@@ -82,7 +83,7 @@ public class CancelsBookingHandlerTest
         fakePlayerRepository.AddAsync(player);
 
         var cancelsBookingCommand = PlayerCancelsBookingCommand
-            .Create(Guid.NewGuid().ToString(), player.email.Value, dailySchedule.scheduleId.ToString()).Data;
+            .Create(Guid.NewGuid().ToString(), player.email.Value, scheduleId.Value.ToString()).Data;
 
         var handler = new PlayerCancelsBookingHandler(fakeDailyScheduleRepository, fakeDateProvider, fakeTimeProvider);
 
