@@ -13,7 +13,7 @@ namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 
 public class DailySchedule : AggregateRoot
 {
-    public ScheduleId scheduleId { get; private set; }
+    public ScheduleId scheduleId { get; }
     internal DateOnly scheduleDate;
     internal TimeOnly availableFrom;
     internal TimeOnly availableUntil;
@@ -25,7 +25,7 @@ public class DailySchedule : AggregateRoot
     internal List<Booking> listOfBookings;
     internal List<VipTimeRange> vipTimeRanges = new();
 
-    public DailySchedule() // for efc
+    private DailySchedule() // for efc
     {
     }
 
