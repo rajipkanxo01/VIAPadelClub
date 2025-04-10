@@ -7,7 +7,7 @@ public class Quarantine
     internal DateOnly StartDate { get; set; }
     internal DateOnly EndDate { get; set; }
 
-    public Quarantine() // for efc
+    private Quarantine() // for efc
     {
     }
 

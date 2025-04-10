@@ -19,8 +19,8 @@ public class Booking : Entity
     internal DateOnly BookedDate { get; }
     internal BookingStatus BookingStatus { get; private set; }
 
-    private Booking(Guid id) : base(id) // for efc
-    {
+    private Booking() : base(Guid.Empty)
+    { // EFC only.
     }
 
     private Booking(Guid id,Email bookedBy, Court court, int duration, DateOnly bookedDate, TimeOnly startTime, TimeOnly endTime) : base(id)

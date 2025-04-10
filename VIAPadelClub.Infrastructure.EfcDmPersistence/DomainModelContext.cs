@@ -86,8 +86,53 @@ public class DomainModelContext(DbContextOptions options) : DbContext(options)
                 ownedBuilder.ToTable("AvailableCourts");
                 ownedBuilder.HasKey("DailyScheduleId", "Name"); // composite key
             });
-        
 
+        entityBuilder.OwnsMany(
+        schedule => schedule.listOfBookings,
+        ownedBuilder => 
+        {
+            ownedBuilder.WithOwner().HasForeignKey("DailyScheduleId");
+
+            ownedBuilder.Property(p => p.BookingId)
+                .HasColumnName("BookingId")
+                .IsRequired();
+
+            ownedBuilder.Property(p => p.BookedBy)
+                .HasConversion(
+                email => email.Value,
+                dbValue => Email.Create(dbValue).Data
+                )
+                .HasColumnName("BookedBy");
+            
+            ownedBuilder.OwnsOne(
+            p => p.Court,
+            ownedBuilder =>
+            {
+                ownedBuilder.Property(c => c.Name)
+                    .HasConversion(
+                    name => name.Value,
+                    value => CourtName.Create(value).Data
+                    )
+                    .HasColumnName("CourtName");
+            });
+            
+            ownedBuilder.Property(p => p.Duration).HasColumnName("Duration");
+            ownedBuilder.Property(p => p.StartTime).HasColumnName("StartTime");
+            ownedBuilder.Property(p => p.EndTime).HasColumnName("EndTime");
+            ownedBuilder.Property(p => p.BookedDate).HasColumnName("BookedDate");
+
+            ownedBuilder.Property(p => p.BookingStatus)
+                .HasConversion(
+                status => status.ToString(),
+                str => Enum.Parse<BookingStatus>(str)
+                )
+                .HasColumnName("BookingStatus");
+            
+            ownedBuilder.ToTable("Bookings");
+            ownedBuilder.HasKey("DailyScheduleId", "BookingId");
+            
+            ownedBuilder.Ignore(p => p.Id);
+        });
     }
 
     private static void ConfigurePlayer(EntityTypeBuilder<Player> entityBuilder)
