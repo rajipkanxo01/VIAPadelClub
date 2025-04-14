@@ -10,7 +10,7 @@ using VIAPadelClub.Core.Tools.OperationResult;
 namespace VIAPadelClub.Core.Domain.Aggregates.Players;
 public class Player : AggregateRoot
 {
-    public Email email { get; private set; }
+    public Email email { get; }
     internal FullName fullName;
     internal ProfileUri url;
     internal VipMemberShip vipMemberShip;
@@ -18,7 +18,7 @@ public class Player : AggregateRoot
     internal Quarantine? activeQuarantine;
     internal bool isBlackListed = false;
 
-    public Player() // for efc
+    private Player() // for efc
     {
     }
 

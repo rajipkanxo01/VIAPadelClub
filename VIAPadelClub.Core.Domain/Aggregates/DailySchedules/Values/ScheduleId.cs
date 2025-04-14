@@ -4,14 +4,14 @@ namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 
 public class ScheduleId : ValueObject
 {
-    public Guid Value { get; private set; }
+    public Guid Value { get; }
 
-    protected ScheduleId(Guid value)
+    private ScheduleId(Guid value)
     {
         Value = value;
     }
 
-    public static ScheduleId Create() => new(Guid.NewGuid());
+    public static ScheduleId Create() => new ScheduleId(Guid.NewGuid());
     
     public static ScheduleId FromGuid(Guid guid) => new ScheduleId(guid);
 
