@@ -7,5 +7,5 @@ public interface IPlayerRepository
 {
     Task<Result> AddAsync(Player player);
     Task<Result<Player>> GetAsync(Email playerEmail);
-    Task<Result> RemoveAsync();
+    Task<Result> RemoveAsync(Email playerEmail);
 }
