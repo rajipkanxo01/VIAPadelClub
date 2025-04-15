@@ -30,7 +30,7 @@ public class CreateBookingHandlerTest
         var dailySchedule = DailyScheduleBuilder.CreateValid().WithDateProvider(fakeDateProvider).Activate()
             .WithCourt(court)
             .WithScheduleFinder(fakeScheduleFinder).BuildAsync().Data;
-        var scheduleId = ScheduleId.FromGuid(dailySchedule.scheduleId.Value);
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value);
         
         fakeDailyScheduleRepository.AddAsync(dailySchedule);
         fakePlayerRepository.AddAsync(player);

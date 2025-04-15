@@ -25,7 +25,7 @@ public class DbContext
 
         await MyDbContext.SaveAndClearAsync(entity, ctx);
 
-        DailySchedule? retrieved = ctx.DailySchedules.SingleOrDefault(x => x.scheduleId.Equals(scheduleId));
+        DailySchedule? retrieved = ctx.DailySchedules.SingleOrDefault(x => x.ScheduleId.Equals(scheduleId));
         Assert.NotNull(retrieved);
     }
 

@@ -164,8 +164,6 @@ public class Booking : Entity
             return Result<Booking>.Fail(DailyScheduleError.OneHourGapBetweenScheduleEndTimeAndBookingEndTime()._message);
         }
         var newBooking = new Booking(Guid.NewGuid(), email, court, (int)(endTime - startTime).TotalMinutes, schedule.scheduleDate, startTime, endTime);
-        schedule.listOfBookings.Add(newBooking);
-        
         return Result<Booking>.Ok(newBooking);
     }
     

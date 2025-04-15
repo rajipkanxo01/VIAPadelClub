@@ -92,7 +92,7 @@ public class Player : AggregateRoot
         return Result.Ok();
     }
 
-    public Result ChangeToVIPStatus()
+    public Result ChangeToVipStatus()
     {
         if (isBlackListed)
             return Result.Fail("Blacklisted players cannot be elevated to VIP status.");

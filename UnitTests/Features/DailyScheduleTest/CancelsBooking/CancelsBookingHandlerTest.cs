@@ -31,7 +31,7 @@ public class CancelsBookingHandlerTest
         var player = PlayerBuilder.CreateValid().BuildAsync().Result.Data;
         var dailySchedule = DailyScheduleBuilder.CreateValid().WithDateProvider(fakeDateProvider).Activate().WithCourt(court)
             .WithScheduleFinder(fakeScheduleFinder).BuildAsync().Data;
-        var scheduleId = ScheduleId.FromGuid(dailySchedule.scheduleId.Value);
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value);
 
         fakeDailyScheduleRepository.AddAsync(dailySchedule);
         fakePlayerRepository.AddAsync(player);
@@ -69,7 +69,7 @@ public class CancelsBookingHandlerTest
 
         var player = PlayerBuilder.CreateValid().BuildAsync().Result.Data;
         var dailySchedule = DailyScheduleBuilder.CreateValid().BuildAsync().Data;
-        var scheduleId = ScheduleId.FromGuid(dailySchedule.scheduleId.Value);
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value);
 
         var bookingStartTime = new TimeOnly(15, 0, 0);
         var bookingEndTime = new TimeOnly(17, 0, 0);

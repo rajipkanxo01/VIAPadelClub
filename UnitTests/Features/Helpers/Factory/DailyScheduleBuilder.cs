@@ -9,24 +9,38 @@ namespace UnitTests.Features.Helpers.Factory;
 
 public class DailyScheduleBuilder
 {
-    private DateOnly? _scheduleDate;
-    private TimeOnly? _availableFrom;
-    private TimeOnly? _availableUntil;
+    private DateOnly _scheduleDate = DateOnly.FromDateTime(DateTime.Today.AddDays(2));
+    private TimeOnly _availableFrom = new TimeOnly(10, 00);
+    private TimeOnly _availableUntil = new TimeOnly(16, 00);
     private readonly List<(TimeOnly start, TimeOnly end)> _vipTimeRanges = new();
-    private bool _activate = false;
-    private ScheduleId scheduleId = ScheduleId.Create();
-    
-    private List<Court> _courts = new();
+    private bool _activate;
+    private ScheduleId _scheduleId = ScheduleId.Create();
 
-    private IDateProvider _dateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
-    private IScheduleFinder _scheduleFinder = new FakeScheduleFinder(daileScheduleRepository);
-    private static FakeDailyScheduleRepository daileScheduleRepository;
+    private readonly List<Court> _courts = new();
 
-    private DailyScheduleBuilder()
+    private IDateProvider _dateProvider;
+    private IScheduleFinder _scheduleFinder;
+
+    private DailyScheduleBuilder(IDateProvider dateProvider, IScheduleFinder scheduleFinder)
     {
+        _dateProvider = dateProvider;
+        _scheduleFinder = scheduleFinder;
     }
 
-    public static DailyScheduleBuilder CreateValid() => new();
+    public static DailyScheduleBuilder CreateValid()
+    {
+        var repo = new FakeDailyScheduleRepository();
+        var dateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
+        var finder = new FakeScheduleFinder(repo);
+
+        return new DailyScheduleBuilder(dateProvider, finder);
+    }
+
+    public DailyScheduleBuilder WithScheduleId(ScheduleId id)
+    {
+        _scheduleId = id;
+        return this;
+    }
 
     public DailyScheduleBuilder WithDate(DateOnly date)
     {
@@ -58,7 +72,7 @@ public class DailyScheduleBuilder
         _dateProvider = provider;
         return this;
     }
-    
+
     public DailyScheduleBuilder WithScheduleFinder(IScheduleFinder finder)
     {
         _scheduleFinder = finder;
@@ -73,40 +87,29 @@ public class DailyScheduleBuilder
 
     public Result<DailySchedule> BuildAsync()
     {
-        var result = DailySchedule.CreateSchedule(_dateProvider, scheduleId);
-        if (!result.Success)
-        {
-            return Result<DailySchedule>.Fail(result.ErrorMessage);
-        }
+        var result = DailySchedule.CreateSchedule(_dateProvider, _scheduleId);
+        if (!result.Success) return Result<DailySchedule>.Fail(result.ErrorMessage);
 
         var schedule = result.Data;
 
-        if (_courts.Any())
+        foreach (var court in _courts)
         {
-            foreach (var court in _courts)
-            {
-                schedule.listOfCourts.Add(court);
-                schedule.AddAvailableCourt(court, _dateProvider, _scheduleFinder);
-            }
+            schedule.listOfCourts.Add(court);
+            schedule.AddAvailableCourt(court, _dateProvider, _scheduleFinder);
         }
-        
-        if (_scheduleDate != null || _availableFrom != null || _availableUntil != null)
-        {
-            var updateResult = schedule.UpdateScheduleDateAndTime(
-                _scheduleDate ?? _dateProvider.Today(),
-                _availableFrom ?? new TimeOnly(15, 0),
-                _availableUntil ?? new TimeOnly(22, 0),
-                _dateProvider
-            );
 
-            if (!updateResult.Success)
-                return Result<DailySchedule>.Fail(updateResult.ErrorMessage);
-        }
+        var updateResult = schedule.UpdateScheduleDateAndTime(
+            _scheduleDate,
+            _availableFrom,
+            _availableUntil,
+            _dateProvider
+        );
+
+        if (!updateResult.Success)
+            return Result<DailySchedule>.Fail(updateResult.ErrorMessage);
 
         if (_activate)
-        {
             schedule.Activate(_dateProvider);
-        }
 
         foreach (var vip in _vipTimeRanges)
         {

@@ -13,7 +13,7 @@ namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 
 public class DailySchedule : AggregateRoot
 {
-    public ScheduleId scheduleId { get; }
+    public ScheduleId ScheduleId { get; }
     internal DateOnly scheduleDate;
     internal TimeOnly availableFrom;
     internal TimeOnly availableUntil;
@@ -31,7 +31,7 @@ public class DailySchedule : AggregateRoot
 
     private DailySchedule(ScheduleId id)
     {
-        scheduleId = id;
+        ScheduleId = id;
         availableFrom = new TimeOnly(15, 0, 0);
         availableUntil = new TimeOnly(22, 0, 0);
         status = ScheduleStatus.Draft;
@@ -58,7 +58,7 @@ public class DailySchedule : AggregateRoot
 
     public Result AddAvailableCourt(Court court, IDateProvider dateProvider, IScheduleFinder scheduleFinder)
     {
-        var scheduleResult = scheduleFinder.FindSchedule(scheduleId);
+        var scheduleResult = scheduleFinder.FindSchedule(ScheduleId);
         if (!scheduleResult.Success)
         {
             return Result.Fail(scheduleResult.ErrorMessage);
@@ -84,8 +84,9 @@ public class DailySchedule : AggregateRoot
             return courtCheckResult;
         }
 
+        court.AssignSchedule(ScheduleId);
+        schedule.listOfCourts.Add(court);
         schedule.listOfAvailableCourts.Add(Court.Create(courtNameResult.Data).Data);
-        scheduleFinder.AddSchedule(schedule);
         return Result.Ok();
     }
 
@@ -132,7 +133,6 @@ public class DailySchedule : AggregateRoot
 
         // If no future bookings exist, remove the court
         listOfAvailableCourts.Remove(court);
-        listOfCourts.Remove(court);
         return Result.Ok();
     }
 
@@ -271,11 +271,14 @@ public class DailySchedule : AggregateRoot
 
   public Result<Booking> BookCourt (Email bookedByPlayer, Court court, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider, IPlayerFinder playerFinder, IScheduleFinder scheduleFinder)
     {
-        var booking = Booking.Create(scheduleId, court, startTime, endTime,bookedByPlayer, scheduleFinder, playerFinder);
+        var booking = Booking.Create(ScheduleId, court, startTime, endTime,bookedByPlayer, scheduleFinder, playerFinder);
         if (!booking.Success)
         {
             return Result<Booking>.Fail(booking.ErrorMessage);
         }
+        
+        listOfBookings.Add(booking.Data);
+        listOfAvailableCourts.Remove(court);
         return Result<Booking>.Ok(booking.Data);
     }
 
@@ -288,6 +291,7 @@ public class DailySchedule : AggregateRoot
             return Result.Fail(DailyScheduleError.BookingNotFound()._message);
         }
 
+        listOfBookings.Remove(booking);
         return booking.Cancel(dateProvider,timeProvider, playerMakingCancel);
     }
 }

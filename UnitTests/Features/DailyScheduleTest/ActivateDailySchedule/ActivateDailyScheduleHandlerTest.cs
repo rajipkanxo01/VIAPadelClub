@@ -23,7 +23,7 @@ public class ActivateDailyScheduleHandlerTest
         var court = Court.Create(CourtName.Create("D1").Data).Data;
         var dailySchedule = DailyScheduleBuilder.CreateValid().WithDateProvider(dateProvider).WithCourt(court)
             .WithScheduleFinder(fakeScheduleFinder).BuildAsync().Data;
-        var scheduleId = ScheduleId.FromGuid(dailySchedule.scheduleId.Value);
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value);
         scheduleRepository.AddAsync(dailySchedule);
         
         var handler = new ActivateDailyScheduleHandler(scheduleRepository,dateProvider);

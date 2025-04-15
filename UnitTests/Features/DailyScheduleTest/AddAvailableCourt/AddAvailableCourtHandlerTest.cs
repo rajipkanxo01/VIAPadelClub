@@ -21,7 +21,7 @@ public class AddAvailableCourtHandlerTest
         var scheduleFinder = new FakeScheduleFinder(scheduleRepository);
         
         var dailySchedule = DailyScheduleBuilder.CreateValid().Activate().BuildAsync().Data;
-        var scheduleId = ScheduleId.FromGuid(dailySchedule.scheduleId.Value);
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value);
         var court = Court.Create(CourtName.Create("D1").Data).Data;
         
         var command = AddAvailableCourtCommand.Create(scheduleId.Value.ToString(),court.Name.Value ).Data;
@@ -45,7 +45,7 @@ public class AddAvailableCourtHandlerTest
         var scheduleFinder = new FakeScheduleFinder(scheduleRepository);
         
         var dailySchedule = DailyScheduleBuilder.CreateValid().Activate().BuildAsync().Data;
-        var scheduleId = ScheduleId.FromGuid(dailySchedule.scheduleId.Value);
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value);
         var court = Court.Create(CourtName.Create("D1").Data).Data;
         dailySchedule.listOfCourts.Add(court);
         dailySchedule.listOfAvailableCourts.Add(court);

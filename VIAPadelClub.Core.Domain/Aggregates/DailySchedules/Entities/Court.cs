@@ -6,6 +6,7 @@ namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 public class Court
 {
     internal CourtName Name { get; }
+    internal ScheduleId ScheduleId { get; private set;  }
 
     private Court() // for efc
     {
@@ -20,5 +21,10 @@ public class Court
     {
         var court = new Court(name);
         return Result<Court>.Ok(court);
+    }
+    
+    internal void AssignSchedule(ScheduleId scheduleId)
+    {
+        ScheduleId = scheduleId;
     }
 }

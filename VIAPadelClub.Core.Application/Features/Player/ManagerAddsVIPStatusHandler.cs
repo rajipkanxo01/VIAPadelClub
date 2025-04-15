@@ -26,7 +26,7 @@ public class ChangePlayerToVipCommandHandler : ICommandHandler<ChangePlayerToVip
 
         var player = playerResult.Data;
 
-        var vipResult = player.ChangeToVIPStatus();
+        var vipResult = player.ChangeToVipStatus();
         if (!vipResult.Success)
         {
             return Result.Fail(vipResult.ErrorMessage);
