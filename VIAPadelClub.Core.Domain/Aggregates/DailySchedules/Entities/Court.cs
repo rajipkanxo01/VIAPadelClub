@@ -25,6 +25,6 @@ public class Court
     
     internal void AssignSchedule(ScheduleId scheduleId)
     {
-        ScheduleId = scheduleId;
+        // ScheduleId = scheduleId;
     }
 }

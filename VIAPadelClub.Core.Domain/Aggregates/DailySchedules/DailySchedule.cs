@@ -217,7 +217,9 @@ public class DailySchedule : AggregateRoot
         if (isDeleted)
             return Result.Fail(DailyScheduleError.ScheduleIsDeleted()._message);
 
-        listOfAvailableCourts = listOfCourts;
+        listOfAvailableCourts = listOfCourts
+            .Select(court => Court.Create(CourtName.Create(court.Name.Value).Data).Data)
+            .ToList();
         status = ScheduleStatus.Active;
         return Result.Ok();
     }

@@ -76,8 +76,7 @@ public class DailySchedulePersistenceTest
         
         dailySchedule.AddAvailableCourt(court, dateProviderMock.Object, scheduleFinderMock.Object);
         dailySchedule.Activate(dateProviderMock.Object);
-
-
+        
         // Act
         dailySchedule.BookCourt(player.Data.email, court, vipStartTime, vipEndTime, dateProviderMock.Object,
             playerFinderMock.Object, scheduleFinderMock.Object);
@@ -90,7 +89,7 @@ public class DailySchedulePersistenceTest
 
         // Assert
         Assert.NotNull(reloaded);
+        Assert.Equal(1, reloaded.listOfCourts.Count);
         Assert.Equal(1, reloaded.listOfBookings.Count);
-        // Assert.Equal(1, reloaded.listOfCourts.Count);
     }
 }
