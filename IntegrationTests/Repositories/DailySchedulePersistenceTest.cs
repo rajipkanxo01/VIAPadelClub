@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using UnitTests.Features.Helpers.Factory;
+using UnitTests.Features.Helpers.Repository;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
@@ -23,10 +24,11 @@ public class DailySchedulePersistenceTest
         var dailySchedule = DailyScheduleBuilder.CreateValid().BuildAsync().Data;
         await using var context = MyDbContext.SetupContext();
 
-        // Act
+        // Act  
         await MyDbContext.SaveAndClearAsync(dailySchedule, context);
         var schedule = await context.DailySchedules.FindAsync(dailySchedule.ScheduleId);
-
+        await context.SaveChangesAsync();
+        
         // Assert
         Assert.NotNull(schedule);
 
@@ -42,21 +44,24 @@ public class DailySchedulePersistenceTest
         Mock<IPlayerFinder> playerFinderMock = new();
 
         dateProviderMock.Setup(m => m.Today()).Returns(DateOnly.FromDateTime(DateTime.Today));
-
-
+        
         await using var context = MyDbContext.SetupContext();
 
-        var court = Court.Create(CourtName.Create("S1").Data).Data;
+        var court = Court.Create(CourtName.Create("D8").Data).Data;
         var startTime = new TimeOnly(10, 00);
         var endTime = new TimeOnly(18, 00);
         var vipStartTime = new TimeOnly(12, 00);
         var vipEndTime = new TimeOnly(14, 00);
+        
+        await MyDbContext.SaveAndClearAsync(court, context);
 
         ScheduleId scheduleId = ScheduleId.Create();
 
         var player = await PlayerBuilder.CreateValid()
             .WithVIP()
             .BuildAsync();
+        
+        await MyDbContext.SaveAndClearAsync(player.Data, context);
 
         var dailySchedule = DailyScheduleBuilder.CreateValid()
             .WithScheduleId(scheduleId)
@@ -67,12 +72,16 @@ public class DailySchedulePersistenceTest
             .WithScheduleFinder(scheduleFinderMock.Object)
             .BuildAsync().Data;
         
+        
+        await MyDbContext.SaveAndClearAsync(dailySchedule, context);
+        
         scheduleFinderMock
             .Setup(m => m.FindSchedule(It.IsAny<ScheduleId>()))
             .Returns(Result<DailySchedule>.Ok(dailySchedule));
         playerFinderMock
             .Setup(m => m.FindPlayer(player.Data.email))
             .Returns(Result<Player>.Ok(player.Data));
+        await MyDbContext.SaveAndClearAsync(court, context);
         
         dailySchedule.AddAvailableCourt(court, dateProviderMock.Object, scheduleFinderMock.Object);
         dailySchedule.Activate(dateProviderMock.Object);
@@ -82,6 +91,7 @@ public class DailySchedulePersistenceTest
             playerFinderMock.Object, scheduleFinderMock.Object);
 
         await MyDbContext.SaveAndClearAsync(dailySchedule, context);
+        
         var reloaded = await context.DailySchedules
             .Include(schedule => schedule.listOfAvailableCourts)
             .Include(schedule => schedule.listOfBookings)

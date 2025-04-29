@@ -1,14 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 
 namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Configs;
 
-public class DailyScheduleEntityConfig
+public class DailyScheduleEntityConfig : IEntityTypeConfiguration<DailySchedule>
 {
-    public static void ConfigureDailySchedule(EntityTypeBuilder<DailySchedule> entityBuilder)
+    public void Configure(EntityTypeBuilder<DailySchedule> entityBuilder)
     {
         entityBuilder.HasKey(schedule => schedule.ScheduleId);
 
@@ -42,87 +43,24 @@ public class DailyScheduleEntityConfig
                 ownedBuilder.HasKey("DailyScheduleId", "Start", "End"); // composite key
             });
 
-        entityBuilder.OwnsMany(
-            schedule => schedule.listOfCourts,
-            ownedBuilder =>
-            {
-                ownedBuilder.WithOwner().HasForeignKey("DailyScheduleId");
+        entityBuilder
+            .HasMany<Court>(ds => ds.listOfCourts)
+            .WithOne() 
+            .HasForeignKey("DailyScheduleId")
+            .OnDelete(DeleteBehavior.Cascade);
 
-                ownedBuilder
-                    .Property(p => p.Name)
-                    .HasConversion(
-                        v => v.Value,
-                        v => CourtName.Create(v).Data 
-                    )
-                    .HasColumnName("Name");
+        entityBuilder
+            .HasMany<Court>(ds => ds.listOfAvailableCourts)
+            .WithOne() 
+            .HasForeignKey("DailyScheduleId")
+            .OnDelete(DeleteBehavior.Cascade);
 
-                ownedBuilder.ToTable("Courts");
-                ownedBuilder.HasKey("DailyScheduleId", "Name"); // composite key
-            });
-        
-        entityBuilder.OwnsMany(
-            schedule => schedule.listOfAvailableCourts,
-            ownedBuilder =>
-            {
-                ownedBuilder.WithOwner().HasForeignKey("DailyScheduleId");
+        entityBuilder
+            .HasMany<Booking>(ds => ds.listOfBookings)
+            .WithOne() 
+            .HasForeignKey("DailyScheduleId")
+            .OnDelete(DeleteBehavior.Cascade);
 
-                ownedBuilder
-                    .Property(p => p.Name)
-                    .HasConversion(
-                        v => v.Value,
-                        v => CourtName.Create(v).Data 
-                    )
-                    .HasColumnName("Name");
-
-                ownedBuilder.ToTable("AvailableCourts");
-                ownedBuilder.HasKey("DailyScheduleId", "Name"); // composite key
-            });
-
-        entityBuilder.OwnsMany(
-        schedule => schedule.listOfBookings,
-        ownedBuilder => 
-        {
-            ownedBuilder.WithOwner().HasForeignKey("DailyScheduleId");
-
-            ownedBuilder.Property(p => p.BookingId)
-                .HasColumnName("BookingId")
-                .IsRequired();
-
-            ownedBuilder.Property(p => p.BookedBy)
-                .HasConversion(
-                email => email.Value,
-                dbValue => Email.Create(dbValue).Data
-                )
-                .HasColumnName("BookedBy");
-            
-            ownedBuilder.OwnsOne(
-            p => p.Court,
-            ownedBuilder =>
-            {
-                ownedBuilder.Property(c => c.Name)
-                    .HasConversion(
-                    name => name.Value,
-                    value => CourtName.Create(value).Data
-                    )
-                    .HasColumnName("CourtName");
-            });
-            
-            ownedBuilder.Property(p => p.Duration).HasColumnName("Duration");
-            ownedBuilder.Property(p => p.StartTime).HasColumnName("StartTime");
-            ownedBuilder.Property(p => p.EndTime).HasColumnName("EndTime");
-            ownedBuilder.Property(p => p.BookedDate).HasColumnName("BookedDate");
-
-            ownedBuilder.Property(p => p.BookingStatus)
-                .HasConversion(
-                status => status.ToString(),
-                str => Enum.Parse<BookingStatus>(str)
-                )
-                .HasColumnName("BookingStatus");
-            
-            ownedBuilder.ToTable("Bookings");
-            ownedBuilder.HasKey("DailyScheduleId", "BookingId");
-            
-            ownedBuilder.Ignore(p => p.Id);
-        });
+        entityBuilder.ToTable("DailySchedules");
     }
 }

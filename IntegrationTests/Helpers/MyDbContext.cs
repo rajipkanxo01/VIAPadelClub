@@ -1,18 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Moq;
-using UnitTests.Features.Helpers;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
-using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
-using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
-using VIAPadelClub.Infrastructure.EfcDmPersistence.Configs;
-using Xunit;
-using Assert = Xunit.Assert;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
+using VIAPadelClub.Core.Domain.Aggregates.Players;
+using VIAPadelClub.Infrastructure.EfcDmPersistence;
 
 namespace IntegrationTests.Helpers;
 
-public class MyDbContext(DbContextOptions options) : Microsoft.EntityFrameworkCore.DbContext(options)
+public class MyDbContext(DbContextOptions options) : DomainModelContext(options)
 {
     public DbSet<DailySchedule> DailySchedules { get; set; }
+    // public DbSet<Court> Courts { get; set; }
+    // public DbSet<Booking> Bookings { get; set; }
+    public DbSet<Player> Players { get; set; }
 
     public static MyDbContext SetupContext()
     {
@@ -33,12 +32,5 @@ public class MyDbContext(DbContextOptions options) : Microsoft.EntityFrameworkCo
         await context.Set<T>().AddAsync(entity);
         await context.SaveChangesAsync();
         context.ChangeTracker.Clear();
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-
-        DailyScheduleEntityConfig.ConfigureDailySchedule(modelBuilder.Entity<DailySchedule>());
     }
 }
