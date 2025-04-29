@@ -8,7 +8,7 @@ namespace IntegrationTests.Helpers;
 
 public class MyDbContext(DbContextOptions options) : DomainModelContext(options)
 {
-    public DbSet<DailySchedule> DailySchedules { get; set; }
+    // public DbSet<DailySchedule> DailySchedules { get; set; }
     // public DbSet<Court> Courts { get; set; }
     // public DbSet<Booking> Bookings { get; set; }
     public DbSet<Player> Players { get; set; }

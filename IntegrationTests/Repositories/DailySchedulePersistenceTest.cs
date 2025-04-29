@@ -26,7 +26,7 @@ public class DailySchedulePersistenceTest
 
         // Act  
         await MyDbContext.SaveAndClearAsync(dailySchedule, context);
-        var schedule = await context.DailySchedules.FindAsync(dailySchedule.ScheduleId);
+        var schedule = await context.Set<DailySchedule>().FindAsync(dailySchedule.ScheduleId);
         await context.SaveChangesAsync();
         
         // Assert
@@ -72,7 +72,6 @@ public class DailySchedulePersistenceTest
             .WithScheduleFinder(scheduleFinderMock.Object)
             .BuildAsync().Data;
         
-        
         await MyDbContext.SaveAndClearAsync(dailySchedule, context);
         
         scheduleFinderMock
@@ -92,7 +91,7 @@ public class DailySchedulePersistenceTest
 
         await MyDbContext.SaveAndClearAsync(dailySchedule, context);
         
-        var reloaded = await context.DailySchedules
+        var reloaded = await context.Set<DailySchedule>()
             .Include(schedule => schedule.listOfAvailableCourts)
             .Include(schedule => schedule.listOfBookings)
             .FirstOrDefaultAsync(x => x.ScheduleId == dailySchedule.ScheduleId);
