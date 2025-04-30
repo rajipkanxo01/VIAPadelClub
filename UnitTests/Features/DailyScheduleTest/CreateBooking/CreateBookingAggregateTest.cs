@@ -422,6 +422,7 @@ public class CreateBookingAggregateTest
         var existingBooking = dailySchedule.BookCourt(player.email, court, new TimeOnly(10, 0), new TimeOnly(12, 0),_dateProvider,_playerFinder, _scheduleFinder);
         dailySchedule.listOfBookings.Add(existingBooking.Data);
         
+        
         // Act
         var result = dailySchedule.BookCourt(player.email,court, new TimeOnly(11, 0), new TimeOnly(12, 0),_dateProvider, _playerFinder,_scheduleFinder);
         

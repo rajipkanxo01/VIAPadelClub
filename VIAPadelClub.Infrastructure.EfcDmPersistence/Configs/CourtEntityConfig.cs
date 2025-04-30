@@ -10,9 +10,7 @@ public class CourtEntityConfig : IEntityTypeConfiguration<Court>
     public void Configure(EntityTypeBuilder<Court> builder)
     {
         builder.HasKey(c => c.Name);
-
-        builder.Property(c => c.Name)
-            .ValueGeneratedNever();
+        
 
         builder.Property(c => c.Name)
             .HasConversion(
@@ -20,6 +18,14 @@ public class CourtEntityConfig : IEntityTypeConfiguration<Court>
                 value => CourtName.Create(value).Data
             )
             .HasColumnName("CourtName");
+        
+        /*builder.Property(c => c.DailyScheduleId)
+            .HasConversion(
+                id => id.Value,
+                value => ScheduleId.FromGuid(value)
+            )
+            .HasColumnName("ScheduleId");*/
+
 
         builder.ToTable("Courts");
     }

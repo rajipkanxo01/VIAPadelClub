@@ -6,14 +6,16 @@ using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Repositories;
 
-public class EfcDailyScheduleRepository : RepositoryBase<DailySchedule, ScheduleId>, IDailyScheduleRepository
+public class DailyScheduleRepository : RepositoryBase<DailySchedule, ScheduleId>, IDailyScheduleRepository
 {
     private readonly DbContext _context;
 
-    public EfcDailyScheduleRepository(DomainModelContext context) : base(context)
+    public DailyScheduleRepository(DomainModelContext context) : base(context)
     {
         _context = context;
     }
+    
+    
 
     public async Task<Result<List<DailySchedule>>> GetAllAsync()
     {

@@ -20,9 +20,9 @@ public class DailySchedule : AggregateRoot
     internal ScheduleStatus status;
     internal bool isDeleted;
 
-    internal List<Court> listOfCourts;
+    public List<Court> listOfCourts { get; private set; }= [];
     internal List<Court> listOfAvailableCourts;
-    internal List<Booking> listOfBookings;
+    public List<Booking> listOfBookings { get; private set; } = [];
     internal List<VipTimeRange> vipTimeRanges = new();
 
     private DailySchedule() // for efc
@@ -84,7 +84,7 @@ public class DailySchedule : AggregateRoot
             return courtCheckResult;
         }
 
-        court.AssignSchedule(ScheduleId);
+        // court.AssignToSchedule(ScheduleId);
         schedule.listOfCourts.Add(court);
         schedule.listOfAvailableCourts.Add(Court.Create(courtNameResult.Data).Data);
         return Result.Ok();
@@ -132,7 +132,13 @@ public class DailySchedule : AggregateRoot
         }
 
         // If no future bookings exist, remove the court
-        listOfAvailableCourts.Remove(court);
+        var courtToRemove = listOfAvailableCourts.FirstOrDefault(c => c.Name.Value == court.Name.Value);
+        if (courtToRemove != null)
+        {
+            listOfAvailableCourts.Remove(courtToRemove);
+        }
+
+        
         return Result.Ok();
     }
 
@@ -280,7 +286,7 @@ public class DailySchedule : AggregateRoot
         }
         
         listOfBookings.Add(booking.Data);
-        listOfAvailableCourts.Remove(court);
+        // listOfAvailableCourts.Remove(court);
         return Result<Booking>.Ok(booking.Data);
     }
 

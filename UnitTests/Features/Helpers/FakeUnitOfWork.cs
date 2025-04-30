@@ -7,9 +7,9 @@ public class FakeUnitOfWork : IUnitOfWork
 {
     public bool SaveChangesCalled { get; private set; }
 
-    public Task<Result> SaveChangesAsync()
+    public Task<int> SaveChangesAsync()
     {
         SaveChangesCalled = true;
-        return Task.FromResult(Result.Ok());
+        return Task.FromResult<int>(1);
     }
 }

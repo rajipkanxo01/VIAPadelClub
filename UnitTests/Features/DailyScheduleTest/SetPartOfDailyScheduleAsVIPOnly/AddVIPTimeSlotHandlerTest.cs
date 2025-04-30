@@ -16,7 +16,7 @@ public class AddVipTimeSlotHandlerTest
         // Arrange
         var dailySchedule = DailyScheduleBuilder.CreateValid().Activate().BuildAsync().Data;
         var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value).Value;
-        var command = AddVipTimeSlotCommand.Create(scheduleId.ToString(), "16:00", "17:00").Data;
+        var command = AddVipTimeSlotCommand.Create(scheduleId.ToString(), "12:00", "13:00").Data;
 
         var scheduleRepository = new FakeDailyScheduleRepository();
         scheduleRepository.AddAsync(dailySchedule);

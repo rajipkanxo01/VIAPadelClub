@@ -44,21 +44,33 @@ public class DailyScheduleEntityConfig : IEntityTypeConfiguration<DailySchedule>
             });
 
         entityBuilder
-            .HasMany<Court>(ds => ds.listOfCourts)
-            .WithOne() 
-            .HasForeignKey("DailyScheduleId")
-            .OnDelete(DeleteBehavior.Cascade);
-
-        entityBuilder
-            .HasMany<Court>(ds => ds.listOfAvailableCourts)
-            .WithOne() 
-            .HasForeignKey("DailyScheduleId")
-            .OnDelete(DeleteBehavior.Cascade);
-
+            .HasMany(ds => ds.listOfCourts)
+            .WithMany(c => c.Schedules)
+            .UsingEntity<Dictionary<string, object>>(
+                "DailyScheduleCourts",
+                j => j
+                    .HasOne<Court>()
+                    .WithMany()
+                    .HasForeignKey("CourtName")
+                    .HasConstraintName("FK_DailyScheduleCourts_Courts_CourtName")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => j
+                    .HasOne<DailySchedule>()
+                    .WithMany()
+                    .HasForeignKey("ScheduleId")
+                    .HasConstraintName("FK_DailyScheduleCourts_DailySchedules_ScheduleId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j =>
+                {
+                    j.HasKey("ScheduleId", "CourtName");
+                    j.ToTable("DailyScheduleCourts");
+                }
+            );
+        
         entityBuilder
             .HasMany<Booking>(ds => ds.listOfBookings)
             .WithOne() 
-            .HasForeignKey("DailyScheduleId")
+            .HasForeignKey("ScheduleId")
             .OnDelete(DeleteBehavior.Cascade);
 
         entityBuilder.ToTable("DailySchedules");

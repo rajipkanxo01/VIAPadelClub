@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
@@ -38,6 +39,11 @@ public class BookingEntityConfig : IEntityTypeConfiguration<Booking>
             .WithMany() 
             .HasForeignKey("CourtName");
 
+        // Configure foreign key to DailySchedule
+        builder.HasOne<DailySchedule>()
+            .WithMany(ds => ds.listOfBookings)
+            .HasForeignKey("ScheduleId")
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.ToTable("Bookings");
     }

@@ -1,29 +1,30 @@
-﻿using Microsoft.EntityFrameworkCore;
-using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
-using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
-using VIAPadelClub.Core.Domain.Aggregates.Players;
+﻿using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using VIAPadelClub.Infrastructure.EfcDmPersistence;
 
 namespace IntegrationTests.Helpers;
 
 public class MyDbContext(DbContextOptions options) : DomainModelContext(options)
 {
-    // public DbSet<DailySchedule> DailySchedules { get; set; }
-    // public DbSet<Court> Courts { get; set; }
-    // public DbSet<Booking> Bookings { get; set; }
-    public DbSet<Player> Players { get; set; }
-
     public static MyDbContext SetupContext()
     {
-        DbContextOptionsBuilder<MyDbContext> optionsBuilder = new();
-        string currentDir = Directory.GetCurrentDirectory();
-        string testDbName = Path.Combine(currentDir, "Test" + Guid.NewGuid() + ".db");
-        optionsBuilder.UseSqlite(@"Data Source = " + testDbName);
-        MyDbContext context = new(optionsBuilder.Options);
+        var connection = new SqliteConnection("DataSource=:memory:");
+        // var connection = new SqliteConnection("DataSource=TestDatabase.db");
+        connection.Open();
 
-        context.Database.EnsureDeleted();
+        var options = new DbContextOptionsBuilder<DomainModelContext>()
+            .UseSqlite(connection)
+            .Options;
+
+        var context = new MyDbContext(options);
         context.Database.EnsureCreated();
+
         return context;
+    }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(DomainModelContext).Assembly);
     }
 
     public static async Task SaveAndClearAsync<T>(T entity, MyDbContext context)
@@ -33,4 +34,26 @@ public class MyDbContext(DbContextOptions options) : DomainModelContext(options)
         await context.SaveChangesAsync();
         context.ChangeTracker.Clear();
     }
+    
+    public static async Task ClearAllDataAsync(DomainModelContext context)
+    {
+        var tables = new[]
+        {
+            "DailyScheduleCourts",
+            "VipTimeRanges",
+            "Bookings",
+            "Player",
+            "Courts",
+            "DailySchedules"
+        };
+
+        foreach (var table in tables)
+        {
+            await context.Database.ExecuteSqlRawAsync($"DELETE FROM \"{table}\"");
+        }
+
+        context.ChangeTracker.Clear();
+    }
+
+
 }

@@ -4,5 +4,5 @@ namespace VIAPadelClub.Core.Domain.Common;
 
 public interface IUnitOfWork
 {
-    Task<Result> SaveChangesAsync();
+    Task<int> SaveChangesAsync();
 }

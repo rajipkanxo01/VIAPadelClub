@@ -28,10 +28,5 @@ public class DbContext
         DailySchedule? retrieved = ctx.Set<DailySchedule>().SingleOrDefault(x => x.ScheduleId.Equals(scheduleId));
         Assert.NotNull(retrieved);
     }
-
-    [Fact]
-    public async Task NonNullableSinglePrimitiveValuedValueObject()
-    {
-        
-    }
+    
 }

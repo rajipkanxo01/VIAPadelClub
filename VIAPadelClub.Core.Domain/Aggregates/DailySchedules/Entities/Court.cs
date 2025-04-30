@@ -5,8 +5,8 @@ namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 
 public class Court
 {
-    internal CourtName Name { get; }
-    internal ScheduleId ScheduleId { get; private set;  }
+    public CourtName Name { get; }
+    public List<DailySchedule> Schedules { get; private set; } = [];
 
     private Court() // for efc
     {
@@ -23,8 +23,19 @@ public class Court
         return Result<Court>.Ok(court);
     }
     
-    internal void AssignSchedule(ScheduleId scheduleId)
+    public override bool Equals(object obj)
     {
-        // ScheduleId = scheduleId;
+        if (obj is not Court other) return false;
+        return Name.Value.Equals(other.Name.Value, StringComparison.OrdinalIgnoreCase);
     }
+
+    public override int GetHashCode()
+    {
+        return Name.Value.GetHashCode();
+    }
+
+    /*public void AssignToSchedule(ScheduleId id)
+    {
+        DailyScheduleId = id;
+    }*/
 }

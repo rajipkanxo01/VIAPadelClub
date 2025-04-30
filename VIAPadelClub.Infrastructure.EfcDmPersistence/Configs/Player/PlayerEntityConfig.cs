@@ -45,5 +45,7 @@ public class PlayerEntityConfig : IEntityTypeConfiguration<Core.Domain.Aggregate
 
         entityBuilder.Property(p => p.isBlackListed).IsRequired();
         entityBuilder.Property(p => p.isQuarantined).IsRequired();
+
+        entityBuilder.ToTable("Player");
     }
 }
