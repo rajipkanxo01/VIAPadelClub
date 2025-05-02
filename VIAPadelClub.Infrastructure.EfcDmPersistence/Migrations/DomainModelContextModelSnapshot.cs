@@ -63,10 +63,6 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("BookingStatus");
 
-                    b.Property<string>("CourtName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("Duration")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Duration");
@@ -74,6 +70,10 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                     b.Property<TimeOnly>("EndTime")
                         .HasColumnType("TEXT")
                         .HasColumnName("EndTime");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("ScheduleId")
                         .HasColumnType("TEXT");
@@ -88,7 +88,7 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 
                     b.HasIndex("ScheduleId");
 
-                    b.HasIndex("CourtName", "ScheduleId");
+                    b.HasIndex("Name", "ScheduleId");
 
                     b.ToTable("Bookings", (string)null);
                 });
@@ -193,7 +193,7 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 
                     b.HasOne("VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities.Court", "Court")
                         .WithMany()
-                        .HasForeignKey("CourtName", "ScheduleId")
+                        .HasForeignKey("Name", "ScheduleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

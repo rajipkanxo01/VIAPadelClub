@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class bookingcourt : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -91,7 +91,7 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                 {
                     BookingId = table.Column<Guid>(type: "TEXT", nullable: false),
                     BookedBy = table.Column<string>(type: "TEXT", nullable: false),
-                    CourtName = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
                     ScheduleId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Duration = table.Column<int>(type: "INTEGER", nullable: false),
                     StartTime = table.Column<TimeOnly>(type: "TEXT", nullable: false),
@@ -103,8 +103,8 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                 {
                     table.PrimaryKey("PK_Bookings", x => x.BookingId);
                     table.ForeignKey(
-                        name: "FK_Bookings_Courts_CourtName_ScheduleId",
-                        columns: x => new { x.CourtName, x.ScheduleId },
+                        name: "FK_Bookings_Courts_Name_ScheduleId",
+                        columns: x => new { x.Name, x.ScheduleId },
                         principalTable: "Courts",
                         principalColumns: new[] { "CourtName", "ScheduleId" },
                         onDelete: ReferentialAction.Restrict);
@@ -128,9 +128,9 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                 column: "BookedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_CourtName_ScheduleId",
+                name: "IX_Bookings_Name_ScheduleId",
                 table: "Bookings",
-                columns: new[] { "CourtName", "ScheduleId" });
+                columns: new[] { "Name", "ScheduleId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_ScheduleId",

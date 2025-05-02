@@ -46,7 +46,7 @@ public class BookingEntityConfig : IEntityTypeConfiguration<Booking>
         
         builder.HasOne(b => b.Court)
             .WithMany()
-            .HasForeignKey("CourtName", "ScheduleId")
+            .HasForeignKey("Name", "ScheduleId")
             .HasPrincipalKey("Name", "ScheduleId")
             .OnDelete(DeleteBehavior.Restrict);
         

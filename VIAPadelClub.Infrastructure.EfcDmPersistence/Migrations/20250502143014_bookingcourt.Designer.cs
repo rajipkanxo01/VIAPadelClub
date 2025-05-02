@@ -12,8 +12,8 @@ using VIAPadelClub.Infrastructure.EfcDmPersistence;
 namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 {
     [DbContext(typeof(DomainModelContext))]
-    [Migration("20250502140857_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250502143014_bookingcourt")]
+    partial class bookingcourt
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,10 +66,6 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("BookingStatus");
 
-                    b.Property<string>("CourtName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("Duration")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Duration");
@@ -77,6 +73,10 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                     b.Property<TimeOnly>("EndTime")
                         .HasColumnType("TEXT")
                         .HasColumnName("EndTime");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("ScheduleId")
                         .HasColumnType("TEXT");
@@ -91,7 +91,7 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 
                     b.HasIndex("ScheduleId");
 
-                    b.HasIndex("CourtName", "ScheduleId");
+                    b.HasIndex("Name", "ScheduleId");
 
                     b.ToTable("Bookings", (string)null);
                 });
@@ -196,7 +196,7 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 
                     b.HasOne("VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities.Court", "Court")
                         .WithMany()
-                        .HasForeignKey("CourtName", "ScheduleId")
+                        .HasForeignKey("Name", "ScheduleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
