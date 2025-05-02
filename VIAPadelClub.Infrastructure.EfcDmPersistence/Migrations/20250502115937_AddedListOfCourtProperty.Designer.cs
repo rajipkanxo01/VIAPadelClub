@@ -12,8 +12,8 @@ using VIAPadelClub.Infrastructure.EfcDmPersistence;
 namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 {
     [DbContext(typeof(DomainModelContext))]
-    [Migration("20250502111345_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250502115937_AddedListOfCourtProperty")]
+    partial class AddedListOfCourtProperty
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
