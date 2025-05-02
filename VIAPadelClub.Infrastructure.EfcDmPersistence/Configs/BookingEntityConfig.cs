@@ -4,6 +4,7 @@ using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
+using VIAPadelClub.Core.Domain.Common.BaseClasses;
 
 namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Configs;
 
@@ -11,11 +12,15 @@ public class BookingEntityConfig : IEntityTypeConfiguration<Booking>
 {
     public void Configure(EntityTypeBuilder<Booking> builder)
     {
-        builder.HasKey(x => x.Id);
+        builder.HasKey(x => x.BookingId);
+        builder
+            .Property(m => m.BookingId)
+            .IsRequired()
+            .HasConversion(
+                mId => mId.Value,
+                dbValue => BookingId.FromGuid(dbValue)
+            );
         
-        builder.Property(b => b.BookingId)
-            .ValueGeneratedNever();
-
         builder.Property(b => b.BookedBy)
             .HasConversion(
                 email => email.Value,

@@ -23,7 +23,7 @@ public class DailySchedule : AggregateRoot
 
     internal List<Court> listOfCourts { get; private set; }
     internal List<Court> listOfAvailableCourts;
-    public List<Booking> listOfBookings { get; private set; } = [];
+    internal List<Booking> listOfBookings { get; private set; } = [];
     internal List<VipTimeRange> vipTimeRanges = new();
 
     private DailySchedule() // for efc
@@ -298,10 +298,10 @@ public class DailySchedule : AggregateRoot
         return Result<Booking>.Ok(booking.Data);
     }
 
-    public Result CancelBooking(Guid bookingId, IDateProvider dateProvider, ITimeProvider timeProvider,
+    public Result CancelBooking(BookingId bookingId, IDateProvider dateProvider, ITimeProvider timeProvider,
         Email playerMakingCancel)
     {
-        var booking = listOfBookings.FirstOrDefault(booking => booking.BookingId == bookingId);
+        var booking = listOfBookings.FirstOrDefault(booking => booking.BookingId.Equals(bookingId));
 
         if (booking == null)
         {

@@ -78,6 +78,8 @@ public class CreateBookingIntegrationTest
 
         var playerResult = await Player.Register(email.Data, fullName.Data, profileUrl.Data, emailCheckerMock.Object);
         await playerRepository.AddAsync(playerResult.Data);
+        
+        
         await unitOfWork.SaveChangesAsync();
 
         // 5. create booking, save it to database
@@ -86,6 +88,8 @@ public class CreateBookingIntegrationTest
 
         var activatedSchedule = await GetDailySchedule(context, scheduleId);
         var player = await GetPlayer(context, email.Data);
+        
+        context.Attach(activatedSchedule);
         var court = activatedSchedule.listOfCourts[0];
 
         scheduleFinderMock.Setup(m => m.FindSchedule(It.IsAny<ScheduleId>()))
@@ -95,6 +99,12 @@ public class CreateBookingIntegrationTest
 
         var bookingResult = activatedSchedule.BookCourt(player.email, court, bookingStarTime, bookingEndTime, dateProviderMock.Object,
             playerFinderMock.Object, scheduleFinderMock.Object);
+        
+        foreach (var entry in context.ChangeTracker.Entries())
+        {
+            Console.WriteLine($"{entry.Entity.GetType().Name} - {entry.State}");
+        }
+        
         await unitOfWork.SaveChangesAsync();
         
         /*context.ChangeTracker.Clear();

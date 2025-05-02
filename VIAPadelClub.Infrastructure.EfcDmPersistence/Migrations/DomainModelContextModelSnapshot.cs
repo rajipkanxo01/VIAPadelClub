@@ -46,8 +46,7 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 
             modelBuilder.Entity("VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities.Booking", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("BookingId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("BookedBy")
@@ -58,9 +57,6 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                     b.Property<DateOnly>("BookedDate")
                         .HasColumnType("TEXT")
                         .HasColumnName("BookedDate");
-
-                    b.Property<Guid>("BookingId")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("BookingStatus")
                         .IsRequired()
@@ -86,7 +82,7 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("StartTime");
 
-                    b.HasKey("Id");
+                    b.HasKey("BookingId");
 
                     b.HasIndex("BookedBy");
 

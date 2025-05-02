@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedCourtFKInBooking : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -89,7 +89,6 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                 name: "Bookings",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     BookingId = table.Column<Guid>(type: "TEXT", nullable: false),
                     BookedBy = table.Column<string>(type: "TEXT", nullable: false),
                     CourtName = table.Column<string>(type: "TEXT", nullable: false),
@@ -102,7 +101,7 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bookings", x => x.Id);
+                    table.PrimaryKey("PK_Bookings", x => x.BookingId);
                     table.ForeignKey(
                         name: "FK_Bookings_Courts_CourtName_ScheduleId",
                         columns: x => new { x.CourtName, x.ScheduleId },

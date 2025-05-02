@@ -172,7 +172,7 @@ public class CancelsBookingAggregateTest
         var schedule = SetupDailySchedule(court, fakeScheduleFinder);
         var firstPlayer = SetupPlayer("111111@via.dk", "First", "Player", fakePlayerFinder);
 
-        var nonExistentBookingId = Guid.NewGuid();
+        var nonExistentBookingId = BookingId.Create();
 
         // Act
         var cancelResult = schedule.CancelBooking(nonExistentBookingId, fakeDateProvider, fakeTimeProvider, firstPlayer.email);

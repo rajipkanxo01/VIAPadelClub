@@ -12,8 +12,8 @@ using VIAPadelClub.Infrastructure.EfcDmPersistence;
 namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 {
     [DbContext(typeof(DomainModelContext))]
-    [Migration("20250502132840_AddedCourtFKInBooking")]
-    partial class AddedCourtFKInBooking
+    [Migration("20250502140857_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,8 +49,7 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 
             modelBuilder.Entity("VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities.Booking", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("BookingId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("BookedBy")
@@ -61,9 +60,6 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                     b.Property<DateOnly>("BookedDate")
                         .HasColumnType("TEXT")
                         .HasColumnName("BookedDate");
-
-                    b.Property<Guid>("BookingId")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("BookingStatus")
                         .IsRequired()
@@ -89,7 +85,7 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("StartTime");
 
-                    b.HasKey("Id");
+                    b.HasKey("BookingId");
 
                     b.HasIndex("BookedBy");
 
