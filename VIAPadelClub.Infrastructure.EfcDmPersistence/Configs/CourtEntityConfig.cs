@@ -9,7 +9,7 @@ public class CourtEntityConfig : IEntityTypeConfiguration<Court>
 {
     public void Configure(EntityTypeBuilder<Court> builder)
     {
-        builder.HasKey(c => c.Name);
+        builder.HasKey("Name", "ScheduleId");
         
 
         builder.Property(c => c.Name)
@@ -19,12 +19,12 @@ public class CourtEntityConfig : IEntityTypeConfiguration<Court>
             )
             .HasColumnName("CourtName");
         
-        /*builder.Property(c => c.DailyScheduleId)
+        builder.Property(c => c.ScheduleId)
             .HasConversion(
                 id => id.Value,
                 value => ScheduleId.FromGuid(value)
             )
-            .HasColumnName("ScheduleId");*/
+            .HasColumnName("ScheduleId");
 
 
         builder.ToTable("Courts");

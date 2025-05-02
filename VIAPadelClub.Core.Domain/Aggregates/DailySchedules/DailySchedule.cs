@@ -84,7 +84,7 @@ public class DailySchedule : AggregateRoot
             return courtCheckResult;
         }
 
-        // court.AssignToSchedule(ScheduleId);
+        court.AssignToSchedule(ScheduleId);
         schedule.listOfCourts.Add(court);
         schedule.listOfAvailableCourts.Add(Court.Create(courtNameResult.Data).Data);
         return Result.Ok();

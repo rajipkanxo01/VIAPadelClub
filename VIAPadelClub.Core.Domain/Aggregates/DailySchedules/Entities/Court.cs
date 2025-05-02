@@ -5,9 +5,9 @@ namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 
 public class Court
 {
-    public CourtName Name { get; }
-    public List<DailySchedule> Schedules { get; private set; } = [];
-
+    internal CourtName Name { get; }
+    internal ScheduleId ScheduleId { get; set; }
+    
     private Court() // for efc
     {
     }
@@ -34,8 +34,8 @@ public class Court
         return Name.Value.GetHashCode();
     }
 
-    /*public void AssignToSchedule(ScheduleId id)
+    public void AssignToSchedule(ScheduleId id)
     {
-        DailyScheduleId = id;
-    }*/
+        ScheduleId = id;
+    }
 }

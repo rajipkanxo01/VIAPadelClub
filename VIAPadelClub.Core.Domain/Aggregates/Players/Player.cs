@@ -27,6 +27,7 @@ public class Player : AggregateRoot
         this.email = email;
         this.fullName = fullName;
         this.url = url;
+
         // quarantines = new List<Quarantine>();
     }
     

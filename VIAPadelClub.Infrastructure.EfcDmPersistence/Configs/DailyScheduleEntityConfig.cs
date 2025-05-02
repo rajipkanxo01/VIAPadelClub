@@ -43,7 +43,7 @@ public class DailyScheduleEntityConfig : IEntityTypeConfiguration<DailySchedule>
                 ownedBuilder.HasKey("DailyScheduleId", "Start", "End"); // composite key
             });
 
-        entityBuilder
+        /*entityBuilder
             .HasMany(ds => ds.listOfCourts)
             .WithMany(c => c.Schedules)
             .UsingEntity<Dictionary<string, object>>(
@@ -65,12 +65,18 @@ public class DailyScheduleEntityConfig : IEntityTypeConfiguration<DailySchedule>
                     j.HasKey("ScheduleId", "CourtName");
                     j.ToTable("DailyScheduleCourts");
                 }
-            );
+            );*/
         
         entityBuilder
             .HasMany<Booking>(ds => ds.listOfBookings)
             .WithOne() 
             .HasForeignKey("ScheduleId")
+            .OnDelete(DeleteBehavior.Cascade);
+
+        entityBuilder
+            .HasMany<Court>(ds => ds.listOfCourts)
+            .WithOne()
+            .HasForeignKey(court => court.ScheduleId)
             .OnDelete(DeleteBehavior.Cascade);
 
         entityBuilder.ToTable("DailySchedules");

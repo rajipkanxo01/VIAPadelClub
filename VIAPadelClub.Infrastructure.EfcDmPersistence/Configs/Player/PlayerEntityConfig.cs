@@ -30,10 +30,10 @@ public class PlayerEntityConfig : IEntityTypeConfiguration<Core.Domain.Aggregate
         entityBuilder.ComplexProperty<ProfileUri>(p => p.url,
             builder => { builder.Property(value => value.Value).HasColumnName("ProfileUrl"); });
 
-        entityBuilder.ComplexProperty<VipMemberShip>(p => p.vipMemberShip, builder =>
+        entityBuilder.OwnsOne<VipMemberShip>(p => p.vipMemberShip, builder =>
         {
-            builder.Property<DateOnly>(ship => ship.StartDate).HasColumnName("StartDate");
-            builder.Property<DateOnly>(ship => ship.EndDate).HasColumnName("EndDate");
+            builder.Property<DateOnly>(ship => ship.VIPStartDate).HasColumnName("VIPStartDate");
+            builder.Property<DateOnly>(ship => ship.VIPEndDate).HasColumnName("VIPEndDate");
             builder.Property<bool>(ship => ship.IsVIP).HasColumnName("IsVip");
         });
 

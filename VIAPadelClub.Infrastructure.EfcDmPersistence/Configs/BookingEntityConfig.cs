@@ -34,11 +34,13 @@ public class BookingEntityConfig : IEntityTypeConfiguration<Booking>
                 str => Enum.Parse<BookingStatus>(str)
             )
             .HasColumnName("BookingStatus");
-        
-        builder.HasOne(b => b.Court)
-            .WithMany() 
-            .HasForeignKey("CourtName");
 
+        /*
+        builder.HasOne<Court>(b => b.Court)
+            .WithMany()
+            .HasForeignKey(b => b.Court.);
+            */
+        
         // Configure foreign key to DailySchedule
         builder.HasOne<DailySchedule>()
             .WithMany(ds => ds.listOfBookings)
