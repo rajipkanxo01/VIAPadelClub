@@ -1,6 +1,9 @@
 ﻿using IntegrationTests.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using Services.Contracts;
+using VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedule;
+using VIAPadelClub.Core.Application.Features.Daily_Schedule;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
@@ -17,16 +20,6 @@ namespace IntegrationTests.Repositories;
 
 public class CreateBookingIntegrationTest
 {
-    // 1. create a new player and save it to database
-    /*var email = Email.Create("123456@via.dk");
-    var fullName = FullName.Create("Test", "User").Data;
-    var profileUrl = ProfileUri.Create("www.profileUri.com/testUser");
-
-    var playerResult = await Player.Register(email.Data, fullName, profileUrl.Data, emailCheckerMock.Object);
-    playerResult.Data.ChangeToVipStatus();
-    await playerRepository.AddAsync(playerResult.Data);
-    await unitOfWork.SaveChangesAsync();*/
-
     [Fact]
     public async Task ShouldCreateDailyScheduleAndSaveToDatabase_WhenValid()
     {
@@ -54,21 +47,21 @@ public class CreateBookingIntegrationTest
         var scheduleEndTime = new TimeOnly(23, 30);
         var scheduleDate = DateOnly.FromDateTime(DateTime.Today.AddDays(3));
 
-        var draftSchedule = await scheduleRepository.GetAsync(scheduleId);
-        draftSchedule.Data.UpdateScheduleDateAndTime(scheduleDate, scheduleStartTime, scheduleEndTime,
+        scheduleResult.Data.UpdateScheduleDateAndTime(scheduleDate, scheduleStartTime, scheduleEndTime,
             dateProviderMock.Object);
         await unitOfWork.SaveChangesAsync();
-
-        scheduleFinderMock.Setup(m => m.FindSchedule(It.IsAny<ScheduleId>()))
-            .Returns(draftSchedule);
 
         // 3. create new court, add it to list of court in daily schedule, activate it, save it to database
         var nameResult = CourtName.Create("S1");
         var courtResult = Court.Create(nameResult.Data);
 
-        var updatedSchedule = await scheduleRepository.GetAsync(scheduleId);
-        updatedSchedule.Data.AddAvailableCourt(courtResult.Data, dateProviderMock.Object, scheduleFinderMock.Object);
-        updatedSchedule.Data.Activate(dateProviderMock.Object);
+        scheduleFinderMock.Setup(m => m.FindSchedule(It.IsAny<ScheduleId>()))
+            .Returns(scheduleResult);
+        scheduleResult.Data.AddAvailableCourt(courtResult.Data, dateProviderMock.Object, scheduleFinderMock.Object);
+        scheduleFinderMock.Setup(m => m.FindSchedule(It.IsAny<ScheduleId>()))
+            .Returns(scheduleResult);
+
+        scheduleResult.Data.Activate(dateProviderMock.Object);
         await unitOfWork.SaveChangesAsync();
 
         // 4. create player, save it to database
@@ -78,52 +71,35 @@ public class CreateBookingIntegrationTest
 
         var playerResult = await Player.Register(email.Data, fullName.Data, profileUrl.Data, emailCheckerMock.Object);
         await playerRepository.AddAsync(playerResult.Data);
-        
-        
+
         await unitOfWork.SaveChangesAsync();
 
         // 5. create booking, save it to database
         var bookingStarTime = new TimeOnly(12, 00);
         var bookingEndTime = new TimeOnly(13, 00);
+        var court = scheduleResult.Data.listOfCourts[0];
 
-        var activatedSchedule = await GetDailySchedule(context, scheduleId);
         var player = await GetPlayer(context, email.Data);
         
-        context.Attach(activatedSchedule);
-        var court = activatedSchedule.listOfCourts[0];
-
         scheduleFinderMock.Setup(m => m.FindSchedule(It.IsAny<ScheduleId>()))
-            .Returns(Result<DailySchedule>.Ok(activatedSchedule));
+            .Returns(scheduleResult);
         playerFinderMock.Setup(m => m.FindPlayer(It.IsAny<Email>()))
             .Returns(Result<Player>.Ok(player));
 
-        var bookingResult = activatedSchedule.BookCourt(player.email, court, bookingStarTime, bookingEndTime, dateProviderMock.Object,
+        scheduleResult.Data.BookCourt(player.email, court, bookingStarTime, bookingEndTime,
+            dateProviderMock.Object,
             playerFinderMock.Object, scheduleFinderMock.Object);
-        
-        foreach (var entry in context.ChangeTracker.Entries())
-        {
-            Console.WriteLine($"{entry.Entity.GetType().Name} - {entry.State}");
-        }
-        
+
         await unitOfWork.SaveChangesAsync();
+
+        var dailySchedule = await GetDailySchedule(context, scheduleId);
         
-        /*context.ChangeTracker.Clear();
-
-        var scheduleWithCourt = await context.Set<DailySchedule>()
-            .AsNoTracking()
-            .Include(schedule => schedule.listOfCourts)
-            .FirstAsync(schedule => schedule.ScheduleId == scheduleId);
-
-             Assert.NotNull(activatedSchedule);
-        Assert.Equal(activatedSchedule.Data.listOfCourts.Count(), 1);
-
-        */
-
-
-        // activate schedule, save it to database
-
-
-        // create booking, save it to database
+        // Assert
+        Assert.NotNull(dailySchedule);
+        Assert.Equal(scheduleId, dailySchedule.ScheduleId);
+        Assert.Equal(scheduleDate, dailySchedule.scheduleDate);
+        Assert.NotEmpty(dailySchedule.listOfBookings);
+        Assert.Equal(1, dailySchedule.listOfBookings.Count);
     }
 
     private static async Task<DailySchedule> GetDailySchedule(DomainModelContext context, ScheduleId scheduleId)
@@ -144,8 +120,7 @@ public class CreateBookingIntegrationTest
 
         return player;
     }
-
-
+    
     private static (DomainModelContext context, IDailyScheduleRepository scheduleRepository, IPlayerRepository
         playerRepository) SetupRepositories()
     {

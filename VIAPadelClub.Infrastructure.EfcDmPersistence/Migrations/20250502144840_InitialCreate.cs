@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 {
     /// <inheritdoc />
-    public partial class bookingcourt : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

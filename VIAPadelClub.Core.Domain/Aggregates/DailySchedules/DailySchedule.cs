@@ -87,13 +87,13 @@ public class DailySchedule : AggregateRoot
 
         // court.AssignToSchedule(ScheduleId);
         schedule.listOfCourts.Add(court);
-        schedule.listOfAvailableCourts.Add(Court.Create(courtNameResult.Data).Data);
+        // schedule.listOfAvailableCourts.Add(Court.Create(courtNameResult.Data).Data);
         return Result.Ok();
     }
 
     private Result HasCourt(CourtName name)
     {
-        if (listOfAvailableCourts.Any(court => court.Name.Value == name.Value))
+        if (listOfCourts.Any(court => court.Name.Value == name.Value))
         {
             return Result.Fail(DailyScheduleError.CourtAlreadyExists()._message);
         }

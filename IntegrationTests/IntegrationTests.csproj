@@ -22,6 +22,7 @@
       <ProjectReference Include="..\UnitTests\UnitTests.csproj" />
       <ProjectReference Include="..\VIAPadelClub.Core.Domain\VIAPadelClub.Core.Domain.csproj" />
       <ProjectReference Include="..\VIAPadelClub.Infrastructure.EfcDmPersistence\VIAPadelClub.Infrastructure.EfcDmPersistence.csproj" />
+      <ProjectReference Include="..\VIAPadelClub.Infrastructure.Services\VIAPadelClub.Infrastructure.Services.csproj" />
     </ItemGroup>
 
 </Project>
