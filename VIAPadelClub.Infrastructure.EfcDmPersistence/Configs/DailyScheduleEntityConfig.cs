@@ -42,30 +42,6 @@ public class DailyScheduleEntityConfig : IEntityTypeConfiguration<DailySchedule>
                 ownedBuilder.ToTable("VipTimeRanges");
                 ownedBuilder.HasKey("DailyScheduleId", "Start", "End"); // composite key
             });
-
-        /*entityBuilder
-            .HasMany(ds => ds.listOfCourts)
-            .WithMany(c => c.Schedules)
-            .UsingEntity<Dictionary<string, object>>(
-                "DailyScheduleCourts",
-                j => j
-                    .HasOne<Court>()
-                    .WithMany()
-                    .HasForeignKey("CourtName")
-                    .HasConstraintName("FK_DailyScheduleCourts_Courts_CourtName")
-                    .OnDelete(DeleteBehavior.Cascade),
-                j => j
-                    .HasOne<DailySchedule>()
-                    .WithMany()
-                    .HasForeignKey("ScheduleId")
-                    .HasConstraintName("FK_DailyScheduleCourts_DailySchedules_ScheduleId")
-                    .OnDelete(DeleteBehavior.Cascade),
-                j =>
-                {
-                    j.HasKey("ScheduleId", "CourtName");
-                    j.ToTable("DailyScheduleCourts");
-                }
-            );*/
         
         entityBuilder
             .HasMany<Booking>(ds => ds.listOfBookings)

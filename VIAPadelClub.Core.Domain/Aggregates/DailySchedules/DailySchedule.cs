@@ -5,6 +5,7 @@ using VIAPadelClub.Core.Domain.Aggregates.Players.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
 using VIAPadelClub.Core.Tools.OperationResult;
+
 // ReSharper disable ParameterHidesMember
 
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
@@ -20,7 +21,7 @@ public class DailySchedule : AggregateRoot
     internal ScheduleStatus status;
     internal bool isDeleted;
 
-    public List<Court> listOfCourts { get; private set; }= [];
+    internal List<Court> listOfCourts { get; private set; }
     internal List<Court> listOfAvailableCourts;
     public List<Booking> listOfBookings { get; private set; } = [];
     internal List<VipTimeRange> vipTimeRanges = new();
@@ -40,7 +41,7 @@ public class DailySchedule : AggregateRoot
         listOfBookings = new List<Booking>();
         isDeleted = false;
     }
-   
+
 
     // public ScheduleId Id => scheduleId;
     public static Result<DailySchedule> CreateSchedule(IDateProvider dateProvider, ScheduleId id)
@@ -52,7 +53,7 @@ public class DailySchedule : AggregateRoot
         {
             scheduleDate = today
         };
-        
+
         return Result<DailySchedule>.Ok(dailySchedule);
     }
 
@@ -84,7 +85,7 @@ public class DailySchedule : AggregateRoot
             return courtCheckResult;
         }
 
-        court.AssignToSchedule(ScheduleId);
+        // court.AssignToSchedule(ScheduleId);
         schedule.listOfCourts.Add(court);
         schedule.listOfAvailableCourts.Add(Court.Create(courtNameResult.Data).Data);
         return Result.Ok();
@@ -99,7 +100,7 @@ public class DailySchedule : AggregateRoot
 
         return Result.Ok();
     }
-    
+
     public Result RemoveAvailableCourt(Court court, IDateProvider dateProvider, TimeOnly timeOfRemoval)
     {
         // Ensure the schedule is for today or the future
@@ -138,7 +139,7 @@ public class DailySchedule : AggregateRoot
             listOfAvailableCourts.Remove(courtToRemove);
         }
 
-        
+
         return Result.Ok();
     }
 
@@ -158,6 +159,8 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
 
+
+    //TODO: need to remove this
     public Result UpdateSchedule(DateOnly date, TimeOnly startTime, TimeOnly endTime)
     {
         availableFrom = startTime;
@@ -186,11 +189,11 @@ public class DailySchedule : AggregateRoot
         }
 
         var timeRanges = vipTimeRanges.Where(vipRange =>
-            vipRange.End == vipStartTime || vipRange.Start == vipEndTime || // checks for border existing
-            (vipRange.Start <= vipStartTime && vipRange.End >= vipStartTime) || // new vip start inside existing
-            (vipRange.Start <= vipEndTime && vipRange.End >= vipEndTime) || // new vip end inside existing
-            (vipStartTime <= vipRange.Start && vipEndTime >= vipRange.End) // checks if both start and end time falls inside existing range
-
+                vipRange.End == vipStartTime || vipRange.Start == vipEndTime || // checks for border existing
+                (vipRange.Start <= vipStartTime && vipRange.End >= vipStartTime) || // new vip start inside existing
+                (vipRange.Start <= vipEndTime && vipRange.End >= vipEndTime) || // new vip end inside existing
+                (vipStartTime <= vipRange.Start &&
+                 vipEndTime >= vipRange.End) // checks if both start and end time falls inside existing range
         ).ToList();
 
         if (timeRanges.Any())
@@ -211,15 +214,15 @@ public class DailySchedule : AggregateRoot
 
     public Result Activate(IDateProvider dateProvider)
     {
-        if(scheduleDate < dateProvider.Today())
+        if (scheduleDate < dateProvider.Today())
             return Result.Fail(DailyScheduleError.PastScheduleCannotBeActivated()._message);
-        
-        if(listOfCourts.Count==0)
+
+        if (listOfCourts.Count == 0)
             return Result.Fail(DailyScheduleError.NoCourtAvailable()._message);
 
         if (status == ScheduleStatus.Active)
             return Result.Fail(DailyScheduleError.ScheduleAlreadyActive()._message);
-        
+
         if (isDeleted)
             return Result.Fail(DailyScheduleError.ScheduleIsDeleted()._message);
 
@@ -229,6 +232,7 @@ public class DailySchedule : AggregateRoot
         status = ScheduleStatus.Active;
         return Result.Ok();
     }
+
     public Result DeleteSchedule(IDateProvider dateProvider, ITimeProvider timeProvider)
     {
         if (isDeleted)
@@ -236,7 +240,7 @@ public class DailySchedule : AggregateRoot
 
         if (scheduleDate < dateProvider.Today())
             return Result.Fail(DailyScheduleError.PastScheduleCannotBeDeleted()._message);
-        
+
         if (scheduleDate == dateProvider.Today() && status == ScheduleStatus.Active)
             return Result.Fail(DailyScheduleError.SameDayActiveScheduleCannotBeDeleted()._message);
 
@@ -245,15 +249,17 @@ public class DailySchedule : AggregateRoot
         foreach (var booking in listOfBookings)
         {
             booking.Cancel(dateProvider, timeProvider, booking.BookedBy);
-            Console.WriteLine($"**NOTIFICATION** Your booking on {scheduleDate} has been canceled due to schedule deletion.");
+            Console.WriteLine(
+                $"**NOTIFICATION** Your booking on {scheduleDate} has been canceled due to schedule deletion.");
         }
-            
+
         listOfCourts.Clear();
-        
+
         return Result.Ok();
     }
-    
-    public Result UpdateScheduleDateAndTime(DateOnly date, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider)
+
+    public Result UpdateScheduleDateAndTime(DateOnly date, TimeOnly startTime, TimeOnly endTime,
+        IDateProvider dateProvider)
     {
         if (date <= dateProvider.Today())
             return Result.Fail(DailyScheduleError.ScheduleCannotBeUpdatedWithPastDate()._message);
@@ -263,7 +269,7 @@ public class DailySchedule : AggregateRoot
 
         if ((endTime - startTime) < TimeSpan.FromMinutes(60))
             return Result.Fail(DailyScheduleError.ScheduleInvalidTimeSpan()._message);
-        
+
         if (status == ScheduleStatus.Active)
             return Result.Fail(DailyScheduleError.InvalidScheduleUpdateStatus()._message);
 
@@ -277,20 +283,23 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
 
-  public Result<Booking> BookCourt (Email bookedByPlayer, Court court, TimeOnly startTime, TimeOnly endTime, IDateProvider dateProvider, IPlayerFinder playerFinder, IScheduleFinder scheduleFinder)
+    public Result<Booking> BookCourt(Email bookedByPlayer, Court court, TimeOnly startTime, TimeOnly endTime,
+        IDateProvider dateProvider, IPlayerFinder playerFinder, IScheduleFinder scheduleFinder)
     {
-        var booking = Booking.Create(ScheduleId, court, startTime, endTime,bookedByPlayer, scheduleFinder, playerFinder);
+        var booking = Booking.Create(ScheduleId, court, startTime, endTime, bookedByPlayer, scheduleFinder,
+            playerFinder);
         if (!booking.Success)
         {
             return Result<Booking>.Fail(booking.ErrorMessage);
         }
-        
+
         listOfBookings.Add(booking.Data);
         // listOfAvailableCourts.Remove(court);
         return Result<Booking>.Ok(booking.Data);
     }
 
-  public Result CancelBooking(Guid bookingId, IDateProvider dateProvider, ITimeProvider timeProvider, Email playerMakingCancel)
+    public Result CancelBooking(Guid bookingId, IDateProvider dateProvider, ITimeProvider timeProvider,
+        Email playerMakingCancel)
     {
         var booking = listOfBookings.FirstOrDefault(booking => booking.BookingId == bookingId);
 
@@ -300,6 +309,6 @@ public class DailySchedule : AggregateRoot
         }
 
         listOfBookings.Remove(booking);
-        return booking.Cancel(dateProvider,timeProvider, playerMakingCancel);
+        return booking.Cancel(dateProvider, timeProvider, playerMakingCancel);
     }
 }
