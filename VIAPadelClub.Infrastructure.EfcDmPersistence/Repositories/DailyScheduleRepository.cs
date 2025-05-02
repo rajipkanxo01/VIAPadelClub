@@ -14,8 +14,7 @@ public class DailyScheduleRepository : RepositoryBase<DailySchedule, ScheduleId>
     {
         _context = context;
     }
-    
-    
+
 
     public async Task<Result<List<DailySchedule>>> GetAllAsync()
     {

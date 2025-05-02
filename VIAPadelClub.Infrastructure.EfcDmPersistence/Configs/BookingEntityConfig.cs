@@ -35,18 +35,16 @@ public class BookingEntityConfig : IEntityTypeConfiguration<Booking>
             )
             .HasColumnName("BookingStatus");
 
-        /*
-        builder.HasOne<Court>(b => b.Court)
+        builder.HasOne<Core.Domain.Aggregates.Players.Player>()
             .WithMany()
-            .HasForeignKey(b => b.Court.);
-            */
+            .HasForeignKey(booking => booking.BookedBy);
         
-        // Configure foreign key to DailySchedule
-        builder.HasOne<DailySchedule>()
-            .WithMany(ds => ds.listOfBookings)
-            .HasForeignKey("ScheduleId")
-            .OnDelete(DeleteBehavior.Cascade);
-
+        builder.HasOne(b => b.Court)
+            .WithMany()
+            .HasForeignKey("CourtName", "ScheduleId")
+            .HasPrincipalKey("Name", "ScheduleId")
+            .OnDelete(DeleteBehavior.Restrict);
+        
         builder.ToTable("Bookings");
     }
 }

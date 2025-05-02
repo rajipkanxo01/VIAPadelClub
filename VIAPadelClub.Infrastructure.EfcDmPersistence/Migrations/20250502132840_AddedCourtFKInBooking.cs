@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedListOfCourtProperty : Migration
+    public partial class AddedCourtFKInBooking : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,31 +49,6 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bookings",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    BookingId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    BookedBy = table.Column<string>(type: "TEXT", nullable: false),
-                    Duration = table.Column<int>(type: "INTEGER", nullable: false),
-                    StartTime = table.Column<TimeOnly>(type: "TEXT", nullable: false),
-                    EndTime = table.Column<TimeOnly>(type: "TEXT", nullable: false),
-                    BookedDate = table.Column<DateOnly>(type: "TEXT", nullable: false),
-                    BookingStatus = table.Column<string>(type: "TEXT", nullable: false),
-                    ScheduleId = table.Column<Guid>(type: "TEXT", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Bookings", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Bookings_DailySchedules_ScheduleId",
-                        column: x => x.ScheduleId,
-                        principalTable: "DailySchedules",
-                        principalColumn: "ScheduleId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Courts",
                 columns: table => new
                 {
@@ -110,6 +85,54 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Bookings",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    BookingId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    BookedBy = table.Column<string>(type: "TEXT", nullable: false),
+                    CourtName = table.Column<string>(type: "TEXT", nullable: false),
+                    ScheduleId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Duration = table.Column<int>(type: "INTEGER", nullable: false),
+                    StartTime = table.Column<TimeOnly>(type: "TEXT", nullable: false),
+                    EndTime = table.Column<TimeOnly>(type: "TEXT", nullable: false),
+                    BookedDate = table.Column<DateOnly>(type: "TEXT", nullable: false),
+                    BookingStatus = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bookings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Courts_CourtName_ScheduleId",
+                        columns: x => new { x.CourtName, x.ScheduleId },
+                        principalTable: "Courts",
+                        principalColumns: new[] { "CourtName", "ScheduleId" },
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Bookings_DailySchedules_ScheduleId",
+                        column: x => x.ScheduleId,
+                        principalTable: "DailySchedules",
+                        principalColumn: "ScheduleId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Player_BookedBy",
+                        column: x => x.BookedBy,
+                        principalTable: "Player",
+                        principalColumn: "email",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_BookedBy",
+                table: "Bookings",
+                column: "BookedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_CourtName_ScheduleId",
+                table: "Bookings",
+                columns: new[] { "CourtName", "ScheduleId" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_ScheduleId",
                 table: "Bookings",
@@ -128,13 +151,13 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                 name: "Bookings");
 
             migrationBuilder.DropTable(
+                name: "VipTimeRanges");
+
+            migrationBuilder.DropTable(
                 name: "Courts");
 
             migrationBuilder.DropTable(
                 name: "Player");
-
-            migrationBuilder.DropTable(
-                name: "VipTimeRanges");
 
             migrationBuilder.DropTable(
                 name: "DailySchedules");

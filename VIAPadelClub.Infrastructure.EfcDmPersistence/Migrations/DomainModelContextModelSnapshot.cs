@@ -67,6 +67,10 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("BookingStatus");
 
+                    b.Property<string>("CourtName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("Duration")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Duration");
@@ -75,7 +79,7 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("EndTime");
 
-                    b.Property<Guid?>("ScheduleId")
+                    b.Property<Guid>("ScheduleId")
                         .HasColumnType("TEXT");
 
                     b.Property<TimeOnly>("StartTime")
@@ -84,7 +88,11 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BookedBy");
+
                     b.HasIndex("ScheduleId");
+
+                    b.HasIndex("CourtName", "ScheduleId");
 
                     b.ToTable("Bookings", (string)null);
                 });
@@ -175,10 +183,25 @@ namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Migrations
 
             modelBuilder.Entity("VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities.Booking", b =>
                 {
+                    b.HasOne("VIAPadelClub.Core.Domain.Aggregates.Players.Player", null)
+                        .WithMany()
+                        .HasForeignKey("BookedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VIAPadelClub.Core.Domain.Aggregates.DailySchedules.DailySchedule", null)
                         .WithMany("listOfBookings")
                         .HasForeignKey("ScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities.Court", "Court")
+                        .WithMany()
+                        .HasForeignKey("CourtName", "ScheduleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Court");
                 });
 
             modelBuilder.Entity("VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities.Court", b =>
