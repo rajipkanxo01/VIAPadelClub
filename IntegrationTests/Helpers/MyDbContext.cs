@@ -8,8 +8,8 @@ public class MyDbContext(DbContextOptions options) : DomainModelContext(options)
 {
     public static MyDbContext SetupContext()
     {
-        // var connection = new SqliteConnection("DataSource=:memory:");
-            var connection = new SqliteConnection("DataSource=TestDatabase.db");
+        var connection = new SqliteConnection("DataSource=:memory:");
+        // var connection = new SqliteConnection("DataSource=TestDatabase.db");
         connection.Open();
 
         var options = new DbContextOptionsBuilder<DomainModelContext>()
@@ -19,11 +19,11 @@ public class MyDbContext(DbContextOptions options) : DomainModelContext(options)
         var context = new MyDbContext(options);
         context.Database.EnsureCreated();
 
-         ClearAllDataAsync(context);
+        ClearAllDataAsync(context);
 
         return context;
     }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DomainModelContext).Assembly);
@@ -36,7 +36,7 @@ public class MyDbContext(DbContextOptions options) : DomainModelContext(options)
         await context.SaveChangesAsync();
         context.ChangeTracker.Clear();
     }
-    
+
     public static async Task ClearAllDataAsync(DomainModelContext context)
     {
         var tables = new[]
@@ -55,6 +55,4 @@ public class MyDbContext(DbContextOptions options) : DomainModelContext(options)
 
         context.ChangeTracker.Clear();
     }
-
-
 }
