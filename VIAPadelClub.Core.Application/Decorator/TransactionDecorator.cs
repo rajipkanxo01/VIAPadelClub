@@ -1,5 +1,6 @@
 ﻿using VIAPadelClub.Core.Application.Dispatcher;
 using VIAPadelClub.Core.Domain.Common;
+using VIAPadelClub.Core.Domain.Common.Repositories;
 using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Application.Decorator;

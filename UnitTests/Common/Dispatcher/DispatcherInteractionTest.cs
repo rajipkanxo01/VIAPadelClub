@@ -6,6 +6,7 @@ using VIAPadelClub.Core.Application.CommandDispatching.Commands.Player;
 using VIAPadelClub.Core.Application.Dispatcher;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Common;
+using VIAPadelClub.Core.Domain.Common.Repositories;
 using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 

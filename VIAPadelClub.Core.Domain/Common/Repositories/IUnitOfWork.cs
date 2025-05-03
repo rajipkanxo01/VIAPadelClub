@@ -1,8 +1,6 @@
-﻿using VIAPadelClub.Core.Tools.OperationResult;
-
-namespace VIAPadelClub.Core.Domain.Common;
+﻿namespace VIAPadelClub.Core.Domain.Common.Repositories;
 
 public interface IUnitOfWork
 {
-    Task<int> SaveChangesAsync();
+    Task SaveChangesAsync();
 }
