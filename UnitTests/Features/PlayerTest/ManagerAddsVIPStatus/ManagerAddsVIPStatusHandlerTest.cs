@@ -36,7 +36,7 @@ public class ManagerAddsVipStatusHandlerTest
     {
         // Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
-        player.ChangeToVIPStatus(); // Changed to VIP
+        player.ChangeToVipStatus(); // Changed to VIP
 
         var playerRepo = new FakePlayerRepository();
         await playerRepo.AddAsync(player);

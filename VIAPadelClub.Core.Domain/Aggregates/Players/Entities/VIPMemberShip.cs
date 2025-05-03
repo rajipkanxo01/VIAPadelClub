@@ -3,14 +3,14 @@
 using Tools.OperationResult;
 
 public class VipMemberShip {
-    internal DateOnly StartDate { get; }
-    internal DateOnly EndDate { get; }
+    internal DateOnly VIPStartDate { get; }
+    internal DateOnly VIPEndDate { get; }
     internal bool IsVIP { get; private set; }
     
-    private VipMemberShip(DateOnly startDate, DateOnly endDate, bool isVip)
+    private VipMemberShip(DateOnly vipStartDate, DateOnly vipEndDate, bool isVip)
     {
-        StartDate = startDate;
-        EndDate = endDate;
+        VIPStartDate = vipStartDate;
+        VIPEndDate = vipEndDate;
         IsVIP = isVip;
     }
 
@@ -31,7 +31,7 @@ public class VipMemberShip {
     public bool HasExpired()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        return today > EndDate;
+        return today > VIPEndDate;
     }
 
     public void ExpireStatus()

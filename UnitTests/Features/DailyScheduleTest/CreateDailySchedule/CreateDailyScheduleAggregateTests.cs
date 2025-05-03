@@ -20,7 +20,7 @@ public class CreateDailyScheduleAggregateTests
         var data = dailySchedule.Data;
 
         // Assert
-        Assert.NotNull(data.scheduleId);
+        Assert.NotNull(data.ScheduleId);
         Assert.Equal(ScheduleStatus.Draft, data.status);
         Assert.Empty(data.listOfAvailableCourts);
         Assert.Equal(new TimeOnly(15, 0, 0), data.availableFrom);

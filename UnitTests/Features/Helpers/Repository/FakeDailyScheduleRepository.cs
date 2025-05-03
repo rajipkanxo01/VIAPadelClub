@@ -16,7 +16,7 @@ public class FakeDailyScheduleRepository : IDailyScheduleRepository
 
     public Task<Result<DailySchedule>> GetAsync(ScheduleId id)
     {
-        var schedule = _listOfSchedules.FirstOrDefault(s => s.scheduleId.Equals(id));
+        var schedule = _listOfSchedules.FirstOrDefault(s => s.ScheduleId.Equals(id));
 
         if (schedule is null)
         {
@@ -28,7 +28,7 @@ public class FakeDailyScheduleRepository : IDailyScheduleRepository
 
     public Task<Result> RemoveAsync(ScheduleId id)
     {
-        var schedule = _listOfSchedules.FirstOrDefault(s => s.scheduleId.Equals(id));
+        var schedule = _listOfSchedules.FirstOrDefault(s => s.ScheduleId.Equals(id));
 
         if (schedule is null)
         {

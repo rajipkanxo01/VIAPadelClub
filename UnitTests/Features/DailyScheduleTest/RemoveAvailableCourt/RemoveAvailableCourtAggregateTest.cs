@@ -38,7 +38,7 @@ public class RemoveAvailableCourtAggregateTest
 
         // Assert
         result.Success.Should().BeTrue();
-        schedule.listOfCourts.Should().NotContain(court);
+        schedule.listOfAvailableCourts.Should().NotContain(court);
     }
     
     [Fact]

@@ -6,11 +6,11 @@ namespace VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedul
 
 public class PlayerCancelsBookingCommand
 {
-    internal  Guid BookingId { get; private set; }
+    internal  BookingId BookingId { get; private set; }
     internal ScheduleId DailyScheduleId { get; private set; }
     internal Email PlayerMakingCancel { get; private set; }
 
-    private PlayerCancelsBookingCommand(Guid bookingId, Email playerMakingCancel, ScheduleId dailyScheduleId)
+    private PlayerCancelsBookingCommand(BookingId bookingId, Email playerMakingCancel, ScheduleId dailyScheduleId)
     {
         BookingId = bookingId;
         PlayerMakingCancel = playerMakingCancel;
@@ -19,7 +19,10 @@ public class PlayerCancelsBookingCommand
 
     public static Result<PlayerCancelsBookingCommand> Create(string id, string playerMakingCancel, string dailyScheduleIdStr)
     {
-        var bookingId   = Guid.Parse(id);
+        var bookingIdGuid   = Guid.Parse(id);
+        
+        var bookingId = BookingId.FromGuid(bookingIdGuid);
+        
         var emailResult = Email.Create(playerMakingCancel);
         var scheduleIdParseResult = Guid.TryParse(dailyScheduleIdStr, out var dailyScheduleId);
 

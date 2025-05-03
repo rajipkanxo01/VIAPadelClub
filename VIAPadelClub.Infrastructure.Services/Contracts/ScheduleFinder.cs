@@ -11,7 +11,7 @@ public class ScheduleFinder : IScheduleFinder
     
     public Result<DailySchedule> FindSchedule(ScheduleId scheduleId)
     {
-        var schedule = _schedules.FirstOrDefault(s => s.scheduleId.Equals(scheduleId));
+        var schedule = _schedules.FirstOrDefault(s => s.ScheduleId.Equals(scheduleId));
         return schedule == null
             ? Result<DailySchedule>.Fail(DailyScheduleError.ScheduleNotFound()._message)
             : Result<DailySchedule>.Ok(schedule);

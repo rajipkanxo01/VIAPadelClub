@@ -1,52 +1,58 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Moq;
-using UnitTests.Features.Helpers;
-using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
-using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
-using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
-using Xunit;
-using Assert = Xunit.Assert;
+﻿using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using VIAPadelClub.Infrastructure.EfcDmPersistence;
 
 namespace IntegrationTests.Helpers;
 
-public class MyDbContext(DbContextOptions options) : Microsoft.EntityFrameworkCore.DbContext(options)
+public class MyDbContext(DbContextOptions options) : DomainModelContext(options)
 {
-    public DbSet<DailySchedule> DailySchedules { get; set; }
-
     public static MyDbContext SetupContext()
     {
-        
-        DbContextOptionsBuilder<MyDbContext> optionsBuilder = new();
-        string testDbName = "Test" + Guid.NewGuid() +".db";
-        optionsBuilder.UseSqlite(@"Data Source = " + testDbName);
-        MyDbContext context = new(optionsBuilder.Options);
-        
-        context.Database.EnsureDeleted();
+        var connection = new SqliteConnection("DataSource=:memory:");
+        // var connection = new SqliteConnection("DataSource=TestDatabase.db");
+        connection.Open();
+
+        var options = new DbContextOptionsBuilder<DomainModelContext>()
+            .UseSqlite(connection)
+            .Options;
+
+        var context = new MyDbContext(options);
         context.Database.EnsureCreated();
+
+        ClearAllDataAsync(context);
+
         return context;
     }
-    
-    public static async Task SaveAndClearAsync<T>(T entity, MyDbContext context) 
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(DomainModelContext).Assembly);
+    }
+
+    public static async Task SaveAndClearAsync<T>(T entity, MyDbContext context)
         where T : class
     {
         await context.Set<T>().AddAsync(entity);
         await context.SaveChangesAsync();
         context.ChangeTracker.Clear();
     }
-    
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+    public static async Task ClearAllDataAsync(DomainModelContext context)
     {
-        base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<DailySchedule>(builder =>
+        var tables = new[]
         {
-            builder.HasKey(ds => ds.scheduleId);
+            "VipTimeRanges",
+            "Bookings",
+            "Player",
+            "Courts",
+            "DailySchedules"
+        };
 
-            builder.Property(ds => ds.scheduleId)
-                .HasConversion(
-                    id => id.Value,               // to DB
-                    value => ScheduleId.FromGuid(value) // from DB
-                );
-        });
+        foreach (var table in tables)
+        {
+            await context.Database.ExecuteSqlRawAsync($"DELETE FROM \"{table}\"");
+        }
+
+        context.ChangeTracker.Clear();
     }
 }

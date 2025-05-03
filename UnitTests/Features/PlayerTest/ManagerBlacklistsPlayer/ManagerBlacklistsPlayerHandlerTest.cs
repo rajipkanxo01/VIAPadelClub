@@ -19,7 +19,7 @@ public class BlacklistPlayerHandlerTests
         await playerRepo.AddAsync(player);
 
         var schedule = (DailyScheduleBuilder.CreateValid().BuildAsync()).Data;
-        var scheduleId = ScheduleId.FromGuid(schedule.scheduleId.Value).Value;
+        var scheduleId = ScheduleId.FromGuid(schedule.ScheduleId.Value).Value;
         var scheduleRepo = new FakeDailyScheduleRepository();
         await scheduleRepo.AddAsync(schedule);
 
@@ -46,7 +46,7 @@ public class BlacklistPlayerHandlerTests
         await playerRepo.AddAsync(player);
 
         var schedule = (DailyScheduleBuilder.CreateValid().BuildAsync()).Data;
-        var scheduleId = ScheduleId.FromGuid(schedule.scheduleId.Value).Value;
+        var scheduleId = ScheduleId.FromGuid(schedule.ScheduleId.Value).Value;
         var scheduleRepo = new FakeDailyScheduleRepository();
         await scheduleRepo.AddAsync(schedule);
 

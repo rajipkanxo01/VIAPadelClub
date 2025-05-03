@@ -27,6 +27,7 @@ public class Player : AggregateRoot
         this.email = email;
         this.fullName = fullName;
         this.url = url;
+
         // quarantines = new List<Quarantine>();
     }
     
@@ -92,7 +93,7 @@ public class Player : AggregateRoot
         return Result.Ok();
     }
 
-    public Result ChangeToVIPStatus()
+    public Result ChangeToVipStatus()
     {
         if (isBlackListed)
             return Result.Fail("Blacklisted players cannot be elevated to VIP status.");

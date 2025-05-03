@@ -15,7 +15,7 @@ public class UpdateDailyScheduleTimeHandlerTest
     {
         // Arrange
         var dailySchedule = DailyScheduleBuilder.CreateValid().BuildAsync().Data;
-        var scheduleId = ScheduleId.FromGuid(dailySchedule.scheduleId.Value).Value;
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value).Value;
         var command = UpdateDailyScheduleTimeCommand.Create(
             scheduleId.ToString(),
             DateOnly.FromDateTime(DateTime.Today.AddDays(1)).ToString(),
@@ -40,7 +40,7 @@ public class UpdateDailyScheduleTimeHandlerTest
     {
         // Arrange
         var dailySchedule = DailyScheduleBuilder.CreateValid().BuildAsync().Data;
-        var scheduleId = ScheduleId.FromGuid(dailySchedule.scheduleId.Value).Value;
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value).Value;
         var command = UpdateDailyScheduleTimeCommand.Create(
             scheduleId.ToString(),
             DateOnly.FromDateTime(DateTime.Today.AddDays(-1)).ToString(), // past

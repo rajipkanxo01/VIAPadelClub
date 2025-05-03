@@ -22,7 +22,7 @@ public class RemoveAvailableCourtHandlerTest
         var court = Court.Create(CourtName.Create("D1").Data).Data;
         var dailySchedule = DailyScheduleBuilder.CreateValid().WithDateProvider(dateProvider).Activate().WithCourt(court)
             .WithScheduleFinder(fakeScheduleFinder).BuildAsync().Data;
-        var scheduleId = ScheduleId.FromGuid(dailySchedule.scheduleId.Value);
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value);
         
         var timeOfRemoval = new TimeOnly(9, 0, 0);
         scheduleRepository.AddAsync(dailySchedule);

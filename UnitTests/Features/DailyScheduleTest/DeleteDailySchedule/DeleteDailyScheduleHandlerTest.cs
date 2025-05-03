@@ -15,7 +15,7 @@ public class DeleteDailyScheduleHandlerTest
     {
         // Arrange
         var schedule = DailyScheduleBuilder.CreateValid().BuildAsync().Data;
-        var scheduleId = ScheduleId.FromGuid(schedule.scheduleId.Value);
+        var scheduleId = ScheduleId.FromGuid(schedule.ScheduleId.Value);
         var repo = new FakeDailyScheduleRepository();
         await repo.AddAsync(schedule);
 
