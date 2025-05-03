@@ -18,6 +18,7 @@ using Xunit;
 
 namespace IntegrationTests.MappingTest;
 
+[Collection("Sequential")]
 public class DailyScheduleAggregateTest
 {
     

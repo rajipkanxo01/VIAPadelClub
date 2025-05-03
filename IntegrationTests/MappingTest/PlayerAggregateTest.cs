@@ -6,6 +6,7 @@ using Xunit;
 
 namespace IntegrationTests.MappingTest;
 
+[Collection("Sequential")]
 public class PlayerAggregateTest
 {
     //NonNullableSinglePrimitiveValuedValueObject
@@ -41,7 +42,7 @@ public class PlayerAggregateTest
         await using MyDbContext ctx = MyDbContext.SetupContext();
 
         // Arrange
-        var email = Email.Create("via@via.dk").Data;
+        var email = Email.Create("viaa@via.dk").Data;
         var fullName = FullName.Create("first", "second").Data;
         var profileUri = ProfileUri.Create("http://example.com").Data;
         var emailUniqueChecker = new EmailUniqueChecker();
@@ -67,7 +68,7 @@ public class PlayerAggregateTest
         await using MyDbContext ctx = MyDbContext.SetupContext();
 
         // Arrange
-        var email = Email.Create("via@via.dk").Data;
+        var email = Email.Create("vias@via.dk").Data;
         var fullName = FullName.Create("first", "second").Data;
         var profileUri = ProfileUri.Create("http://example.com").Data;
         var emailUniqueChecker = new EmailUniqueChecker();

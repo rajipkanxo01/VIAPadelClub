@@ -18,7 +18,8 @@ using Xunit;
 
 namespace IntegrationTests.Repositories;
 
-public class CreateBookingIntegrationTest
+[Collection("Sequential")]
+public class CreateBookingIntegrationTest 
 {
     [Fact]
     public async Task ShouldCreateDailyScheduleAndSaveToDatabase_WhenValid()
