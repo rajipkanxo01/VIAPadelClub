@@ -219,7 +219,7 @@ public class AddAvailableCourtAggregateTest
     
         // Assert
         result.Success.Should().BeTrue();
-        scheduleResult.Data.listOfAvailableCourts.Should().Contain(c => c.Name.Value == courtName);
+        scheduleResult.Data.listOfCourts.Should().Contain(c => c.Name.Value == courtName);
     }
     
     

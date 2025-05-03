@@ -48,7 +48,7 @@ public class CancelsBookingHandlerTest
         var booking = bookingResult.Data;
         
         var cancelsBookingCommand = PlayerCancelsBookingCommand
-            .Create(booking.BookingId.ToString(), player.email.Value, scheduleId.Value.ToString()).Data;
+            .Create(booking.BookingId.Value.ToString(), player.email.Value, scheduleId.Value.ToString()).Data;
 
         var handler = new PlayerCancelsBookingHandler(fakeDailyScheduleRepository, fakeDateProvider, fakeTimeProvider);
 
