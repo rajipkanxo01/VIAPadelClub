@@ -1,4 +1,5 @@
 ﻿using IntegrationTests.Helpers;
+using Services.Contracts;
 using UnitTests.Features.Helpers;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
