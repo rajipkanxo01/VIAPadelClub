@@ -4,29 +4,32 @@ using Common.BaseClasses;
 
 public class Quarantine
 { 
-    public Guid quarentineId;
     internal DateOnly StartDate { get; set; }
     internal DateOnly EndDate { get; set; }
-    
+
+    private Quarantine() // for efc
+    {
+    }
+
     private Quarantine(DateOnly startDate)
     {
         StartDate = startDate;
         EndDate = startDate.AddDays(3);
     }
     
-    public static Quarantine CreateOrExtend(List<Quarantine> quarantines, DateOnly startDate)
+    public static Quarantine? CreateOrExtend(Quarantine? activeQuarantine, DateOnly startDate)
     {
-        if (quarantines == null || quarantines.Count == 0)
+        /*if (quarantines == null || quarantines.Count == 0)
         {
             return new Quarantine(startDate);
         }
         
-        var latestQuarantine = quarantines.LastOrDefault(); // Get last quarantine or null
+        var latestQuarantine = quarantines.LastOrDefault(); // Get last quarantine or null*/
 
-        if (latestQuarantine != null && latestQuarantine.EndDate >= startDate)
+        if (activeQuarantine != null && activeQuarantine.EndDate >= startDate)
         {
-            latestQuarantine.Extend();
-            return latestQuarantine;
+            activeQuarantine.Extend();
+            return activeQuarantine;
         }
         
         return new Quarantine(startDate);

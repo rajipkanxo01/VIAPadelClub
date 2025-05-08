@@ -2,32 +2,36 @@
 
 using Tools.OperationResult;
 
-public class VIPMemberShip {
-    internal DateOnly StartDate { get; }
-    internal DateOnly EndDate { get; }
+public class VipMemberShip {
+    internal DateOnly VIPStartDate { get; }
+    internal DateOnly VIPEndDate { get; }
     internal bool IsVIP { get; private set; }
     
-    private VIPMemberShip(DateOnly startDate, DateOnly endDate, bool isVip)
+    private VipMemberShip(DateOnly vipStartDate, DateOnly vipEndDate, bool isVip)
     {
-        StartDate = startDate;
-        EndDate = endDate;
+        VIPStartDate = vipStartDate;
+        VIPEndDate = vipEndDate;
         IsVIP = isVip;
     }
 
-    public static Result<VIPMemberShip> Create(VIPMemberShip? currentMemberShip)
+    private VipMemberShip() // for efc
+    {
+    }
+
+    public static Result<VipMemberShip> Create(VipMemberShip? currentMemberShip)
     {
         if (currentMemberShip != null && currentMemberShip.IsVIP)
-            return Result<VIPMemberShip>.Fail("Player is already a VIP.");
+            return Result<VipMemberShip>.Fail("Player is already a VIP.");
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        return Result<VIPMemberShip>.Ok(new VIPMemberShip(today, today.AddDays(30), true));
+        return Result<VipMemberShip>.Ok(new VipMemberShip(today, today.AddDays(30), true));
     }
     
     public bool HasExpired()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        return today > EndDate;
+        return today > VIPEndDate;
     }
 
     public void ExpireStatus()

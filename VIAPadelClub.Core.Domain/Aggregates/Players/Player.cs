@@ -10,26 +10,26 @@ using VIAPadelClub.Core.Tools.OperationResult;
 namespace VIAPadelClub.Core.Domain.Aggregates.Players;
 public class Player : AggregateRoot
 {
-    internal Email email;
+    public Email email { get; }
     internal FullName fullName;
     internal ProfileUri url;
-    internal VIPMemberShip vipMemberShip;
+    internal VipMemberShip vipMemberShip;
     internal bool isQuarantined = false;
     internal Quarantine? activeQuarantine;
-    internal int quarantineId = 0;
-    internal ActiveBooking activeBooking = new();
     internal bool isBlackListed = false;
-    internal List<Quarantine> quarantines;
+
+    private Player() // for efc
+    {
+    }
 
     private Player(Email email, FullName fullName, ProfileUri url)
     {
         this.email = email;
         this.fullName = fullName;
         this.url = url;
-        quarantines = new List<Quarantine>();
+
+        // quarantines = new List<Quarantine>();
     }
-    
-    public Email Email => email;
     
     public static async Task<Result<Player>> Register(Email email, FullName fullName, ProfileUri profileUri,IEmailUniqueChecker emailUniqueChecker)
     {
@@ -48,18 +48,14 @@ public class Player : AggregateRoot
         if (isBlackListed)
             return Result<Quarantine>.Fail(PlayerError.BlackListedCannotQuarantine()._message);
 
-        var quarantine = Entities.Quarantine.CreateOrExtend(quarantines, startDate);
+        var quarantine = Entities.Quarantine.CreateOrExtend(activeQuarantine, startDate);
     
-        if (!quarantines.Contains(quarantine))
-        {
-            quarantines.Add(quarantine);
-            isQuarantined = true;
-            activeQuarantine=quarantine;
-        }
+        isQuarantined = true;
+        activeQuarantine=quarantine;
         
         CancelBookingsDuringQuarantine(schedules);
         
-        return Result<Quarantine>.Ok(quarantine);
+        return Result<Quarantine>.Ok(quarantine!);
     }
     
     private void CancelBookingsDuringQuarantine(List<DailySchedule> schedules)
@@ -97,7 +93,7 @@ public class Player : AggregateRoot
         return Result.Ok();
     }
 
-    public Result ChangeToVIPStatus()
+    public Result ChangeToVipStatus()
     {
         if (isBlackListed)
             return Result.Fail("Blacklisted players cannot be elevated to VIP status.");
@@ -105,7 +101,7 @@ public class Player : AggregateRoot
         if (isQuarantined)
             return Result.Fail("Quarantined players cannot be elevated to VIP status.");
 
-        var vipResult = VIPMemberShip.Create(vipMemberShip);
+        var vipResult = VipMemberShip.Create(vipMemberShip);
         
         if (!vipResult.Success)
             return Result.Fail(vipResult.ErrorMessage);

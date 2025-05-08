@@ -1,6 +1,7 @@
 ﻿using UnitTests.Features.Helpers.Repository;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace UnitTests.Features.Helpers;
@@ -14,7 +15,7 @@ public class FakeScheduleFinder : IScheduleFinder
         _dailyScheduleRepository = dailyScheduleRepository;
     }
     
-    public Result<DailySchedule> FindSchedule(Guid scheduleId)
+    public Result<DailySchedule> FindSchedule(ScheduleId scheduleId)
     {
         var result = _dailyScheduleRepository.GetAsync(scheduleId).Result;
         

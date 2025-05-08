@@ -19,7 +19,7 @@ public class ManagerLiftsBlacklistHandlerTest
         var player = PlayerBuilder.CreateValid().WithBlacklisted().BuildAsync().Result.Data;
         fakePlayerRepository.AddAsync(player);
         
-        var liftsBlacklistsPlayerCommand = LiftsBlacklistsPlayerCommand.Create(player.Email.Value);
+        var liftsBlacklistsPlayerCommand = LiftsBlacklistsPlayerCommand.Create(player.email.Value);
 
         var playerHandler = new LiftsBlacklistsPlayerHandler(fakePlayerRepository);
         
@@ -39,7 +39,7 @@ public class ManagerLiftsBlacklistHandlerTest
         var player = PlayerBuilder.CreateValid().BuildAsync().Result.Data;
         fakePlayerRepository.AddAsync(player);
         
-        var liftsBlacklistsPlayerCommand = LiftsBlacklistsPlayerCommand.Create(player.Email.Value);
+        var liftsBlacklistsPlayerCommand = LiftsBlacklistsPlayerCommand.Create(player.email.Value);
         
         var playerHandler = new LiftsBlacklistsPlayerHandler(fakePlayerRepository);
         

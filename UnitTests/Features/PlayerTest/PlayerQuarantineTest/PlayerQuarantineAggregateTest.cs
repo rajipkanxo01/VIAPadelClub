@@ -31,7 +31,7 @@ public class PlayerQuarantineTest {
         // Assert
         Assert.True(result.Success);
         Assert.NotNull(result.Data);
-        Assert.Single(player.quarantines); // Only one quarantine should exist
+        Assert.NotNull(player.activeQuarantine); // Only one quarantine should exist
         Assert.Equal(startDate, result.Data!.StartDate);
         Assert.Equal(startDate.AddDays(3), result.Data!.EndDate);
     }
@@ -56,7 +56,6 @@ public class PlayerQuarantineTest {
         // Assert
         Assert.True(result.Success);
         Assert.NotNull(result.Data);
-        Assert.Single(player.quarantines); // No new quarantine, now we extended
         Assert.Equal(startDate, result.Data.StartDate);
         Assert.Equal(startDate.AddDays(6), result.Data.EndDate); // Extended by another 3 days
     }
@@ -80,7 +79,7 @@ public class PlayerQuarantineTest {
         Assert.False(result.Success);
         Assert.Null(result.Data);
         Assert.Equal("Player is already blacklisted and cannot be quarantined.", result.ErrorMessage);
-        Assert.Empty(player.quarantines);
+        Assert.Null(player.activeQuarantine);
     }
     
 
@@ -110,12 +109,14 @@ public class PlayerQuarantineTest {
     public async Task Should_Cancel_Booking_When_Player_Is_Quarantined(string startDateString)
     {
         // Arrange
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+        
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         var startDate = DateOnly.Parse(startDateString);
         
         // Create a daily schedule with a booking
         var court = Court.Create(CourtName.Create("S1").Data).Data;
-        var dailySchedule = DailySchedule.CreateSchedule(new FakeDateProvider(startDate)).Data;
+        var dailySchedule = DailySchedule.CreateSchedule(new FakeDateProvider(startDate), scheduleId).Data;
         dailySchedule.availableFrom = new TimeOnly(9, 0);
         dailySchedule.availableUntil = new TimeOnly(17, 0);
         dailySchedule.listOfCourts.Add(court);
@@ -141,7 +142,7 @@ public class PlayerQuarantineTest {
         // Assert
         Assert.True(result.Success);
         Assert.NotNull(result.Data);
-        Assert.Single(player.quarantines);
+        Assert.NotNull(player.activeQuarantine);
         Assert.Equal(BookingStatus.Cancelled, booking.BookingStatus);
     }
 }

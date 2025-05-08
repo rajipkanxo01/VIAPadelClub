@@ -30,6 +30,7 @@ public class CreateBookingHandlerTest
         var dailySchedule = DailyScheduleBuilder.CreateValid().WithDateProvider(fakeDateProvider).Activate()
             .WithCourt(court)
             .WithScheduleFinder(fakeScheduleFinder).BuildAsync().Data;
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value);
         
         fakeDailyScheduleRepository.AddAsync(dailySchedule);
         fakePlayerRepository.AddAsync(player);
@@ -37,7 +38,7 @@ public class CreateBookingHandlerTest
         var bookingStartTime = new TimeOnly(15, 0, 0);
         var bookingEndTime = new TimeOnly(16, 0, 0);
 
-        var createBookingCommand = CreateBookingCommand.Create(dailySchedule.scheduleId.ToString(), player.email.Value,
+        var createBookingCommand = CreateBookingCommand.Create(scheduleId.Value.ToString(), player.email.Value,
             bookingStartTime.ToString(), bookingEndTime.ToString(), court.Name.Value).Data;
         var handler = new CreateBookingHandler(fakeDailyScheduleRepository, fakeDateProvider,
             fakePlayerFinder, fakeScheduleFinder);

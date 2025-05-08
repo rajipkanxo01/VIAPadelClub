@@ -3,7 +3,6 @@ using UnitTests.Features.Helpers.Factory;
 using UnitTests.Features.Helpers.Repository;
 using VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedule;
 using VIAPadelClub.Core.Application.Features.Daily_Schedule;
-using VIAPadelClub.Core.Application.Features.DailySchedule;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Tools.OperationResult;
@@ -20,12 +19,12 @@ public class AddAvailableCourtHandlerTest
         var scheduleRepository = new FakeDailyScheduleRepository();
         var dateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
         var scheduleFinder = new FakeScheduleFinder(scheduleRepository);
-        var unitOfWork = new FakeUnitOfWork();
         
         var dailySchedule = DailyScheduleBuilder.CreateValid().Activate().BuildAsync().Data;
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value);
         var court = Court.Create(CourtName.Create("D1").Data).Data;
         
-        var command = AddAvailableCourtCommand.Create(dailySchedule.Id.ToString(),court.Name.Value ).Data;
+        var command = AddAvailableCourtCommand.Create(scheduleId.Value.ToString(),court.Name.Value ).Data;
         scheduleRepository.AddAsync(dailySchedule);
         
         var handler = new AddAvailableCourtHandler(scheduleRepository,dateProvider,scheduleFinder);
@@ -46,11 +45,12 @@ public class AddAvailableCourtHandlerTest
         var scheduleFinder = new FakeScheduleFinder(scheduleRepository);
         
         var dailySchedule = DailyScheduleBuilder.CreateValid().Activate().BuildAsync().Data;
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value);
         var court = Court.Create(CourtName.Create("D1").Data).Data;
         dailySchedule.listOfCourts.Add(court);
         dailySchedule.listOfAvailableCourts.Add(court);
         
-        var command = AddAvailableCourtCommand.Create(dailySchedule.Id.ToString(),court.Name.Value).Data;
+        var command = AddAvailableCourtCommand.Create(scheduleId.Value.ToString(),court.Name.Value).Data;
         scheduleRepository.AddAsync(dailySchedule);
         
         var handler = new AddAvailableCourtHandler(scheduleRepository,dateProvider,scheduleFinder);

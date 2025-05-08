@@ -6,11 +6,11 @@ namespace VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedul
 
 public class RemoveAvailableCourtCommand
 {
-    internal Guid DailyScheduleId { get; private set; }
+    internal ScheduleId DailyScheduleId { get; private set; }
     internal Court Court { get; private set; }
     internal TimeOnly TimeOfRemoval { get; private set; }
     
-    private RemoveAvailableCourtCommand(Guid dailyScheduleId, Court court, TimeOnly timeOfRemoval)
+    private RemoveAvailableCourtCommand(ScheduleId dailyScheduleId, Court court, TimeOnly timeOfRemoval)
     {
         DailyScheduleId = dailyScheduleId;
         Court = court;
@@ -38,7 +38,7 @@ public class RemoveAvailableCourtCommand
             return Result<RemoveAvailableCourtCommand>.Fail(DailyScheduleError.InvalidTimeformatWhileParsing()._message);
         }
 
-        var command = new RemoveAvailableCourtCommand(dailyScheduleId, courtResult.Data, timeOfRemoval);
+        var command = new RemoveAvailableCourtCommand(ScheduleId.FromGuid(dailyScheduleId), courtResult.Data, timeOfRemoval);
         return Result<RemoveAvailableCourtCommand>.Ok(command);
     }
 }

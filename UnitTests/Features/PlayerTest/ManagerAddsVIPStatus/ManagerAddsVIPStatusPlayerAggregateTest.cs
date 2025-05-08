@@ -14,7 +14,7 @@ public class ManagerAddsVipStatusPlayerAggregateTest {
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         
         // Act
-        var result = player.ChangeToVIPStatus();
+        var result = player.ChangeToVipStatus();
 
         // Assert
         Assert.True(result.Success);
@@ -29,10 +29,10 @@ public class ManagerAddsVipStatusPlayerAggregateTest {
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
         
         // First VIP upgrade
-        player.ChangeToVIPStatus();
+        player.ChangeToVipStatus();
 
         // Act
-        var result = player.ChangeToVIPStatus(); //We try again
+        var result = player.ChangeToVipStatus(); //We try again
 
         // Assert
         Assert.False(result.Success); // It shouldn't upgrade again
@@ -47,7 +47,7 @@ public class ManagerAddsVipStatusPlayerAggregateTest {
         player.isQuarantined = true;
         
         // Act
-        var result = player.ChangeToVIPStatus();
+        var result = player.ChangeToVipStatus();
 
         // Assert
         Assert.False(result.Success);
@@ -62,7 +62,7 @@ public class ManagerAddsVipStatusPlayerAggregateTest {
         player.isBlackListed = true;
         
         // Act
-        var result = player.ChangeToVIPStatus();
+        var result = player.ChangeToVipStatus();
 
         // Assert
         Assert.False(result.Success);

@@ -1,13 +1,18 @@
 ﻿using System.Text.RegularExpressions;
+using VIAPadelClub.Core.Domain.Common.BaseClasses;
 using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 
-public class CourtName
+public class CourtName: ValueObject
 {
     internal string Value { get; }
 
-    private CourtName(string value)
+    // EFC
+    private CourtName()
+    {
+    }
+    protected CourtName(string value)
     {
         Value = value;
     }
@@ -62,5 +67,9 @@ public class CourtName
             : Result.Fail(DailyScheduleError.InvalidLength()._message);
     }
 
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return Value;
+    }
 }
 

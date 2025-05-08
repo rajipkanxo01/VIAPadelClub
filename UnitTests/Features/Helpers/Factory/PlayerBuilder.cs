@@ -120,7 +120,7 @@ public class PlayerBuilder
 
         if (_makeVip)
         {
-            player.ChangeToVIPStatus();
+            player.ChangeToVipStatus();
         }
 
         if (_blacklist)

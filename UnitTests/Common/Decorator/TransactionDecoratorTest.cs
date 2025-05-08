@@ -3,6 +3,7 @@ using Moq;
 using VIAPadelClub.Core.Application.Decorator;
 using VIAPadelClub.Core.Application.Dispatcher;
 using VIAPadelClub.Core.Domain.Common;
+using VIAPadelClub.Core.Domain.Common.Repositories;
 using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 

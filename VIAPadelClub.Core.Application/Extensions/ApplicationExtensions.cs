@@ -6,8 +6,8 @@ using VIAPadelClub.Core.Application.Decorator;
 using VIAPadelClub.Core.Application.Dispatcher;
 using VIAPadelClub.Core.Application.Features.Booking;
 using VIAPadelClub.Core.Application.Features.Daily_Schedule;
-using VIAPadelClub.Core.Application.Features.DailySchedule;
 using VIAPadelClub.Core.Domain.Common;
+using VIAPadelClub.Core.Domain.Common.Repositories;
 
 namespace VIAPadelClub.Core.Application.Extensions;
 

@@ -2,6 +2,7 @@
 using VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedule;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Domain.Common;
 using VIAPadelClub.Core.Tools.OperationResult;
 
@@ -20,7 +21,8 @@ public class CreateDailyScheduleHandler : ICommandHandler<CreateDailyScheduleCom
 
     public async Task<Result> HandleAsync(CreateDailyScheduleCommand command)
     {
-        var scheduleResult = Domain.Aggregates.DailySchedules.DailySchedule.CreateSchedule(_dateProvider);
+        var newGuid = Guid.NewGuid();
+        var scheduleResult = DailySchedule.CreateSchedule(_dateProvider, ScheduleId.FromGuid(newGuid));
 
         if (!scheduleResult.Success)
         {

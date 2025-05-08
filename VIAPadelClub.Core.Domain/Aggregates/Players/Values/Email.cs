@@ -5,12 +5,13 @@ namespace VIAPadelClub.Core.Domain.Aggregates.Players.Values
 {
     public class Email
     {
-        internal string Value { get; }
+        public string Value { get; private set; }
 
         private Email(string value)
         {
             Value = value;
         }
+        
 
         public static Result<Email> Create(string email)
         {

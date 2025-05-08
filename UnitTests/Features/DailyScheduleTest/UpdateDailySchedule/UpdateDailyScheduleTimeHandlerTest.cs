@@ -3,6 +3,7 @@ using UnitTests.Features.Helpers.Factory;
 using UnitTests.Features.Helpers.Repository;
 using VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedule;
 using VIAPadelClub.Core.Application.Features.Daily_Schedule;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using Xunit;
 
 namespace UnitTests.Features.DailyScheduleTest.UpdateDailySchedule;
@@ -14,8 +15,9 @@ public class UpdateDailyScheduleTimeHandlerTest
     {
         // Arrange
         var dailySchedule = DailyScheduleBuilder.CreateValid().BuildAsync().Data;
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value).Value;
         var command = UpdateDailyScheduleTimeCommand.Create(
-            dailySchedule.Id.ToString(),
+            scheduleId.ToString(),
             DateOnly.FromDateTime(DateTime.Today.AddDays(1)).ToString(),
             "10:00", "12:00"
         ).Data;
@@ -38,8 +40,9 @@ public class UpdateDailyScheduleTimeHandlerTest
     {
         // Arrange
         var dailySchedule = DailyScheduleBuilder.CreateValid().BuildAsync().Data;
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value).Value;
         var command = UpdateDailyScheduleTimeCommand.Create(
-            dailySchedule.Id.ToString(),
+            scheduleId.ToString(),
             DateOnly.FromDateTime(DateTime.Today.AddDays(-1)).ToString(), // past
             "10:00", "12:00"
         ).Data;

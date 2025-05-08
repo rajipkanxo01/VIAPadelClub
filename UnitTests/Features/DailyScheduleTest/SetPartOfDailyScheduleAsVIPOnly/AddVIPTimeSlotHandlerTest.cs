@@ -2,7 +2,7 @@
 using UnitTests.Features.Helpers.Repository;
 using VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedule;
 using VIAPadelClub.Core.Application.Features.Daily_Schedule;
-using VIAPadelClub.Core.Application.Features.DailySchedule;
+using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 
@@ -15,7 +15,8 @@ public class AddVipTimeSlotHandlerTest
     {
         // Arrange
         var dailySchedule = DailyScheduleBuilder.CreateValid().Activate().BuildAsync().Data;
-        var command = AddVipTimeSlotCommand.Create(dailySchedule.Id.ToString(), "16:00", "17:00").Data;
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value).Value;
+        var command = AddVipTimeSlotCommand.Create(scheduleId.ToString(), "12:00", "13:00").Data;
 
         var scheduleRepository = new FakeDailyScheduleRepository();
         scheduleRepository.AddAsync(dailySchedule);
@@ -30,11 +31,13 @@ public class AddVipTimeSlotHandlerTest
         Assert.Single(dailySchedule.vipTimeRanges);
     }
     
+    [Fact]
     public void ShouldFail_WhenInvalidCommandIsProvided()
     {
         // Arrange
         var dailySchedule = DailyScheduleBuilder.CreateValid().Activate().BuildAsync().Data;
-        var command = AddVipTimeSlotCommand.Create(dailySchedule.Id.ToString(), "16:15", "17:00").Data;
+        var scheduleId = ScheduleId.FromGuid(dailySchedule.ScheduleId.Value);
+        var command = AddVipTimeSlotCommand.Create(scheduleId.Value.ToString(), "16:15", "17:00").Data;
 
         var scheduleRepository = new FakeDailyScheduleRepository();
         scheduleRepository.AddAsync(dailySchedule);
@@ -46,6 +49,5 @@ public class AddVipTimeSlotHandlerTest
 
         // Assert
         Assert.False(result.Success);
-        Assert.Single(DailyScheduleError.InvalidTimeSlot()._message);
     }
 }

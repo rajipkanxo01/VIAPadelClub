@@ -15,8 +15,9 @@ public class DeleteDailyScheduleAggregateTest {
     public void Should_Soft_Delete_Active_Schedule()
     {
         // Arrange
-        
-        var schedule = DailySchedule.CreateSchedule(_fakeDateProvider).Data;
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
+        var schedule = DailySchedule.CreateSchedule(_fakeDateProvider, scheduleId).Data;
         schedule.status = ScheduleStatus.Active;
         schedule.scheduleDate = _fakeDateProvider.Today().AddDays(1);
 
@@ -36,7 +37,9 @@ public class DeleteDailyScheduleAggregateTest {
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
         var fakeTimeProvider = new FakeTimeProvider(TimeOnly.FromDateTime(DateTime.Now));
         
-        var schedule = DailySchedule.CreateSchedule(fakeDateProvider).Data!;
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+        
+        var schedule = DailySchedule.CreateSchedule(fakeDateProvider, scheduleId).Data!;
         schedule.isDeleted = true;
         
         // Act
@@ -51,7 +54,9 @@ public class DeleteDailyScheduleAggregateTest {
     public void Should_Soft_Delete_Draft_Schedule()
     {
         // Arrange
-        var schedule = DailySchedule.CreateSchedule(_fakeDateProvider).Data!;
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
+        var schedule = DailySchedule.CreateSchedule(_fakeDateProvider, scheduleId).Data!;
         schedule.status = ScheduleStatus.Draft;
         schedule.scheduleDate = _fakeDateProvider.Today();
 
@@ -68,7 +73,9 @@ public class DeleteDailyScheduleAggregateTest {
     public void Should_Fail_To_Delete_Past_Schedule()
     {
         // Arrange
-        var schedule = DailySchedule.CreateSchedule(_fakeDateProvider).Data;
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
+        var schedule = DailySchedule.CreateSchedule(_fakeDateProvider, scheduleId).Data;
         schedule.scheduleDate = _fakeDateProvider.Today().AddDays(-1);
 
         // Act
@@ -83,7 +90,9 @@ public class DeleteDailyScheduleAggregateTest {
     public void Should_Fail_To_Delete_Active_Schedule_On_Same_Day()
     {
         // Arrange
-        var schedule = DailySchedule.CreateSchedule(_fakeDateProvider).Data!;
+        var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
+
+        var schedule = DailySchedule.CreateSchedule(_fakeDateProvider, scheduleId).Data!;
         schedule.status = ScheduleStatus.Active;
         schedule.scheduleDate = _fakeDateProvider.Today();
 

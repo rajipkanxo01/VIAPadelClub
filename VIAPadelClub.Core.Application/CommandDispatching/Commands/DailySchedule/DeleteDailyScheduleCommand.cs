@@ -1,12 +1,13 @@
-﻿using VIAPadelClub.Core.Tools.OperationResult;
+﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
+using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedule;
 
 public class DeleteDailyScheduleCommand
 {
-    internal Guid ScheduleId { get; private set; }
+    internal ScheduleId ScheduleId { get; private set; }
 
-    private DeleteDailyScheduleCommand(Guid scheduleId)
+    private DeleteDailyScheduleCommand(ScheduleId scheduleId)
     {
         ScheduleId = scheduleId;
     }
@@ -18,6 +19,6 @@ public class DeleteDailyScheduleCommand
             return Result<DeleteDailyScheduleCommand>.Fail(DailyScheduleError.InvalidScheduleIdFormatWhileParsing()._message);
         }
 
-        return Result<DeleteDailyScheduleCommand>.Ok(new DeleteDailyScheduleCommand(scheduleId));
+        return Result<DeleteDailyScheduleCommand>.Ok(new DeleteDailyScheduleCommand(ScheduleId.FromGuid(scheduleId)));
     }
 }

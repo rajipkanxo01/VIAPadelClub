@@ -6,10 +6,10 @@ namespace VIAPadelClub.Core.Application.CommandDispatching.Commands.DailySchedul
 
 public class AddAvailableCourtCommand
 {
-    internal Guid DailyScheduleId { get; private set; }
+    internal ScheduleId DailyScheduleId { get; private set; }
     internal Court Court { get; private set; }
     
-    private AddAvailableCourtCommand(Guid dailyScheduleId, Court court)
+    private AddAvailableCourtCommand(ScheduleId dailyScheduleId, Court court)
     {
         DailyScheduleId = dailyScheduleId;
         Court = court;
@@ -31,7 +31,7 @@ public class AddAvailableCourtCommand
             return Result<AddAvailableCourtCommand>.Fail(DailyScheduleError.InvalidScheduleIdFormatWhileParsing()._message);
         }
         
-        var command = new AddAvailableCourtCommand(dailyScheduleId, courtResult.Data);
+        var command = new AddAvailableCourtCommand(ScheduleId.FromGuid(dailyScheduleId), courtResult.Data);
         return Result<AddAvailableCourtCommand>.Ok(command);
     }
 }

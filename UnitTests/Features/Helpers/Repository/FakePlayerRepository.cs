@@ -19,8 +19,16 @@ public class FakePlayerRepository : IPlayerRepository
         return Task.FromResult(Result<Player>.Ok(player));
     }
 
-    public Task<Result> RemoveAsync()
+    public Task<Result> RemoveAsync(Email playerEmail)
     {
-        throw new NotImplementedException();
+        var player = _players.FirstOrDefault(p => p.email.Value == playerEmail.Value);
+
+        if (player is null)
+        {
+            return Task.FromResult(Result.Fail(DailyScheduleError.NoPlayerFound()._message));
+        }
+
+        _players.Remove(player);
+        return Task.FromResult(Result.Ok());
     }
 }
