@@ -1,0 +1,112 @@
+[
+  {
+    "BookingId": "b2c3d4e5-0001-0000-0000-000000000001",
+    "BookedBy": "232232@via.dk",
+    "Name": "s2",
+    "ScheduleId": "c1e2a3f4-b5d6-c7e8-f9a0-b1d2c3e4f5a6",
+    "Duration": 90,
+    "StartTime": "10:30:00",
+    "EndTime": "12:00:00",
+    "BookedDate": "2025-04-01",
+    "BookingStatus": "Active"
+  },
+  {
+    "BookingId": "b2c3d4e5-0002-0000-0000-000000000002",
+    "BookedBy": "123456@via.dk",
+    "Name": "s3",
+    "ScheduleId": "d2f3b4a5-c6e7-d8f9-a0b1-c2d3e4f5a6b7",
+    "Duration": 90,
+    "StartTime": "13:00:00",
+    "EndTime": "14:30:00",
+    "BookedDate": "2025-04-03",
+    "BookingStatus": "Active"
+  },
+  {
+    "BookingId": "b2c3d4e5-0003-0000-0000-000000000003",
+    "BookedBy": "654321@via.dk",
+    "Name": "d2",
+    "ScheduleId": "e3a4c5b6-d7f8-e9a0-b1c2-d3e4f5a6b7c8",
+    "Duration": 90,
+    "StartTime": "11:30:00",
+    "EndTime": "13:00:00",
+    "BookedDate": "2025-04-04",
+    "BookingStatus": "Active"
+  },
+  {
+    "BookingId": "b2c3d4e5-0004-0000-0000-000000000004",
+    "BookedBy": "987654@via.dk",
+    "Name": "d3",
+    "ScheduleId": "f4b5d6c7-e8a9-f0b1-c2d3-e4f5a6b7c8d9",
+    "Duration": 90,
+    "StartTime": "14:00:00",
+    "EndTime": "15:30:00",
+    "BookedDate": "2025-04-06",
+    "BookingStatus": "Active"
+  },
+  {
+    "BookingId": "b2c3d4e5-0005-0000-0000-000000000005",
+    "BookedBy": "234567@via.dk",
+    "Name": "s2",
+    "ScheduleId": "a5c6e7d8-f9b0-a1c2-d3e4-f5a6b7c8d9ea",
+    "Duration": 90,
+    "StartTime": "15:00:00",
+    "EndTime": "16:30:00",
+    "BookedDate": "2025-04-07",
+    "BookingStatus": "Cancelled"
+  },
+  {
+    "BookingId": "b2c3d4e5-0006-0000-0000-000000000006",
+    "BookedBy": "345678@via.dk",
+    "Name": "d2",
+    "ScheduleId": "b6d7f8e9-a0c1-b2d3-e4f5-a6b7c8d9eaf0",
+    "Duration": 90,
+    "StartTime": "18:00:00",
+    "EndTime": "19:30:00",
+    "BookedDate": "2025-04-09",
+    "BookingStatus": "Active"
+  },
+  {
+    "BookingId": "b2c3d4e5-0007-0000-0000-000000000007",
+    "BookedBy": "456789@via.dk",
+    "Name": "s3",
+    "ScheduleId": "c7e8a9f0-b1d2-c3e4-f5a6-b7c8d9eaf0b1",
+    "Duration": 120,
+    "StartTime": "16:00:00",
+    "EndTime": "18:00:00",
+    "BookedDate": "2025-04-10",
+    "BookingStatus": "Active"
+  },
+  {
+    "BookingId": "b2c3d4e5-0008-0000-0000-000000000008",
+    "BookedBy": "567890@via.dk",
+    "Name": "d3",
+    "ScheduleId": "d8f9b0a1-c2e3-d4f5-a6b7-c8d9eaf0b1c2",
+    "Duration": 120,
+    "StartTime": "15:00:00",
+    "EndTime": "17:00:00",
+    "BookedDate": "2025-04-12",
+    "BookingStatus": "Active"
+  },
+  {
+    "BookingId": "b2c3d4e5-0009-0000-0000-000000000009",
+    "BookedBy": "678901@via.dk",
+    "Name": "s2",
+    "ScheduleId": "e9a0c1b2-d3f4-e5a6-b7c8-d9eaf0b1c2d3",
+    "Duration": 120,
+    "StartTime": "12:30:00",
+    "EndTime": "14:30:00",
+    "BookedDate": "2025-04-14",
+    "BookingStatus": "Active"
+  },
+  {
+    "BookingId": "b2c3d4e5-0010-0000-0000-000000000010",
+    "BookedBy": "789012@via.dk",
+    "Name": "d2",
+    "ScheduleId": "f0b1d2c3-e4a5-f6b7-c8d9-eaf0b1c2d3e4",
+    "Duration": 90,
+    "StartTime": "16:00:00",
+    "EndTime": "17:30:00",
+    "BookedDate": "2025-04-15",
+    "BookingStatus": "Active"
+  }
+]
