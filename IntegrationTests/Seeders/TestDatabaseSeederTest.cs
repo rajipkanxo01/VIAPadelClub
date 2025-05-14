@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace IntegrationTests.Seeders;
 
 using Helpers;
@@ -6,11 +8,16 @@ using Xunit;
 
 public class TestDatabaseSeederTest
 {
-    private static VeadatabaseProductionContext CreateContext()
+    private static  VeadatabaseProductionContext CreateContext()
     {
-        VeadatabaseProductionContext context = new();
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
+        var path = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid()}.db");
+        var options = new DbContextOptionsBuilder<VeadatabaseProductionContext>()
+            .UseSqlite($"Data Source={path}")
+            .Options;
+
+        var context = new VeadatabaseProductionContext(options);
+         context.Database.EnsureCreated();
+
         context.SeedTestData();
         context.ChangeTracker.Clear();
 

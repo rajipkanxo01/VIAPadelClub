@@ -1,15 +1,23 @@
-using Xunit;
+using IntegrationTests.Seeders;
+using Microsoft.EntityFrameworkCore;
+using VIAPadelClub.Core.QueryContracts.Queries;
 using VIAPadelClub.Infrastructure.EfcQueries.GeneratedModels;
 using VIAPadelClub.Infrastructure.EfcQueries.Queries;
-using VIAPadelClub.Core.QueryContracts.Queries;
-using Microsoft.EntityFrameworkCore;
-using IntegrationTests.Seeders;
+using Xunit;
+
+namespace IntegrationTests.Queries;
 
 public class ViewBookingDetailsHandlerTests
 {
     private static VeadatabaseProductionContext CreateSeededContext()
     {
-        var context = new VeadatabaseProductionContext();
+        var path = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid()}.db");
+        var options = new DbContextOptionsBuilder<VeadatabaseProductionContext>()
+            .UseSqlite($"Data Source={path}")
+            .Options;
+
+        var context = new VeadatabaseProductionContext(options);
+        
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
         context.SeedTestData();
