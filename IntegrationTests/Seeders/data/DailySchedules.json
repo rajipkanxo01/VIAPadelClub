@@ -68,7 +68,7 @@
     "availableFrom": "09:00:00",
     "availableUntil": "18:00:00",
     "isDeleted": 0,
-    "scheduleDate": "2025-04-14",
+    "scheduleDate": "2025-06-14",
     "status": "active"
   },
   {
@@ -76,7 +76,7 @@
     "availableFrom": "09:00:00",
     "availableUntil": "18:00:00",
     "isDeleted": 0,
-    "scheduleDate": "2025-04-15",
+    "scheduleDate": "2025-06-15",
     "status": "active"
   }
 ]
