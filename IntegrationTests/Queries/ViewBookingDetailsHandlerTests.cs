@@ -1,27 +1,20 @@
-using Xunit;
+using IntegrationTests.Helpers;
+using IntegrationTests.Seeders;
+using Microsoft.EntityFrameworkCore;
+using VIAPadelClub.Core.QueryContracts.Queries;
 using VIAPadelClub.Infrastructure.EfcQueries.GeneratedModels;
 using VIAPadelClub.Infrastructure.EfcQueries.Queries;
-using VIAPadelClub.Core.QueryContracts.Queries;
-using Microsoft.EntityFrameworkCore;
-using IntegrationTests.Seeders;
+using Xunit;
+
+namespace IntegrationTests.Queries;
 
 public class ViewBookingDetailsHandlerTests
 {
-    private static VeadatabaseProductionContext CreateSeededContext()
-    {
-        var context = new VeadatabaseProductionContext();
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
-        context.SeedTestData();
-        context.ChangeTracker.Clear();
-        return context;
-    }
-
     [Fact]
     public async Task ReturnsBookingDetails_WhenBookingExists()
     {
         // Arrange
-        using var context = CreateSeededContext();
+        await using var context = MyDbContext.CreateSeededContext();
         var booking = context.Bookings.AsNoTracking().FirstOrDefault();
         Assert.NotNull(booking);
 
@@ -46,7 +39,7 @@ public class ViewBookingDetailsHandlerTests
     [Fact]
     public async Task Throws_WhenBookingNotFound()
     {
-        using var context = CreateSeededContext();
+        await using var context = MyDbContext.CreateSeededContext();
         var handler = new ViewBookingDetailsHandler(context);
         var nonExistingId = Guid.NewGuid();
 
