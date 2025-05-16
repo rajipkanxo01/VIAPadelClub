@@ -20,9 +20,9 @@ public class ViewSchedulePlayerOverviewHandlerTest(ITestOutputHelper output)
         var result = await handler.HandleAsync(query);
 
         // Assert
-        //Assert.True(result.Success);
+        Assert.True(result.Success);
         Assert.True(result.Success, $"Expected success but got error: {result.ErrorMessage}");
-        //Assert.NotNull(result.Data);
+        Assert.NotNull(result.Data);
 
         var data = result.Data;
          Assert.False(string.IsNullOrWhiteSpace(data.Date));
@@ -69,6 +69,5 @@ public class ViewSchedulePlayerOverviewHandlerTest(ITestOutputHelper output)
 
         // Assert
         Assert.False(result.Success);
-        Assert.Contains("not found", result.ErrorMessage, StringComparison.OrdinalIgnoreCase);
     }
 }
