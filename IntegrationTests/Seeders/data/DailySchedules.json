@@ -1,0 +1,82 @@
+[
+  {
+    "ScheduleId": "c1e2a3f4-b5d6-c7e8-f9a0-b1d2c3e4f5a6",
+    "availableFrom": "09:00:00",
+    "availableUntil": "18:00:00",
+    "isDeleted": 0,
+    "scheduleDate": "2025-04-01",
+    "status": "active"
+  },
+  {
+    "ScheduleId": "d2f3b4a5-c6e7-d8f9-a0b1-c2d3e4f5a6b7",
+    "availableFrom": "09:00:00",
+    "availableUntil": "18:00:00",
+    "isDeleted": 0,
+    "scheduleDate": "2025-04-03",
+    "status": "active"
+  },
+  {
+    "ScheduleId": "e3a4c5b6-d7f8-e9a0-b1c2-d3e4f5a6b7c8",
+    "availableFrom": "09:00:00",
+    "availableUntil": "18:00:00",
+    "isDeleted": 0,
+    "scheduleDate": "2025-04-04",
+    "status": "active"
+  },
+  {
+    "ScheduleId": "f4b5d6c7-e8a9-f0b1-c2d3-e4f5a6b7c8d9",
+    "availableFrom": "09:00:00",
+    "availableUntil": "18:00:00",
+    "isDeleted": 0,
+    "scheduleDate": "2025-04-06",
+    "status": "active"
+  },
+  {
+    "ScheduleId": "a5c6e7d8-f9b0-a1c2-d3e4-f5a6b7c8d9ea",
+    "availableFrom": "09:00:00",
+    "availableUntil": "13:00:00",
+    "isDeleted": 1,
+    "scheduleDate": "2025-04-07",
+    "status": "draft"
+  },
+  {
+    "ScheduleId": "b6d7f8e9-a0c1-b2d3-e4f5-a6b7c8d9eaf0",
+    "availableFrom": "09:00:00",
+    "availableUntil": "18:00:00",
+    "isDeleted": 0,
+    "scheduleDate": "2025-04-09",
+    "status": "active"
+  },
+  {
+    "ScheduleId": "c7e8a9f0-b1d2-c3e4-f5a6-b7c8d9eaf0b1",
+    "availableFrom": "09:00:00",
+    "availableUntil": "18:00:00",
+    "isDeleted": 0,
+    "scheduleDate": "2025-04-10",
+    "status": "active"
+  },
+  {
+    "ScheduleId": "d8f9b0a1-c2e3-d4f5-a6b7-c8d9eaf0b1c2",
+    "availableFrom": "09:00:00",
+    "availableUntil": "18:00:00",
+    "isDeleted": 0,
+    "scheduleDate": "2025-04-12",
+    "status": "active"
+  },
+  {
+    "ScheduleId": "e9a0c1b2-d3f4-e5a6-b7c8-d9eaf0b1c2d3",
+    "availableFrom": "09:00:00",
+    "availableUntil": "18:00:00",
+    "isDeleted": 0,
+    "scheduleDate": "2025-06-14",
+    "status": "active"
+  },
+  {
+    "ScheduleId": "f0b1d2c3-e4a5-f6b7-c8d9-eaf0b1c2d3e4",
+    "availableFrom": "09:00:00",
+    "availableUntil": "18:00:00",
+    "isDeleted": 0,
+    "scheduleDate": "2025-06-15",
+    "status": "active"
+  }
+]

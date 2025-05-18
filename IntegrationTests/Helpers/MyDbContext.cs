@@ -1,6 +1,8 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using IntegrationTests.Seeders;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using VIAPadelClub.Infrastructure.EfcDmPersistence;
+using VIAPadelClub.Infrastructure.EfcQueries.GeneratedModels;
 
 namespace IntegrationTests.Helpers;
 
@@ -54,5 +56,21 @@ public class MyDbContext(DbContextOptions options) : DomainModelContext(options)
         }
 
         context.ChangeTracker.Clear();
+    }
+    
+    public static VeadatabaseProductionContext CreateSeededContext()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid()}.db");
+        var options = new DbContextOptionsBuilder<VeadatabaseProductionContext>()
+            .UseSqlite($"Data Source={path}")
+            .Options;
+
+        var context = new VeadatabaseProductionContext(options);
+        
+        context.Database.EnsureDeleted();
+        context.Database.EnsureCreated();
+        context.SeedTestData();
+        context.ChangeTracker.Clear();
+        return context;
     }
 }

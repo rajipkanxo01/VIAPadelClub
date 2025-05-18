@@ -1,0 +1,27 @@
+[
+  {
+    "VipStart": "2025-01-01",
+    "VipEnd": "2025-12-31",
+    "DailyScheduleId": "c1e2a3f4-b5d6-c7e8-f9a0-b1d2c3e4f5a6"
+  },
+  {
+    "VipStart": "2025-06-01",
+    "VipEnd": "2025-06-30",
+    "DailyScheduleId": "d2f3b4a5-c6e7-d8f9-a0b1-c2d3e4f5a6b7"
+  },
+  {
+    "VipStart": "2025-03-01",
+    "VipEnd": "2025-03-31",
+    "DailyScheduleId": "f4b5d6c7-e8a9-f0b1-c2d3-e4f5a6b7c8d9"
+  },
+  {
+    "VipStart": "2025-05-01",
+    "VipEnd": "2025-05-31",
+    "DailyScheduleId": "b6d7f8e9-a0c1-b2d3-e4f5-a6b7c8d9eaf0"
+  },
+  {
+    "VipStart": "2025-07-01",
+    "VipEnd": "2025-07-31",
+    "DailyScheduleId": "e9a0c1b2-d3f4-e5a6-b7c8-d9eaf0b1c2d3"
+  }
+]

@@ -245,6 +245,7 @@ public class DailySchedule : AggregateRoot
             return Result.Fail(DailyScheduleError.SameDayActiveScheduleCannotBeDeleted()._message);
 
         isDeleted = true;
+        status = ScheduleStatus.Deleted;
 
         foreach (var booking in listOfBookings)
         {
