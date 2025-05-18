@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.3"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\VIAPadelClub.Core.Application\VIAPadelClub.Core.Application.csproj" />
+      <ProjectReference Include="..\VIAPadelClub.Core.Domain\VIAPadelClub.Core.Domain.csproj" />
+      <ProjectReference Include="..\VIAPadelClub.Core.QueryContracts\VIAPadelClub.Core.QueryContracts.csproj" />
+      <ProjectReference Include="..\VIAPadelClub.Core.Tools.ObjectMapper\VIAPadelClub.Core.Tools.ObjectMapper.csproj" />
+      <ProjectReference Include="..\VIAPadelClub.Infrastructure.EfcDmPersistence\VIAPadelClub.Infrastructure.EfcDmPersistence.csproj" />
+      <ProjectReference Include="..\VIAPadelClub.Infrastructure.EfcQueries\VIAPadelClub.Infrastructure.EfcQueries.csproj" />
+      <ProjectReference Include="..\VIAPadelClub.Infrastructure.Services\VIAPadelClub.Infrastructure.Services.csproj" />
+    </ItemGroup>
+
+</Project>
