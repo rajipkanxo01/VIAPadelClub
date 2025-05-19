@@ -27,7 +27,10 @@
     <ItemGroup>
       <ProjectReference Include="..\VIAPadelClub.Core.Application\VIAPadelClub.Core.Application.csproj" />
       <ProjectReference Include="..\VIAPadelClub.Core.Domain\VIAPadelClub.Core.Domain.csproj" />
+      <ProjectReference Include="..\VIAPadelClub.Core.QueryContracts\VIAPadelClub.Core.QueryContracts.csproj" />
+      <ProjectReference Include="..\VIAPadelClub.Core.Tools.ObjectMapper\VIAPadelClub.Core.Tools.ObjectMapper.csproj" />
       <ProjectReference Include="..\VIAPadelClub.Core.Tools.OperationResult\VIAPadelClub.Core.Tools.OperationResult.csproj" />
+      <ProjectReference Include="..\VIAPadelClub.Presentation.WebApi\VIAPadelClub.Presentation.WebApi.csproj" />
     </ItemGroup>
 
 </Project>
