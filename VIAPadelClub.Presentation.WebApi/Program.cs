@@ -1,6 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using VIAPadelClub.Core.Application.Extensions;
 using VIAPadelClub.Core.Tools.ObjectMapper;
+using VIAPadelClub.Infrastructure.EfcDmPersistence;
 using VIAPadelClub.Infrastructure.EfcQueries;
+using VIAPadelClub.Infrastructure.EfcQueries.GeneratedModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +17,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.RegisterHandlers();
 builder.Services.RegisterDispatcher();
 builder.Services.RegisterQueryHandler();
+
+builder.Services.AddDbContext<DomainModelContext>(options => options.UseSqlite("Data Source = VEAPadelClub.db"));
+builder.Services.AddDbContext<VeadatabaseProductionContext>(options => options.UseSqlite("Data Source = VEAPadelClub.db"));
+
 builder.Services.AddScoped<IMapper, ObjectMapper>();
 
 
