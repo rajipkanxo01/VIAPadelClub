@@ -34,7 +34,6 @@
 
     <ItemGroup>
         <Folder Include="Controllers\"/>
-        <Folder Include="Endpoints\Queries\"/>
     </ItemGroup>
 
 </Project>
