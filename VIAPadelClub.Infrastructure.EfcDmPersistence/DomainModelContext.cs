@@ -2,7 +2,7 @@
 
 namespace VIAPadelClub.Infrastructure.EfcDmPersistence;
 
-public class DomainModelContext(DbContextOptions options) : DbContext(options)
+public class DomainModelContext(DbContextOptions<DomainModelContext> options) : DbContext(options)
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
