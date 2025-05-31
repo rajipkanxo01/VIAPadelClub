@@ -11,18 +11,29 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\VIAPadelClub.Core.Application\VIAPadelClub.Core.Application.csproj" />
-      <ProjectReference Include="..\VIAPadelClub.Core.Domain\VIAPadelClub.Core.Domain.csproj" />
-      <ProjectReference Include="..\VIAPadelClub.Core.QueryContracts\VIAPadelClub.Core.QueryContracts.csproj" />
-      <ProjectReference Include="..\VIAPadelClub.Core.Tools.ObjectMapper\VIAPadelClub.Core.Tools.ObjectMapper.csproj" />
-      <ProjectReference Include="..\VIAPadelClub.Infrastructure.EfcDmPersistence\VIAPadelClub.Infrastructure.EfcDmPersistence.csproj" />
-      <ProjectReference Include="..\VIAPadelClub.Infrastructure.EfcQueries\VIAPadelClub.Infrastructure.EfcQueries.csproj" />
-      <ProjectReference Include="..\VIAPadelClub.Infrastructure.Services\VIAPadelClub.Infrastructure.Services.csproj" />
-    </ItemGroup>
+    <PropertyGroup>
+        <PreserveCompilationContext>true</PreserveCompilationContext>
+    </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
+        <ProjectReference Include="..\VIAPadelClub.Core.Application\VIAPadelClub.Core.Application.csproj"/>
+        <ProjectReference Include="..\VIAPadelClub.Core.Domain\VIAPadelClub.Core.Domain.csproj"/>
+        <ProjectReference Include="..\VIAPadelClub.Core.QueryContracts\VIAPadelClub.Core.QueryContracts.csproj"/>
+        <ProjectReference Include="..\VIAPadelClub.Core.Tools.ObjectMapper\VIAPadelClub.Core.Tools.ObjectMapper.csproj"/>
+        <ProjectReference Include="..\VIAPadelClub.Infrastructure.EfcDmPersistence\VIAPadelClub.Infrastructure.EfcDmPersistence.csproj"/>
+        <ProjectReference Include="..\VIAPadelClub.Infrastructure.EfcQueries\VIAPadelClub.Infrastructure.EfcQueries.csproj"/>
+        <ProjectReference Include="..\VIAPadelClub.Infrastructure.Services\VIAPadelClub.Infrastructure.Services.csproj"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>IntegrationTests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <Folder Include="Controllers\"/>
     </ItemGroup>
 
 </Project>

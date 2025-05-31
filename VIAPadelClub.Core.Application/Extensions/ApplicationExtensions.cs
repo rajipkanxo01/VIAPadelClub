@@ -13,26 +13,26 @@ namespace VIAPadelClub.Core.Application.Extensions;
 
 public static class ApplicationExtensions
 {
-    public static void RegisterHandlers(this IServiceCollection serviceCollection)
+    public static void RegisterCommandHandlers(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<ICommandHandler<CreateDailyScheduleCommand>, CreateDailyScheduleHandler>();
-        serviceCollection.AddSingleton<ICommandHandler<ActivateDailyScheduleCommand>, ActivateDailyScheduleHandler>();
-        serviceCollection.AddSingleton<ICommandHandler<AddAvailableCourtCommand>, AddAvailableCourtHandler>();
-        serviceCollection.AddSingleton<ICommandHandler<AddVipTimeSlotCommand>, AddVipTimeSlotsHandler>();
-        serviceCollection.AddSingleton<ICommandHandler<CreateBookingCommand>, CreateBookingHandler>();
-        serviceCollection.AddSingleton<ICommandHandler<PlayerCancelsBookingCommand>, PlayerCancelsBookingHandler>();
-        serviceCollection.AddSingleton<ICommandHandler<RemoveAvailableCourtCommand>, RemoveAvailableCourtHandler>();
-        serviceCollection.AddSingleton<ICommandHandler<BlacklistsPlayerCommand>, BlacklistsPlayerHandler>();
-        serviceCollection.AddSingleton<ICommandHandler<LiftsBlacklistsPlayerCommand>, LiftsBlacklistsPlayerHandler>();
-        serviceCollection.AddSingleton<ICommandHandler<CreatePlayerCommand>, CreatePlayerHandler>();
-        serviceCollection.AddSingleton<ICommandHandler<DeleteDailyScheduleCommand>, DeleteDailyScheduleCommandHandler>();
-        serviceCollection.AddSingleton<ICommandHandler<UpdateDailyScheduleTimeCommand>, UpdateDailyScheduleTimeHandler>();
-        serviceCollection.AddSingleton<ICommandHandler<QuarantinesPlayerCommand>, QuarantinesPlayerCommandHandler>();
+        serviceCollection.AddScoped<ICommandHandler<CreateDailyScheduleCommand>, CreateDailyScheduleHandler>();
+        serviceCollection.AddScoped<ICommandHandler<ActivateDailyScheduleCommand>, ActivateDailyScheduleHandler>();
+        serviceCollection.AddScoped<ICommandHandler<AddAvailableCourtCommand>, AddAvailableCourtHandler>();
+        serviceCollection.AddScoped<ICommandHandler<AddVipTimeSlotCommand>, AddVipTimeSlotsHandler>();
+        serviceCollection.AddScoped<ICommandHandler<CreateBookingCommand>, CreateBookingHandler>();
+        serviceCollection.AddScoped<ICommandHandler<PlayerCancelsBookingCommand>, PlayerCancelsBookingHandler>();
+        serviceCollection.AddScoped<ICommandHandler<RemoveAvailableCourtCommand>, RemoveAvailableCourtHandler>();
+        serviceCollection.AddScoped<ICommandHandler<BlacklistsPlayerCommand>, BlacklistsPlayerHandler>();
+        serviceCollection.AddScoped<ICommandHandler<LiftsBlacklistsPlayerCommand>, LiftsBlacklistsPlayerHandler>();
+        serviceCollection.AddScoped<ICommandHandler<CreatePlayerCommand>, CreatePlayerHandler>();
+        serviceCollection.AddScoped<ICommandHandler<DeleteDailyScheduleCommand>, DeleteDailyScheduleCommandHandler>();
+        serviceCollection.AddScoped<ICommandHandler<UpdateDailyScheduleTimeCommand>, UpdateDailyScheduleTimeHandler>();
+        serviceCollection.AddScoped<ICommandHandler<QuarantinesPlayerCommand>, QuarantinesPlayerCommandHandler>();
     }
 
-    public static void RegisterDispatcher(this IServiceCollection serviceCollection)
+    public static void RegisterCommandDispatcher(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddSingleton<ICommandDispatcher>(provider =>
+        serviceCollection.AddScoped<ICommandDispatcher>(provider =>
         {
             var dispatcher = new CommandDispatcher(provider);
             var transactionDecorator = new TransactionDecorator(dispatcher, provider.GetRequiredService<IUnitOfWork>());

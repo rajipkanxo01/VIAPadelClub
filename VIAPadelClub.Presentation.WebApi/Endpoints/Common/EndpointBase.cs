@@ -6,7 +6,6 @@ namespace VIAPadelClub.Presentation.WebApi.Endpoints.Common;
 [ApiController, Route("api")]
 public abstract class EndpointBase : ControllerBase
 {
-
     public static class ApiEndpoint
     {
         public static class WithoutRequest
