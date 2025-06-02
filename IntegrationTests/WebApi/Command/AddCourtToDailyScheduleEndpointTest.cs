@@ -11,6 +11,7 @@ using VIAPadelClub.Infrastructure.EfcQueries.GeneratedModels;
 using Xunit;
 using Xunit.Abstractions;
 using DailySchedule = VIAPadelClub.Core.Domain.Aggregates.DailySchedules.DailySchedule;
+namespace IntegrationTests.WebApi.Command;
 
 public class AddCourtToDailyScheduleEndpointTest(ITestOutputHelper testOutputHelper)
 {
@@ -38,28 +39,11 @@ public class AddCourtToDailyScheduleEndpointTest(ITestOutputHelper testOutputHel
         await scheduleRepository.AddAsync(createScheduleResult.Data);
         await domainModelContext.SaveChangesAsync();
         
-        // 👇 This is critical
-        var scheduleFinder = serviceScope.ServiceProvider.GetRequiredService<IScheduleFinder>() as ScheduleFinder;
-        scheduleFinder?.AddSchedule(createScheduleResult.Data);
-        
-        veaDatabaseProductionContext.DailySchedules.Add(
-            new VIAPadelClub.Infrastructure.EfcQueries.GeneratedModels.DailySchedule
-            {
-                ScheduleId = scheduleId.Value.ToString().ToLowerInvariant(),
-                AvailableFrom = "15:00:00",
-                AvailableUntil = "22:00:00",
-                IsDeleted = 0,
-                ScheduleDate = DateTime.Today.ToString("yyyy-MM-dd"),
-                Status = "Draft"
-            });
-
-        await veaDatabaseProductionContext.SaveChangesAsync();
-
         var requestBody = new
         {
             RequestBody = new
             {
-                ScheduleId = scheduleId.Value.ToString().ToLowerInvariant(),
+                ScheduleId = scheduleId.Value,
                 CourtName = "SS1"
             }
         };
@@ -67,6 +51,7 @@ public class AddCourtToDailyScheduleEndpointTest(ITestOutputHelper testOutputHel
         // Act
         var response = await client.PostAsJsonAsync("/api/schedules/addCourt", requestBody);
 
+        // Below for logging. - To be removed.
         var content = await response.Content.ReadAsStringAsync();
         _testOutputHelper.WriteLine($"Status: {(int)response.StatusCode}, Body: {content}");
         var count = await veaDatabaseProductionContext.DailySchedules.CountAsync();
