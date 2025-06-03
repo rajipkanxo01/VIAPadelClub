@@ -57,10 +57,10 @@ public class CreateBookingIntegrationTest
         var courtResult = Court.Create(nameResult.Data);
 
         scheduleFinderMock.Setup(m => m.FindSchedule(It.IsAny<ScheduleId>()))
-            .Returns(scheduleResult);
+            .ReturnsAsync(scheduleResult);
         scheduleResult.Data.AddAvailableCourt(courtResult.Data, dateProviderMock.Object, scheduleFinderMock.Object);
         scheduleFinderMock.Setup(m => m.FindSchedule(It.IsAny<ScheduleId>()))
-            .Returns(scheduleResult);
+            .ReturnsAsync(scheduleResult);
 
         scheduleResult.Data.Activate(dateProviderMock.Object);
         await unitOfWork.SaveChangesAsync();
@@ -83,7 +83,7 @@ public class CreateBookingIntegrationTest
         var player = await GetPlayer(context, email.Data);
         
         scheduleFinderMock.Setup(m => m.FindSchedule(It.IsAny<ScheduleId>()))
-            .Returns(scheduleResult);
+            .ReturnsAsync(scheduleResult);
         playerFinderMock.Setup(m => m.FindPlayer(It.IsAny<Email>()))
             .Returns(Result<Player>.Ok(player));
 

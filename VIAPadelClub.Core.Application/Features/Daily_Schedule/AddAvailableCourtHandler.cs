@@ -20,16 +20,16 @@ public class AddAvailableCourtHandler:ICommandHandler<AddAvailableCourtCommand>
         _scheduleFinder = scheduleFinder;
     }
     
-    public Task<Result> HandleAsync(AddAvailableCourtCommand command)
+    public async Task<Result> HandleAsync(AddAvailableCourtCommand command)
     {
         var dailyScheduleResult = _dailyScheduleRepository.GetAsync(command.DailyScheduleId).Result;
 
         if (!dailyScheduleResult.Success)
         {
-            return Task.FromResult(Result.Fail(dailyScheduleResult.ErrorMessage));
+            return Result.Fail(dailyScheduleResult.ErrorMessage);
         }
 
-        var result = dailyScheduleResult.Data.AddAvailableCourt(command.Court,_dateProvider, _scheduleFinder);
-        return Task.FromResult(result);
+        var result = await dailyScheduleResult.Data.AddAvailableCourt(command.Court,_dateProvider, _scheduleFinder);
+        return result;
     }
 }

@@ -11,6 +11,7 @@ using VIAPadelClub.Infrastructure.EfcQueries.GeneratedModels;
 using Xunit;
 using Xunit.Abstractions;
 using DailySchedule = VIAPadelClub.Core.Domain.Aggregates.DailySchedules.DailySchedule;
+
 namespace IntegrationTests.WebApi.Command;
 
 public class AddCourtToDailyScheduleEndpointTest(ITestOutputHelper testOutputHelper)
@@ -20,7 +21,6 @@ public class AddCourtToDailyScheduleEndpointTest(ITestOutputHelper testOutputHel
     [Fact]
     public async Task AddCourtToSchedule_ShouldSucceed_WhenInputIsValid()
     {
-
         // Arrange
         await using WebApplicationFactory<Program> webApplicationFactory = new PadelClubWebApplicationFactory();
         using var client = webApplicationFactory.CreateClient();
@@ -38,7 +38,7 @@ public class AddCourtToDailyScheduleEndpointTest(ITestOutputHelper testOutputHel
 
         await scheduleRepository.AddAsync(createScheduleResult.Data);
         await domainModelContext.SaveChangesAsync();
-        
+
         var requestBody = new
         {
             RequestBody = new
@@ -66,10 +66,12 @@ public class AddCourtToDailyScheduleEndpointTest(ITestOutputHelper testOutputHel
 
         // Assert
 
+        var all = await veaDatabaseProductionContext.DailySchedules.Include(s => s.Courts)
+            .ToListAsync();
+        var updatedSchedule = all.FirstOrDefault(s =>
+            string.Equals(s.ScheduleId, scheduleId.Value.ToString(), StringComparison.OrdinalIgnoreCase));
 
-        var updatedSchedule = await veaDatabaseProductionContext.DailySchedules
-            .Include(s => s.Courts)
-            .FirstOrDefaultAsync(s => s.ScheduleId == scheduleId.Value.ToString());
+   
         Assert.True(response.IsSuccessStatusCode);
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         Assert.NotNull(updatedSchedule);

@@ -21,4 +21,18 @@ public class DailyScheduleRepository : RepositoryBase<DailySchedule, ScheduleId>
         var allSchedules = await _context.Set<DailySchedule>().ToListAsync();
         return Result<List<DailySchedule>>.Ok(allSchedules);
     }
+
+    public override async Task<Result<DailySchedule>> GetAsync(ScheduleId id)
+    {
+        var dailySchedule =  await _context.Set<DailySchedule>()
+            .Include(schedule => schedule.listOfCourts)
+            .FirstOrDefaultAsync( schedule => schedule.ScheduleId.Equals(id));
+        
+        if (dailySchedule == null)
+        {
+            return Result<DailySchedule>.Fail(DailyScheduleError.ScheduleNotFound()._message);
+        }
+        
+        return Result<DailySchedule>.Ok(dailySchedule);
+    }
 }

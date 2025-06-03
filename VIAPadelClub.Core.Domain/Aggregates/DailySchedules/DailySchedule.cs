@@ -54,9 +54,9 @@ public class DailySchedule : AggregateRoot
         return Result<DailySchedule>.Ok(dailySchedule);
     }
 
-    public Result AddAvailableCourt(Court court, IDateProvider dateProvider, IScheduleFinder scheduleFinder)//
+    public async Task<Result> AddAvailableCourt(Court court, IDateProvider dateProvider, IScheduleFinder scheduleFinder)//
     {
-        var scheduleResult = scheduleFinder.FindSchedule(ScheduleId);
+        var scheduleResult = await scheduleFinder.FindSchedule(ScheduleId);
         if (!scheduleResult.Success)
         {
             return Result.Fail(scheduleResult.ErrorMessage);
@@ -281,10 +281,10 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
 
-    public Result<Booking> BookCourt(Email bookedByPlayer, Court court, TimeOnly startTime, TimeOnly endTime,
+    public async Task<Result<Booking>> BookCourt(Email bookedByPlayer, Court court, TimeOnly startTime, TimeOnly endTime,
         IDateProvider dateProvider, IPlayerFinder playerFinder, IScheduleFinder scheduleFinder)
     {
-        var booking = Booking.Create(ScheduleId, court, startTime, endTime, bookedByPlayer, scheduleFinder,
+        var booking = await Booking.Create(ScheduleId, court, startTime, endTime, bookedByPlayer, scheduleFinder,
             playerFinder);
         if (!booking.Success)
         {

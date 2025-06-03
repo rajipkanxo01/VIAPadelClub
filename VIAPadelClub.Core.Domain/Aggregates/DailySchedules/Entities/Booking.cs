@@ -39,10 +39,10 @@ public class Booking : Entity
         BookingStatus = BookingStatus.Active;
     }
 
-    public static Result<Booking> Create(ScheduleId scheduleId, Court court, TimeOnly startTime, TimeOnly endTime,
+    public static async Task<Result<Booking>> Create(ScheduleId scheduleId, Court court, TimeOnly startTime, TimeOnly endTime,
         Email email, IScheduleFinder scheduleFinder, IPlayerFinder playerFinder)
     {
-        var scheduleResult = scheduleFinder.FindSchedule(scheduleId);
+        var scheduleResult = await scheduleFinder.FindSchedule(scheduleId);
         if (!scheduleResult.Success)
         {
             return Result<Booking>.Fail(scheduleResult.ErrorMessage);

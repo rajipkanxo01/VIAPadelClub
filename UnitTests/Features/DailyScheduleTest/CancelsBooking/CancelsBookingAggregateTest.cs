@@ -18,7 +18,7 @@ public class CancelsBookingAggregateTest
     private readonly FakePlayerRepository playerRepository = new FakePlayerRepository();
 
     [Fact] // S1
-    public void Should_Cancel_Booking_When_More_Than_One_Hour_Before_Start()
+    public async Task Should_Cancel_Booking_When_More_Than_One_Hour_Before_Start()
     {
         // Arrange
         var courtName = CourtName.Create("D1").Data;
@@ -38,19 +38,19 @@ public class CancelsBookingAggregateTest
         var schedule = SetupDailySchedule(court, fakeScheduleFinder);
         var player = SetupPlayer("test@via.dk", "Test", "Player", fakePlayerFinder);
         
-        var createdBooking = schedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder).Data;
-        schedule.listOfBookings.Add(createdBooking);
+        var createdBooking = await schedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder);
+        schedule.listOfBookings.Add(createdBooking.Data);
         
         // Act
-        var cancelResult = schedule.CancelBooking(createdBooking.BookingId, fakeDateProvider, fakeTimeProvider, player.email);
+        var cancelResult = schedule.CancelBooking(createdBooking.Data.BookingId, fakeDateProvider, fakeTimeProvider, player.email);
 
         // Assert
         Assert.True(cancelResult.Success);
-        Assert.Equal(BookingStatus.Cancelled, createdBooking.BookingStatus);
+        Assert.Equal(BookingStatus.Cancelled, createdBooking.Data.BookingStatus);
     }
 
     [Fact] // S3
-    public void Should_Cancel_Booking_When_Date_Before_Schedule_But_Time_Less_Than_1_Hour()
+    public async Task Should_Cancel_Booking_When_Date_Before_Schedule_But_Time_Less_Than_1_Hour()
     {
         // Arrange
         var courtName = CourtName.Create("D1").Data;
@@ -71,22 +71,22 @@ public class CancelsBookingAggregateTest
         var schedule = SetupDailySchedule(court, fakeScheduleFinder);
         var player = SetupPlayer("test@via.dk", "Test", "Player", fakePlayerFinder);
 
-        var createdBooking = schedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder).Data;
-        schedule.listOfBookings.Add(createdBooking);
+        var createdBooking = await schedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder);
+        schedule.listOfBookings.Add(createdBooking.Data);
 
         // Act
-        var cancelResult = schedule.CancelBooking(createdBooking.BookingId, fakeDateProvider, fakeTimeProvider, player.email);
+        var cancelResult = schedule.CancelBooking(createdBooking.Data.BookingId, fakeDateProvider, fakeTimeProvider, player.email);
 
         // Assert
         Assert.True(cancelResult.Success);
-        Assert.Equal(BookingStatus.Cancelled, createdBooking.BookingStatus);
+        Assert.Equal(BookingStatus.Cancelled, createdBooking.Data.BookingStatus);
     }
 
 
     [Theory] // F1
     [InlineData("12:00", "12:01")] // Cancellation 1 min after start
     [InlineData("12:00", "13:00")] // Cancellation after booking started
-    public void Should_Fail_When_Booking_Is_In_The_Past(string bookingStartTimeStr, string cancellationTimeStr)
+    public async Task Should_Fail_When_Booking_Is_In_The_Past(string bookingStartTimeStr, string cancellationTimeStr)
     {
         // Arrange
         var courtName = CourtName.Create("D1").Data;
@@ -107,11 +107,11 @@ public class CancelsBookingAggregateTest
         var schedule = SetupDailySchedule(court, fakeScheduleFinder);
         var player = SetupPlayer("test@via.dk", "Test", "Player", fakePlayerFinder);
 
-        var createdBooking = schedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder).Data;
-        schedule.listOfBookings.Add(createdBooking);
+        var createdBooking = await schedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder);
+        schedule.listOfBookings.Add(createdBooking.Data);
 
         // Act
-        var cancelResult = schedule.CancelBooking(createdBooking.BookingId, fakeDateProvider, fakeTimeProvider, player.email);
+        var cancelResult = schedule.CancelBooking(createdBooking.Data.BookingId, fakeDateProvider, fakeTimeProvider, player.email);
 
         // Assert
         Assert.False(cancelResult.Success);
@@ -122,7 +122,7 @@ public class CancelsBookingAggregateTest
     [InlineData("12:00", "11:30")]
     [InlineData("12:00", "11:01")]
     [InlineData("12:00", "11:59")]
-    public void Should_Fail_When_Cancellation_Is_Too_Late(string bookingStartTimeStr, string cancellationTimeStr)
+    public async Task Should_Fail_When_Cancellation_Is_Too_Late(string bookingStartTimeStr, string cancellationTimeStr)
     {
         // Arrange
         var courtName = CourtName.Create("D1").Data;
@@ -143,11 +143,11 @@ public class CancelsBookingAggregateTest
         var schedule = SetupDailySchedule(court, fakeScheduleFinder);
         var player = SetupPlayer("test@via.dk", "Test", "Player", fakePlayerFinder);
 
-        var createdBooking = schedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder).Data;
-        schedule.listOfBookings.Add(createdBooking);
+        var createdBooking = await schedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder);
+        schedule.listOfBookings.Add(createdBooking.Data);
         
         // Act
-        var result = schedule.CancelBooking(createdBooking.BookingId, fakeDateProvider, fakeTimeProvider, player.email);
+        var result = schedule.CancelBooking(createdBooking.Data.BookingId, fakeDateProvider, fakeTimeProvider, player.email);
 
         // Assert
         Assert.False(result.Success);
@@ -183,7 +183,7 @@ public class CancelsBookingAggregateTest
     }
 
     [Fact] // F5
-    public void Should_Fail_When_Player_Does_Not_Own_Booking()
+    public async Task Should_Fail_When_Player_Does_Not_Own_Booking()
     {
         // Arrange
         var courtName = CourtName.Create("D1").Data;
@@ -205,11 +205,11 @@ public class CancelsBookingAggregateTest
         var firstPlayer = SetupPlayer("111111@via.dk", "First", "Player", fakePlayerFinder);
         var secondPlayer = SetupPlayer("111112@via.dk", "Second", "Player", fakePlayerFinder);
 
-        var createdBooking = schedule.BookCourt(firstPlayer.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder).Data;
-        schedule.listOfBookings.Add(createdBooking);
+        var createdBooking = await schedule.BookCourt(firstPlayer.email, court, bookingStartTime, bookingEndTime, fakeDateProvider, fakePlayerFinder, fakeScheduleFinder);
+        schedule.listOfBookings.Add(createdBooking.Data);
 
         // Act
-        var result = schedule.CancelBooking(createdBooking.BookingId, fakeDateProvider, fakeTimeProvider, secondPlayer.email);
+        var result = schedule.CancelBooking(createdBooking.Data.BookingId, fakeDateProvider, fakeTimeProvider, secondPlayer.email);
 
         // Assert
         Assert.False(result.Success);

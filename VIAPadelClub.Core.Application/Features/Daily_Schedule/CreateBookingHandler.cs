@@ -33,7 +33,7 @@ public class CreateBookingHandler : ICommandHandler<CreateBookingCommand>
         }
         
         var schedule = scheduleResult.Data;
-        var bookingResult = schedule.BookCourt(command.BookedBy,command.Court, command.StartTime, command.EndTime, _dateProvider, _playerFinder, _scheduleFinder);
+        var bookingResult = await schedule.BookCourt(command.BookedBy,command.Court, command.StartTime, command.EndTime, _dateProvider, _playerFinder, _scheduleFinder);
         
         if (!bookingResult.Success)
         {

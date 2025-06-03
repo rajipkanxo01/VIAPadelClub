@@ -15,7 +15,7 @@ namespace UnitTests.Features.DailyScheduleTest.CancelsBooking;
 public class CancelsBookingHandlerTest
 {
     [Fact]
-    public void ShouldCancelBooking_WhenCommandIsValid()
+    public async Task ShouldCancelBooking_WhenCommandIsValid()
     {
         // Arrange
         var fakeDailyScheduleRepository = new FakeDailyScheduleRepository();
@@ -43,7 +43,7 @@ public class CancelsBookingHandlerTest
         var bookingStartTime = new TimeOnly(12, 0, 0);
         var bookingEndTime = new TimeOnly(13, 0, 0);
 
-        var bookingResult = dailySchedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider,
+        var bookingResult = await dailySchedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider,
             fakePlayerFinder, fakeScheduleFinder);
         var booking = bookingResult.Data;
         
@@ -61,7 +61,7 @@ public class CancelsBookingHandlerTest
     }
 
     [Fact]
-    public void ShouldFail_WhenBookingDoesNotExist()
+    public async Task ShouldFail_WhenBookingDoesNotExist()
     {
         // Arrange
         var fakeDateProvider = new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
@@ -80,11 +80,11 @@ public class CancelsBookingHandlerTest
 
         var court = Court.Create(CourtName.Create("D1").Data).Data;
 
-        var booking = dailySchedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider,
-            fakePlayerFinder, fakeScheduleFinder).Data;
+        var booking = await dailySchedule.BookCourt(player.email, court, bookingStartTime, bookingEndTime, fakeDateProvider,
+            fakePlayerFinder, fakeScheduleFinder);
 
-        fakeDailyScheduleRepository.AddAsync(dailySchedule);
-        fakePlayerRepository.AddAsync(player);
+        await fakeDailyScheduleRepository.AddAsync(dailySchedule);
+        await fakePlayerRepository.AddAsync(player);
 
         var cancelsBookingCommand = PlayerCancelsBookingCommand
             .Create(Guid.NewGuid().ToString(), player.email.Value, scheduleId.Value.ToString()).Data;

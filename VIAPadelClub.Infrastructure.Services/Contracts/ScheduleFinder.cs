@@ -5,26 +5,29 @@ using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace Services.Contracts;
 
-public class ScheduleFinder : IScheduleFinder
+public class ScheduleFinder(IDailyScheduleRepository dailyScheduleRepository) : IScheduleFinder
 {
-    private readonly IDailyScheduleRepository _dailyScheduleRepository;
-
-    public ScheduleFinder(IDailyScheduleRepository dailyScheduleRepository)
+    private List<DailySchedule> _schedules = new();
+    
+    public async Task<Result<DailySchedule>> FindSchedule(ScheduleId scheduleId)
     {
-        _dailyScheduleRepository = dailyScheduleRepository;
-    }
+        var scheduleResult = await dailyScheduleRepository.GetAsync(scheduleId);
 
-
-    public async <Task<Result<DailySchedule>> FindSchedule(ScheduleId scheduleId)
-    {
-        var schedule = await _dailyScheduleRepository.GetAsync(scheduleId);
-        return schedule.Data == null
+        if (!scheduleResult.Success)
+        {
+            return scheduleResult;
+        }
+        
+        return Result<DailySchedule>.Ok(scheduleResult.Data);
+        
+        /*return schedule.Data == null
             ? Result<DailySchedule>.Fail(DailyScheduleError.ScheduleNotFound()._message)
-            : Result<DailySchedule>.Ok(schedule.Data);
+            : Result<DailySchedule>.Ok(schedule.Data);*/
     }
-
+    
     public void AddSchedule(DailySchedule schedule)
     {
+        
         _schedules.Add(schedule);
     }
 }
