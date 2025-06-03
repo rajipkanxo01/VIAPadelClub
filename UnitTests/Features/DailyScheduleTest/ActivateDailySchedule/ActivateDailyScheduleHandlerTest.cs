@@ -6,6 +6,7 @@ using VIAPadelClub.Core.Application.Features.Daily_Schedule;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
 using VIAPadelClub.Core.Domain.Common;
+using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 
 namespace UnitTests.Features.DailyScheduleTest.ActivateDailySchedule;
@@ -34,5 +35,24 @@ public class ActivateDailyScheduleHandlerTest
 
         // Assert
         Assert.True(result.Success);
+    }
+    
+    [Fact]
+    public void ShouldFail_WhenInScheduleDoesNotExistIsProvided()
+    {
+        // Arrange
+        var scheduleId = Guid.NewGuid();
+        var scheduleRepository = new FakeDailyScheduleRepository();
+        var dateProvider=new FakeDateProvider(DateOnly.FromDateTime(DateTime.Today));
+        
+        var handler = new ActivateDailyScheduleHandler(scheduleRepository,dateProvider);
+        var command = ActivateDailyScheduleCommand.Create(scheduleId.ToString());
+        
+        // Act
+        var result = handler.HandleAsync(command.Data).Result;
+
+        // Assert
+        Assert.False(result.Success);
+        Assert.NotNull(result.ErrorMessage);
     }
 }

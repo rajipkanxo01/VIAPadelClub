@@ -7,16 +7,17 @@ using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Core.Application.Features.Daily_Schedule;
 
-public class ActivateDailyScheduleHandler: ICommandHandler<ActivateDailyScheduleCommand>
+internal class ActivateDailyScheduleHandler: ICommandHandler<ActivateDailyScheduleCommand>
 {
     private readonly IDailyScheduleRepository _dailyScheduleRepository;
     private readonly IDateProvider _dateProvider;
     
-    public ActivateDailyScheduleHandler(IDailyScheduleRepository dailyScheduleRepository, IDateProvider dateProvider)
+    internal ActivateDailyScheduleHandler(IDailyScheduleRepository dailyScheduleRepository, IDateProvider dateProvider)
     {
         _dailyScheduleRepository = dailyScheduleRepository;
         _dateProvider = dateProvider;
     }
+    
     public Task<Result> HandleAsync(ActivateDailyScheduleCommand command)
     {
         var dailyScheduleResult = _dailyScheduleRepository.GetAsync(command.ScheduleId).Result;
