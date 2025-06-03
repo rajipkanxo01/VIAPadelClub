@@ -7,14 +7,20 @@ namespace Services.Contracts;
 
 public class ScheduleFinder : IScheduleFinder
 {
-    private readonly List<DailySchedule> _schedules = new();
-    
-    public Result<DailySchedule> FindSchedule(ScheduleId scheduleId)
+    private readonly IDailyScheduleRepository _dailyScheduleRepository;
+
+    public ScheduleFinder(IDailyScheduleRepository dailyScheduleRepository)
     {
-        var schedule = _schedules.FirstOrDefault(s => s.ScheduleId.Equals(scheduleId));
-        return schedule == null
+        _dailyScheduleRepository = dailyScheduleRepository;
+    }
+
+
+    public async <Task<Result<DailySchedule>> FindSchedule(ScheduleId scheduleId)
+    {
+        var schedule = await _dailyScheduleRepository.GetAsync(scheduleId);
+        return schedule.Data == null
             ? Result<DailySchedule>.Fail(DailyScheduleError.ScheduleNotFound()._message)
-            : Result<DailySchedule>.Ok(schedule);
+            : Result<DailySchedule>.Ok(schedule.Data);
     }
 
     public void AddSchedule(DailySchedule schedule)

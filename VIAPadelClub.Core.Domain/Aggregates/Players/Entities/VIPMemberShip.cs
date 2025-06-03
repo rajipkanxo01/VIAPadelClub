@@ -27,15 +27,4 @@ public class VipMemberShip {
 
         return Result<VipMemberShip>.Ok(new VipMemberShip(today, today.AddDays(30), true));
     }
-    
-    public bool HasExpired()
-    {
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        return today > VIPEndDate;
-    }
-
-    public void ExpireStatus()
-    {
-        IsVIP = false;
-    }
 }

@@ -111,15 +111,4 @@ public class Player : AggregateRoot
         Console.WriteLine($"**NOTIFICATION** Player {email.Value} has been upgraded to VIP!");
         return Result.Ok();
     }
-
-    public void CheckVIPStatusExpiry()
-    {
-        if (vipMemberShip == null) 
-            return;
-
-        if (vipMemberShip.HasExpired())
-        {
-            vipMemberShip.ExpireStatus();
-        }
-    }
 }

@@ -41,13 +41,10 @@ public class DailySchedule : AggregateRoot
         listOfBookings = new List<Booking>();
         isDeleted = false;
     }
-
-
-    // public ScheduleId Id => scheduleId;
-    public static Result<DailySchedule> CreateSchedule(IDateProvider dateProvider, ScheduleId id)
+    
+    public static Result<DailySchedule> CreateSchedule(IDateProvider dateProvider, ScheduleId id)//
     {
         var today = dateProvider.Today();
-        // var id = ScheduleId.Create();
 
         var dailySchedule = new DailySchedule(id)
         {
@@ -57,7 +54,7 @@ public class DailySchedule : AggregateRoot
         return Result<DailySchedule>.Ok(dailySchedule);
     }
 
-    public Result AddAvailableCourt(Court court, IDateProvider dateProvider, IScheduleFinder scheduleFinder)
+    public Result AddAvailableCourt(Court court, IDateProvider dateProvider, IScheduleFinder scheduleFinder)//
     {
         var scheduleResult = scheduleFinder.FindSchedule(ScheduleId);
         if (!scheduleResult.Success)

@@ -43,8 +43,8 @@ public class AddCourtToDailyScheduleEndpointTest(ITestOutputHelper testOutputHel
         {
             RequestBody = new
             {
-                ScheduleId = scheduleId.Value,
-                CourtName = "SS1"
+                ScheduleId = scheduleId.Value.ToString().ToUpper(),
+                CourtName = "S1"
             }
         };
 
@@ -73,6 +73,6 @@ public class AddCourtToDailyScheduleEndpointTest(ITestOutputHelper testOutputHel
         Assert.True(response.IsSuccessStatusCode);
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         Assert.NotNull(updatedSchedule);
-        Assert.Contains(updatedSchedule.Courts, c => c.CourtName == "SS1");
+        Assert.Contains(updatedSchedule.Courts, c => c.CourtName == "S1");
     }
 }
