@@ -22,4 +22,5 @@ public partial class DailySchedule
     public virtual ICollection<Court> Courts { get; set; } = new List<Court>();
 
     public virtual ICollection<VipTimeRange> VipTimeRanges { get; set; } = new List<VipTimeRange>();
+    
 }

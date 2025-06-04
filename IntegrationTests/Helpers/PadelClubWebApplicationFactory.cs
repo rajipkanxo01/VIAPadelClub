@@ -34,10 +34,19 @@ internal class PadelClubWebApplicationFactory : WebApplicationFactory<Program>
 
     private void SetupCleanDatabase(IServiceCollection services)
     {
-        var domainModelContext = services.BuildServiceProvider().GetService<DomainModelContext>()!;
+        var serviceProvider = services.BuildServiceProvider();
+
+        using var domainModelScope = serviceProvider.CreateScope();
+        var domainModelContext = domainModelScope.ServiceProvider.GetRequiredService<DomainModelContext>();
         domainModelContext.Database.EnsureDeleted();
         domainModelContext.Database.EnsureCreated();
+
+        using var veaScope = serviceProvider.CreateScope();
+        var veaContext = veaScope.ServiceProvider.GetRequiredService<VeadatabaseProductionContext>();
+        veaContext.Database.EnsureDeleted();
+        veaContext.Database.EnsureCreated();
     }
+
 
     private string GetConnectionString()
     {
@@ -48,11 +57,14 @@ internal class PadelClubWebApplicationFactory : WebApplicationFactory<Program>
 
     protected override void Dispose(bool disposing)
     {
-        var domainModelContext = _serviceCollection.BuildServiceProvider().GetService<DomainModelContext>()!;
         if (disposing)
         {
-            domainModelContext.Database.EnsureDeleted();
-            domainModelContext.Dispose();
+            using var domainModelScope = _serviceCollection.BuildServiceProvider().CreateScope();
+            domainModelScope.ServiceProvider.GetRequiredService<DomainModelContext>().Database.EnsureDeleted();
+            domainModelScope.ServiceProvider.GetRequiredService<VeadatabaseProductionContext>().Database.EnsureDeleted();
         }
+
+        base.Dispose(disposing);
     }
+
 }

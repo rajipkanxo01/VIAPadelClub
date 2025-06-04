@@ -33,7 +33,6 @@ builder.Services.AddDbContext<VeadatabaseProductionContext>(options => options.U
 builder.Services.AddScoped<IMapper, ObjectMapper>();
 builder.Services.AddScoped<IMappingConfig<ViewManagerOverview.Answer, ViewManagerOverviewResponse>, ViewManagerOverviewAnswerToResponseMapping>();
 builder.Services.AddScoped<IMappingConfig<PlayerScheduleOverview.Answer, PlayerScheduleViewResponse>, PlayerScheduleAnswerToPlayerScheduleViewResponseMapping>();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

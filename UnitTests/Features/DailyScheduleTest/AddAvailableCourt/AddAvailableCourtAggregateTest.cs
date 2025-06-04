@@ -122,7 +122,7 @@ public class AddAvailableCourtAggregateTest
     
     //Daily_Schedule tests
     [Fact]
-     public void Should_Fail_When_Schedule_Not_Found()
+     public async Task Should_Fail_When_Schedule_Not_Found()
      {
          // Arrange
          var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
@@ -133,7 +133,7 @@ public class AddAvailableCourtAggregateTest
          string courtName = "D1";
 
          // Act
-         var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
+         var result = await scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
     
          // Assert
          result.Success.Should().BeFalse();
@@ -141,7 +141,7 @@ public class AddAvailableCourtAggregateTest
      }
 
     [Fact]
-    public void Should_Fail_When_Schedule_Is_Past()
+    public async Task Should_Fail_When_Schedule_Is_Past()
     {
         // Arrange
         var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
@@ -155,7 +155,7 @@ public class AddAvailableCourtAggregateTest
         string courtName = "D1";
     
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
+        var result = await scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
 
         // Assert
         result.Success.Should().BeFalse();
@@ -163,7 +163,7 @@ public class AddAvailableCourtAggregateTest
     }
     
     [Fact]
-    public void Should_Fail_When_Court_Name_Is_Invalid()
+    public async Task Should_Fail_When_Court_Name_Is_Invalid()
     {
         // Arrange
         var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
@@ -174,14 +174,14 @@ public class AddAvailableCourtAggregateTest
         string invalidCourtName = "F1";
         
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(invalidCourtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
+        var result = await scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(invalidCourtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
 
         // Assert
         result.Success.Should().BeFalse();
     }
     
     [Fact]
-    public void Should_Fail_When_Court_Already_Exists_In_Daily_Schedule()
+    public async Task Should_Fail_When_Court_Already_Exists_In_Daily_Schedule()
     {
         // Arrange
         var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
@@ -192,10 +192,10 @@ public class AddAvailableCourtAggregateTest
         fakeScheduleRepo.AddSchedule(scheduleResult.Data);
         string courtName = "D1";
 
-        scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
+        await scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
     
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
+        var result = await scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
     
         // Assert
         result.Success.Should().BeFalse();
@@ -203,7 +203,7 @@ public class AddAvailableCourtAggregateTest
     }
     
     [Fact]
-    public void Should_Add_Court_Successfully_When_Valid()
+    public async Task Should_Add_Court_Successfully_When_Valid()
     {
         // Arrange
         var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
@@ -215,7 +215,7 @@ public class AddAvailableCourtAggregateTest
         string courtName = "D1";
         
         // Act
-        var result = scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
+        var result = await scheduleResult.Data.AddAvailableCourt(Court.Create(CourtName.Create(courtName).Data).Data, fakeDateProvider, fakeScheduleRepo);
     
         // Assert
         result.Success.Should().BeTrue();
