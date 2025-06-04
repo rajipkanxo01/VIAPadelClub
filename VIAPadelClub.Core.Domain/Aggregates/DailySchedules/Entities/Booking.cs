@@ -1,5 +1,6 @@
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Values;
+using VIAPadelClub.Core.Domain.Aggregates.Players;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Contracts;
 using VIAPadelClub.Core.Domain.Common.BaseClasses;
 using VIAPadelClub.Core.Tools.OperationResult;
@@ -39,149 +40,114 @@ public class Booking : Entity
         BookingStatus = BookingStatus.Active;
     }
 
-    public static async Task<Result<Booking>> Create(ScheduleId scheduleId, Court court, TimeOnly startTime, TimeOnly endTime,
-        Email email, IScheduleFinder scheduleFinder, IPlayerFinder playerFinder)
+    public static async Task<Result<Booking>> Create(
+        ScheduleId scheduleId,
+        Court court,
+        TimeOnly startTime,
+        TimeOnly endTime,
+        Email email,
+        IScheduleFinder scheduleFinder,
+        IPlayerFinder playerFinder)
     {
         var scheduleResult = await scheduleFinder.FindSchedule(scheduleId);
         if (!scheduleResult.Success)
-        {
             return Result<Booking>.Fail(scheduleResult.ErrorMessage);
-        }
 
         var schedule = scheduleResult.Data;
-
-        if (schedule.isDeleted || schedule.status != ScheduleStatus.Active) //F1 and 2
+        if (!IsValidSchedule(schedule))
             return Result<Booking>.Fail(DailyScheduleError.ScheduleNotActive()._message);
 
-        if (schedule.listOfCourts.All(c => 
-                !string.Equals(c.Name.Value.Trim(), court.Name.Value.Trim(), StringComparison.OrdinalIgnoreCase)))
-        {
+        if (!CourtExists(schedule, court))
             return Result<Booking>.Fail(DailyScheduleError.CourtDoesntExistInSchedule()._message);
-        }
 
-
-        //F5- Player start time before schedule start time 
-        if (startTime < schedule.availableFrom)
-        {
-            return Result<Booking>.Fail(DailyScheduleError.BookingStartTimeBeforeScheduleStartTime()._message);
-        }
-
-        //F6- Player end time after schedule start time
-        if (endTime < schedule.availableFrom)
-        {
-            return Result<Booking>.Fail(DailyScheduleError.BookingEndTimeAfterScheduleStartTime()._message);
-        }
-
-        //F7- Player start time after schedule's end time
-        if (startTime > schedule.availableUntil)
-        {
-            return Result<Booking>.Fail(DailyScheduleError.BookingStartTimeAfterScheduleStartTime()._message);
-        }
-
-        //F8- Player end time after schedule's end time
-        if (endTime > schedule.availableUntil)
-        {
+        if (!IsValidTimeRange(schedule, startTime, endTime))
             return Result<Booking>.Fail(DailyScheduleError.BookingEndTimeAfterScheduleEndTime()._message);
-        }
 
-        if ((startTime.Minute != 0 && startTime.Minute != 30) || (endTime.Minute != 0 && endTime.Minute != 30)) //F9
-            return Result<Booking>.Fail(DailyScheduleError.InvalidBookingTimeSpan()._message);
+        var playerResult = playerFinder.FindPlayer(email);
+        if (!playerResult.Success)
+            return Result<Booking>.Fail(playerResult.ErrorMessage);
 
-        var player = playerFinder.FindPlayer(email);
+        var player = playerResult.Data;
+        if (!IsBookingAllowed(schedule, player, court, startTime, endTime))
+            return Result<Booking>.Fail(DailyScheduleError.BookingCannotBeOverlapped()
+                ._message);
 
-        if (!player.Success)
-        {
-            return Result<Booking>.Fail(player.ErrorMessage);
-        }
+        var booking = new Booking(
+            BookingId.Create(),
+            email,
+            court,
+            (int)(endTime - startTime).TotalMinutes,
+            schedule.scheduleDate,
+            startTime,
+            endTime);
 
-        var duration = endTime - startTime; //F10 and F12
+        return Result<Booking>.Ok(booking);
+    }
+
+    private static bool IsValidSchedule(DailySchedule schedule) =>
+        !schedule.isDeleted && schedule.status == ScheduleStatus.Active;
+
+    private static bool CourtExists(DailySchedule schedule, Court court) =>
+        schedule.listOfCourts.Any(c =>
+            string.Equals(c.Name.Value.Trim(), court.Name.Value.Trim(), StringComparison.OrdinalIgnoreCase));
+
+    private static bool IsValidTimeRange(DailySchedule schedule, TimeOnly start, TimeOnly end)
+    {
+        if (start < schedule.availableFrom)
+            return false;
+
+        if (end < schedule.availableFrom || end > schedule.availableUntil)
+            return false;
+
+        if (start > schedule.availableUntil)
+            return false;
+
+        if ((start.Minute != 0 && start.Minute != 30) || (end.Minute != 0 && end.Minute != 30))
+            return false;
+
+        var duration = end - start;
         if (duration < TimeSpan.FromHours(1) || duration > TimeSpan.FromHours(3))
-            return Result<Booking>.Fail(DailyScheduleError.BookingDurationError()._message);
+            return false;
 
-        if (schedule.listOfBookings.Any(b => //F11
-                b.Court == court &&
-                !(endTime <= b.StartTime || startTime >= b.EndTime)))
-        {
-            return Result<Booking>.Fail(DailyScheduleError.BookingCannotBeOverlapped()._message);
-        }
+        if ((start - schedule.availableFrom).TotalMinutes < 60 && start > schedule.availableFrom)
+            return false;
 
-        var playerResult = player.Data;
-        //F13- player is quarantined and the selected date of booking is before the quarantine is ended
-        if (playerResult.isQuarantined && playerResult.activeQuarantine?.EndDate >= schedule.scheduleDate)
-        {
-            return Result<Booking>.Fail(DailyScheduleError.QuarantinePlayerCannotBookCourt()._message);
-        }
+        if ((schedule.availableUntil - end).TotalMinutes < 60 && end < schedule.availableUntil)
+            return false;
 
-        //F14- player is blacklisted
-        if (playerResult.isBlackListed)
-        {
-            return Result<Booking>.Fail(DailyScheduleError.PlayerIsBlacklisted()._message);
-        }
+        return true;
+    }
 
-        //F15- if non VIP player tries to book court in VIP time then should be rejected
-        foreach (var vipTime in schedule.vipTimeRanges)
-        {
-            if (startTime < vipTime.End && endTime > vipTime.Start)
-            {
-                if (playerResult.vipMemberShip is null)
-                {
-                    return Result<Booking>.Fail(DailyScheduleError.NonVipMemberCannotBookInVipTimeSlot()._message);
-                }
-            }
-        }
+    private static bool IsBookingAllowed(DailySchedule schedule, Player player, Court court, TimeOnly start,
+        TimeOnly end)
+    {
+        if (player.isQuarantined && player.activeQuarantine?.EndDate >= schedule.scheduleDate)
+            return false;
+
+        if (player.isBlackListed)
+            return false;
+
+        if (schedule.vipTimeRanges.Any(vip => start < vip.End && end > vip.Start) &&
+            player.vipMemberShip == null)
+            return false;
 
         if (schedule.listOfBookings.Count(b =>
-                b.BookedBy.Value == player.Data.email.Value && b.BookedDate == schedule.scheduleDate) >= 1) //F17
-            return Result<Booking>.Fail(DailyScheduleError.BookingLimitExceeded()._message);
+                b.BookedBy.Value == player.email.Value && b.BookedDate == schedule.scheduleDate) >= 1)
+            return false;
 
-        //F18- Player leave hole less than one hour
+        var bookings = schedule.listOfBookings.Where(b => b.Court.Name.Equals(court.Name));
 
-        var existingBookings = schedule.listOfBookings.Where(booking => booking.Court.Name.Equals(court.Name));
-
-        foreach (var booking in existingBookings)
+        foreach (var b in bookings)
         {
-            //Ensure at least 1-hour gap before the new booking
-            if (booking.EndTime <= startTime && (startTime - booking.EndTime).TotalMinutes < 60)
-            {
-                return Result<Booking>.Fail(DailyScheduleError.OneHourGapShouldBeBeforeNewBooking()._message);
-            }
-
-            //Ensure at least 1-hour gap after the new booking
-            if (booking.StartTime >= endTime && (booking.StartTime - endTime).TotalMinutes < 60)
-            {
-                return Result<Booking>.Fail(DailyScheduleError.OneHourGapShouldBeAfterAnotherBooking()._message);
-            }
-
-            //Check for any overlap
-            if (startTime < booking.EndTime || endTime > booking.StartTime)
-            {
-                return Result<Booking>.Fail(DailyScheduleError.BookingCannotBeOverlapped()._message);
-            }
+            if ((b.EndTime <= start && (start - b.EndTime).TotalMinutes < 60) ||
+                (b.StartTime >= end && (b.StartTime - end).TotalMinutes < 60) ||
+                (start < b.EndTime && end > b.StartTime))
+                return false;
         }
 
-        // Get daily schedule available time
-        var scheduleStart = schedule.availableFrom;
-        var scheduleEnd = schedule.availableUntil;
-
-        // Check if booking creates small gaps with the daily schedule time
-        if ((startTime - scheduleStart).TotalMinutes < 60 && startTime > scheduleStart)
-        {
-            return Result<Booking>.Fail(DailyScheduleError.OneHourGapBetweenScheduleStartTimeAndBookingStartTime()
-                ._message);
-        }
-
-        if ((scheduleEnd - endTime).TotalMinutes < 60 && endTime < scheduleEnd)
-        {
-            return Result<Booking>.Fail(DailyScheduleError.OneHourGapBetweenScheduleEndTimeAndBookingEndTime()
-                ._message);
-        }
-
-        var bookingId = BookingId.Create();
-
-        var newBooking = new Booking(bookingId, email, court, (int)(endTime - startTime).TotalMinutes,
-            schedule.scheduleDate, startTime, endTime);
-        return Result<Booking>.Ok(newBooking);
+        return true;
     }
+
 
     public Result Cancel(IDateProvider dateProvider, ITimeProvider timeProvider, Email playerMakingCancel)
     {

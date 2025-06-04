@@ -7,11 +7,10 @@ using VIAPadelClub.Presentation.WebApi.Endpoints.Common;
 namespace VIAPadelClub.Presentation.WebApi.Endpoints.Commands;
 
 public record UpdateScheduleDateTimeRequest(string ScheduleId, string Date, string StartTime, string EndTime);
-public record UpdateScheduleDateTimeRequestBody();
 
 public class UpdateScheduleDateTimeEndpoint(ICommandDispatcher dispatcher) : EndpointBase.ApiEndpoint.WithRequest<UpdateScheduleDateTimeRequest>.AndResult<NoContent, BadRequest<string>>
 {
-    [HttpPut("dailySchedule/update")]
+    [HttpPost("dailySchedule/update")]
     public override async Task<Results<NoContent, BadRequest<string>>> HandleAsync([FromBody] UpdateScheduleDateTimeRequest request)
     {
         var commandResult = UpdateDailyScheduleTimeCommand.Create(

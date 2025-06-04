@@ -6,6 +6,11 @@ using VIAPadelClub.Presentation.WebApi.Endpoints.Common;
 
 namespace VIAPadelClub.Presentation.WebApi.Endpoints.Commands;
 
+public record CreateBookingRequest([FromBody] CreateBookingRequest.Body RequestBody)
+{
+    public record Body(string DailyScheduleId, string BookedBy, string StartTime, string EndTime, string CourtName); 
+}
+
 public class CreateBookingEndpoint(ICommandDispatcher commandDispatcher)
     : EndpointBase
         .ApiEndpoint
@@ -16,11 +21,11 @@ public class CreateBookingEndpoint(ICommandDispatcher commandDispatcher)
     public override async Task<Results<NoContent, BadRequest<string>>> HandleAsync(CreateBookingRequest request)
     {
         var commandResult = CreateBookingCommand.Create(
-            request.RequestBody.dailyScheduleId,
-            request.RequestBody.bookedBy,
-            request.RequestBody.startTime,
-            request.RequestBody.endTime,
-            request.RequestBody.courtName
+            request.RequestBody.DailyScheduleId,
+            request.RequestBody.BookedBy,
+            request.RequestBody.StartTime,
+            request.RequestBody.EndTime,
+            request.RequestBody.CourtName
             );
 
         if (!commandResult.Success)
@@ -39,8 +44,3 @@ public class CreateBookingEndpoint(ICommandDispatcher commandDispatcher)
     }
 }
 
-public record CreateBookingRequest(
-    [FromBody] CreateBookingRequest.Body RequestBody)
-{
-    public record Body(string dailyScheduleId, string bookedBy, string startTime, string endTime, string courtName); 
-}

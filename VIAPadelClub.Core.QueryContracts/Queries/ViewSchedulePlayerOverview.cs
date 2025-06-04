@@ -6,6 +6,7 @@ namespace VIAPadelClub.Core.QueryContracts.Queries;
 public class ViewSchedulePlayerOverview
 {
     public record Query(string Date) : IQuery<Result<Answer>>;
+    
     public record Answer(
         string ScheduleId,
         string Date,

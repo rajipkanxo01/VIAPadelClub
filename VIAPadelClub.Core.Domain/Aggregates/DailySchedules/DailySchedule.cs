@@ -284,13 +284,13 @@ public class DailySchedule : AggregateRoot
     {
         var booking = await Booking.Create(ScheduleId, court, startTime, endTime, bookedByPlayer, scheduleFinder,
             playerFinder);
+        
         if (!booking.Success)
         {
             return Result<Booking>.Fail(booking.ErrorMessage);
         }
 
         listOfBookings.Add(booking.Data);
-        // listOfAvailableCourts.Remove(court);
         return Result<Booking>.Ok(booking.Data);
     }
 
