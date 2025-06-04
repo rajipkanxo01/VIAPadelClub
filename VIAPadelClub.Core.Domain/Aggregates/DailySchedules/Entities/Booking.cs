@@ -53,8 +53,12 @@ public class Booking : Entity
         if (schedule.isDeleted || schedule.status != ScheduleStatus.Active) //F1 and 2
             return Result<Booking>.Fail(DailyScheduleError.ScheduleNotActive()._message);
 
-        if (schedule.listOfCourts.All(c => c.Name.Value != court.Name.Value)) //F4
+        if (schedule.listOfCourts.All(c => 
+                !string.Equals(c.Name.Value.Trim(), court.Name.Value.Trim(), StringComparison.OrdinalIgnoreCase)))
+        {
             return Result<Booking>.Fail(DailyScheduleError.CourtDoesntExistInSchedule()._message);
+        }
+
 
         //F5- Player start time before schedule start time 
         if (startTime < schedule.availableFrom)

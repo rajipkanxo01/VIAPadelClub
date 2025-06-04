@@ -64,7 +64,7 @@ public class DailySchedule : AggregateRoot
 
         var schedule = scheduleResult.Data;
 
-        var validationResult = schedule.ValidateScheduleForCourtAddition(dateProvider.Today());
+        var validationResult = ValidateScheduleForCourtAddition(dateProvider.Today());
         if (!validationResult.Success)
         {
             return validationResult;
@@ -76,15 +76,13 @@ public class DailySchedule : AggregateRoot
             return Result.Fail(courtNameResult.ErrorMessage);
         }
 
-        var courtCheckResult = schedule.HasCourt(courtNameResult.Data);
+        var courtCheckResult = HasCourt(courtNameResult.Data);
         if (!courtCheckResult.Success)
         {
             return courtCheckResult;
         }
 
-        // court.AssignToSchedule(ScheduleId);
-        schedule.listOfCourts.Add(court);
-        // schedule.listOfAvailableCourts.Add(Court.Create(courtNameResult.Data).Data);
+        listOfCourts.Add(court);
         return Result.Ok();
     }
 

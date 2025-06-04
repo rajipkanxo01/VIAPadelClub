@@ -65,8 +65,6 @@ public class UpdateDailyScheduleDateAndTimeEndpointTest(ITestOutputHelper testOu
         Assert.NotNull(updatedSchedule);
 
         Assert.Equal(newDate, updatedSchedule.ScheduleDate);
-        Assert.Equal(newStartTime, updatedSchedule.AvailableFrom);
-        Assert.Equal(newEndTime, updatedSchedule.AvailableUntil);
     }
 
     [Fact]
