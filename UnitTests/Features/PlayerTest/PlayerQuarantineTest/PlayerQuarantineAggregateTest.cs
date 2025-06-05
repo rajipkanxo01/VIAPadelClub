@@ -123,7 +123,7 @@ public class PlayerQuarantineTest {
         dailySchedule.Activate(new FakeDateProvider(startDate));
         
         // Create a booking for the player
-        var booking = dailySchedule.BookCourt(
+        var booking = await dailySchedule.BookCourt(
             player.email,
             court,
             new TimeOnly(10, 0),
@@ -131,9 +131,9 @@ public class PlayerQuarantineTest {
             new FakeDateProvider(startDate),
             new FakePlayerFinder(new FakePlayerRepository()),
             new FakeScheduleFinder(new FakeDailyScheduleRepository())
-        ).Data;
+        );
         
-        dailySchedule.listOfBookings.Add(booking);
+        dailySchedule.listOfBookings.Add(booking.Data);
         var schedules = new List<DailySchedule> { dailySchedule };
 
         // Act
@@ -143,6 +143,6 @@ public class PlayerQuarantineTest {
         Assert.True(result.Success);
         Assert.NotNull(result.Data);
         Assert.NotNull(player.activeQuarantine);
-        Assert.Equal(BookingStatus.Cancelled, booking.BookingStatus);
+        Assert.Equal(BookingStatus.Cancelled, booking.Data.BookingStatus);
     }
 }

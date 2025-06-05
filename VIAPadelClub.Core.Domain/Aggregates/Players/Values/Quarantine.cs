@@ -2,7 +2,7 @@
 
 using Common.BaseClasses;
 
-public class Quarantine
+public class Quarantine : ValueObject
 { 
     internal DateOnly StartDate { get; set; }
     internal DateOnly EndDate { get; set; }
@@ -38,5 +38,10 @@ public class Quarantine
     private void Extend()
     {
         EndDate = EndDate.AddDays(3);
+    }
+
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        throw new NotImplementedException();
     }
 }

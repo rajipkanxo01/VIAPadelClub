@@ -287,7 +287,7 @@ public class DailyScheduleAggregateTest
             var courtResult = Court.Create(nameResult.Data);
 
             ScheduleFinderMock.Setup(m => m.FindSchedule(It.IsAny<ScheduleId>()))
-                .Returns(scheduleResult);
+                .ReturnsAsync(scheduleResult);
 
             scheduleResult.Data.AddAvailableCourt(courtResult.Data, DateProviderMock.Object, ScheduleFinderMock.Object);
 
@@ -319,12 +319,12 @@ public class DailyScheduleAggregateTest
             var player = await GetPlayer(Context, playerEmail);
 
             ScheduleFinderMock.Setup(m => m.FindSchedule(It.IsAny<ScheduleId>()))
-                .Returns(scheduleResult);
+                .ReturnsAsync(scheduleResult);
 
             PlayerFinderMock.Setup(m => m.FindPlayer(It.IsAny<Email>()))
                 .Returns(Result<Player>.Ok(player));
 
-            var bookingResult = scheduleResult.Data.BookCourt(
+            var bookingResult = await scheduleResult.Data.BookCourt(
                 player.email,
                 court,
                 startTime,

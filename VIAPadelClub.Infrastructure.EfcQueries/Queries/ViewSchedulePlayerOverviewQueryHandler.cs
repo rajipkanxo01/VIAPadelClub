@@ -20,7 +20,6 @@ public class ViewSchedulePlayerOverviewQueryHandler(VeadatabaseProductionContext
             .Include(s => s.VipTimeRanges)
             .FirstOrDefaultAsync(s => s.ScheduleDate == query.Date && s.Status == "active");
 
-
         if (schedule == null)
         {
             return Result<ViewSchedulePlayerOverview.Answer>.Fail(DailyScheduleError.ScheduleNotFound()._message);

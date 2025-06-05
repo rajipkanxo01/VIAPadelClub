@@ -6,19 +6,31 @@ using VIAPadelClub.Core.Tools.OperationResult;
 
 namespace VIAPadelClub.Infrastructure.EfcDmPersistence.Repositories;
 
-public class DailyScheduleRepository : RepositoryBase<DailySchedule, ScheduleId>, IDailyScheduleRepository
+public class DailyScheduleRepository(DomainModelContext context)
+    : RepositoryBase<DailySchedule, ScheduleId>(context), IDailyScheduleRepository
 {
-    private readonly DbContext _context;
-
-    public DailyScheduleRepository(DomainModelContext context) : base(context)
-    {
-        _context = context;
-    }
-
-
+    private readonly DbContext _context = context;
+    
     public async Task<Result<List<DailySchedule>>> GetAllAsync()
     {
-        var allSchedules = await _context.Set<DailySchedule>().ToListAsync();
+        var allSchedules = await _context.Set<DailySchedule>()
+            .Include(schedule => schedule.listOfBookings)
+            .Include(schedule => schedule.listOfCourts )
+            .ToListAsync();
         return Result<List<DailySchedule>>.Ok(allSchedules);
+    }
+
+    public override async Task<Result<DailySchedule>> GetAsync(ScheduleId id)
+    {
+        var dailySchedule =  await _context.Set<DailySchedule>()
+            .Include(schedule => schedule.listOfCourts)
+            .FirstOrDefaultAsync( schedule => schedule.ScheduleId.Equals(id));
+        
+        if (dailySchedule == null)
+        {
+            return Result<DailySchedule>.Fail(DailyScheduleError.ScheduleNotFound()._message);
+        }
+        
+        return Result<DailySchedule>.Ok(dailySchedule);
     }
 }

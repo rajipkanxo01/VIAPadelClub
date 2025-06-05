@@ -14,16 +14,16 @@ public class FakeDailyScheduleRepository : IDailyScheduleRepository
         return Task.FromResult(Result.Ok());
     }
 
-    public Task<Result<DailySchedule>> GetAsync(ScheduleId id)
+    public async Task<Result<DailySchedule>> GetAsync(ScheduleId id)
     {
         var schedule = _listOfSchedules.FirstOrDefault(s => s.ScheduleId.Equals(id));
 
         if (schedule is null)
         {
-            return Task.FromResult(Result<DailySchedule>.Fail(DailyScheduleError.ScheduleNotFound()._message));
+            return Result<DailySchedule>.Fail(DailyScheduleError.ScheduleNotFound()._message);
         }
 
-        return Task.FromResult(Result<DailySchedule>.Ok(schedule));
+        return Result<DailySchedule>.Ok(schedule);
     }
 
     public Task<Result> RemoveAsync(ScheduleId id)

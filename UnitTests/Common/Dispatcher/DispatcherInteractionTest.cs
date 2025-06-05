@@ -20,7 +20,8 @@ public class DispatcherInteractionTest
         // Arrange
         var command = CreateDailyScheduleCommand.Create().Data;
         var mock = new Mock<ICommandHandler<CreateDailyScheduleCommand>>();
-        mock.Setup(h => h.HandleAsync(It.IsAny<CreateDailyScheduleCommand>())).ReturnsAsync(Result.Ok);
+        mock.Setup(h => h.HandleAsync
+            (It.IsAny<CreateDailyScheduleCommand>())).ReturnsAsync(Result.Ok);
         
         var mockUnitOfWork = new Mock<IUnitOfWork>();
         var mockDailyScheduleRepository = new Mock<IDailyScheduleRepository>();
@@ -38,7 +39,8 @@ public class DispatcherInteractionTest
         
         // Assert
         Assert.True(result.Success);
-        mock.Verify(h => h.HandleAsync(It.IsAny<CreateDailyScheduleCommand>()), Times.Once);
+        mock.Verify(h => h.HandleAsync
+            (It.IsAny<CreateDailyScheduleCommand>()), Times.Once);
     }
     
     

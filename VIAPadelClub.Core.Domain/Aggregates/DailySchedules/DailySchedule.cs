@@ -41,13 +41,10 @@ public class DailySchedule : AggregateRoot
         listOfBookings = new List<Booking>();
         isDeleted = false;
     }
-
-
-    // public ScheduleId Id => scheduleId;
-    public static Result<DailySchedule> CreateSchedule(IDateProvider dateProvider, ScheduleId id)
+    
+    public static Result<DailySchedule> CreateSchedule(IDateProvider dateProvider, ScheduleId id)//
     {
         var today = dateProvider.Today();
-        // var id = ScheduleId.Create();
 
         var dailySchedule = new DailySchedule(id)
         {
@@ -57,9 +54,9 @@ public class DailySchedule : AggregateRoot
         return Result<DailySchedule>.Ok(dailySchedule);
     }
 
-    public Result AddAvailableCourt(Court court, IDateProvider dateProvider, IScheduleFinder scheduleFinder)
+    public async Task<Result> AddAvailableCourt(Court court, IDateProvider dateProvider, IScheduleFinder scheduleFinder)//
     {
-        var scheduleResult = scheduleFinder.FindSchedule(ScheduleId);
+        var scheduleResult = await scheduleFinder.FindSchedule(ScheduleId);
         if (!scheduleResult.Success)
         {
             return Result.Fail(scheduleResult.ErrorMessage);
@@ -67,7 +64,7 @@ public class DailySchedule : AggregateRoot
 
         var schedule = scheduleResult.Data;
 
-        var validationResult = schedule.ValidateScheduleForCourtAddition(dateProvider.Today());
+        var validationResult = ValidateScheduleForCourtAddition(dateProvider.Today());
         if (!validationResult.Success)
         {
             return validationResult;
@@ -79,15 +76,13 @@ public class DailySchedule : AggregateRoot
             return Result.Fail(courtNameResult.ErrorMessage);
         }
 
-        var courtCheckResult = schedule.HasCourt(courtNameResult.Data);
+        var courtCheckResult = HasCourt(courtNameResult.Data);
         if (!courtCheckResult.Success)
         {
             return courtCheckResult;
         }
 
-        // court.AssignToSchedule(ScheduleId);
-        schedule.listOfCourts.Add(court);
-        // schedule.listOfAvailableCourts.Add(Court.Create(courtNameResult.Data).Data);
+        listOfCourts.Add(court);
         return Result.Ok();
     }
 
@@ -284,18 +279,18 @@ public class DailySchedule : AggregateRoot
         return Result.Ok();
     }
 
-    public Result<Booking> BookCourt(Email bookedByPlayer, Court court, TimeOnly startTime, TimeOnly endTime,
+    public async Task<Result<Booking>> BookCourt(Email bookedByPlayer, Court court, TimeOnly startTime, TimeOnly endTime,
         IDateProvider dateProvider, IPlayerFinder playerFinder, IScheduleFinder scheduleFinder)
     {
-        var booking = Booking.Create(ScheduleId, court, startTime, endTime, bookedByPlayer, scheduleFinder,
+        var booking = await Booking.Create(ScheduleId, court, startTime, endTime, bookedByPlayer, scheduleFinder,
             playerFinder);
+        
         if (!booking.Success)
         {
             return Result<Booking>.Fail(booking.ErrorMessage);
         }
 
         listOfBookings.Add(booking.Data);
-        // listOfAvailableCourts.Remove(court);
         return Result<Booking>.Ok(booking.Data);
     }
 

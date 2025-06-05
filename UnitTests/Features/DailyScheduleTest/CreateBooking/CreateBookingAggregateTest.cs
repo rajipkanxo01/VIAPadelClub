@@ -28,7 +28,7 @@ public class CreateBookingAggregateTest
     }
     
     [Fact]
-    public void Should_Not_Create_Booking_When_Schedule_Is_Not_Found()
+    public async Task Should_Not_Create_Booking_When_Schedule_Is_Not_Found()
     {
         // Arrange
         var court = Court.Create(CourtName.Create("S1").Data);
@@ -38,7 +38,7 @@ public class CreateBookingAggregateTest
         var dailySchedule = DailySchedule.CreateSchedule(_dateProvider, scheduleId);
 
         // Act
-        var result = dailySchedule.Data.BookCourt(email,court.Data, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.Data.BookCourt(email,court.Data, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -66,7 +66,7 @@ public class CreateBookingAggregateTest
         dailySchedule.Data.Activate(_dateProvider);
         
         // Act
-        var result = dailySchedule.Data.BookCourt(player.email,court.Data, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.Data.BookCourt(player.email,court.Data, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.True(result.Success);
@@ -74,7 +74,7 @@ public class CreateBookingAggregateTest
     }
     
     [Fact]
-    public void Should_Not_Create_Booking_When_StartTime_Before_ScheduleStart()
+    public async Task Should_Not_Create_Booking_When_StartTime_Before_ScheduleStart()
     {
         //Arrange
         var court = Court.Create(CourtName.Create("S1").Data).Data;
@@ -89,14 +89,14 @@ public class CreateBookingAggregateTest
         dailySchedule.Activate(_dateProvider);
 
         //Act
-        var result = dailySchedule.BookCourt(email, court, new TimeOnly(8, 0), new TimeOnly(10, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(email, court, new TimeOnly(8, 0), new TimeOnly(10, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         Assert.False(result.Success);
         Assert.Equal(DailyScheduleError.BookingStartTimeBeforeScheduleStartTime()._message, result.ErrorMessage);
     }
     
     [Fact]
-    public void Should_Not_Create_Booking_When_EndTime_After_ScheduleEnd()
+    public async Task Should_Not_Create_Booking_When_EndTime_After_ScheduleEnd()
     {
         //Arrange
         var court = Court.Create(CourtName.Create("S1").Data).Data;
@@ -110,7 +110,7 @@ public class CreateBookingAggregateTest
         dailySchedule.Activate(_dateProvider);
         
         // Act
-        var result = dailySchedule.BookCourt(email,court, new TimeOnly(16, 0), new TimeOnly(18, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(email,court, new TimeOnly(16, 0), new TimeOnly(18, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         //Assert
         Assert.False(result.Success);
@@ -136,7 +136,7 @@ public class CreateBookingAggregateTest
         dailySchedule.Activate(_dateProvider);
         
         // Act
-        var result = dailySchedule.BookCourt(player.Data.email,court, new TimeOnly(18, 0), new TimeOnly(19, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player.Data.email,court, new TimeOnly(18, 0), new TimeOnly(19, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -162,7 +162,7 @@ public class CreateBookingAggregateTest
         _playerFinder.AddPlayer(player);
         
         // Act
-        var result = dailySchedule.BookCourt(player.email,court, new TimeOnly(16, 0), new TimeOnly(18, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player.email,court, new TimeOnly(16, 0), new TimeOnly(18, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -183,7 +183,7 @@ public class CreateBookingAggregateTest
         _scheduleFinder.AddSchedule(dailySchedule);
         
         // Act
-        var result = dailySchedule.BookCourt(email,court, new TimeOnly(10, 0), new TimeOnly(12, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(email,court, new TimeOnly(10, 0), new TimeOnly(12, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -215,7 +215,7 @@ public class CreateBookingAggregateTest
         dailySchedule.Activate(_dateProvider);
         
         // Act
-        var result = dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(12, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(12, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -242,7 +242,7 @@ public class CreateBookingAggregateTest
         dailySchedule.Activate(_dateProvider);
         
         // Act
-        var result = dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(12, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(12, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -269,7 +269,7 @@ public class CreateBookingAggregateTest
         dailySchedule.Activate(_dateProvider);
         
         // Act
-        var result = dailySchedule.BookCourt(player.email,court, new TimeOnly(9, 30), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player.email,court, new TimeOnly(9, 30), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -295,7 +295,7 @@ public class CreateBookingAggregateTest
         dailySchedule.Activate(_dateProvider);
         
         // Act
-        var result = dailySchedule.BookCourt(player.email,court, new TimeOnly(15, 0), new TimeOnly(16, 30),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player.email,court, new TimeOnly(15, 0), new TimeOnly(16, 30),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -325,11 +325,11 @@ public class CreateBookingAggregateTest
 
         dailySchedule.Activate(_dateProvider);
         
-        var existingBooking = dailySchedule.BookCourt(player.email,court, new TimeOnly(12, 0), new TimeOnly(14, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var existingBooking = await dailySchedule.BookCourt(player.email,court, new TimeOnly(12, 0), new TimeOnly(14, 0),_dateProvider, _playerFinder,_scheduleFinder);
         dailySchedule.listOfBookings.Add(existingBooking.Data);
         
         // Act
-        var result = dailySchedule.BookCourt(player2.email,court, new TimeOnly(9, 0), new TimeOnly(11, 30),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player2.email,court, new TimeOnly(9, 0), new TimeOnly(11, 30),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -359,11 +359,11 @@ public class CreateBookingAggregateTest
         dailySchedule.Activate(_dateProvider);
         
         // Act
-        var existingBooking = dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(12, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var existingBooking = await dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(12, 0),_dateProvider, _playerFinder,_scheduleFinder);
         dailySchedule.listOfBookings.Add(existingBooking.Data);
         
         // Act
-        var result = dailySchedule.BookCourt(player2.email,court, new TimeOnly(12, 30), new TimeOnly(14, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player2.email,court, new TimeOnly(12, 30), new TimeOnly(14, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -394,7 +394,7 @@ public class CreateBookingAggregateTest
         _playerFinder.AddPlayer(player);
         
         // Act
-        var result = dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(12, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(12, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -419,12 +419,12 @@ public class CreateBookingAggregateTest
 
         _playerFinder.AddPlayer(player);
         
-        var existingBooking = dailySchedule.BookCourt(player.email, court, new TimeOnly(10, 0), new TimeOnly(12, 0),_dateProvider,_playerFinder, _scheduleFinder);
+        var existingBooking = await dailySchedule.BookCourt(player.email, court, new TimeOnly(10, 0), new TimeOnly(12, 0),_dateProvider,_playerFinder, _scheduleFinder);
         dailySchedule.listOfBookings.Add(existingBooking.Data);
         
         
         // Act
-        var result = dailySchedule.BookCourt(player.email,court, new TimeOnly(11, 0), new TimeOnly(12, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player.email,court, new TimeOnly(11, 0), new TimeOnly(12, 0),_dateProvider, _playerFinder,_scheduleFinder);
         
         // Assert
         Assert.False(result.Success);
@@ -432,7 +432,7 @@ public class CreateBookingAggregateTest
     }
     
     [Fact]
-    public void F1_Should_Not_Create_Booking_When_Schedule_Is_Deleted()
+    public async Task F1_Should_Not_Create_Booking_When_Schedule_Is_Deleted()
     { 
         // Arrange
         FakeTimeProvider timeProvider = new FakeTimeProvider(TimeOnly.FromDateTime(DateTime.Now));
@@ -446,7 +446,7 @@ public class CreateBookingAggregateTest
         var court = Court.Create(CourtName.Create("S1").Data).Data;
         
         // Act
-        var result = dailySchedule.BookCourt(email,court, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(email,court, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -454,7 +454,7 @@ public class CreateBookingAggregateTest
     }
     
     [Fact]
-    public void F2_Should_Not_Create_Booking_When_Schedule_Is_Draft()
+    public async Task F2_Should_Not_Create_Booking_When_Schedule_Is_Draft()
     {
         // Arrange
         var scheduleId = ScheduleId.FromGuid(Guid.NewGuid());
@@ -466,7 +466,7 @@ public class CreateBookingAggregateTest
         var court = Court.Create(CourtName.Create("S1").Data).Data;
         
         // Act
-        var result = dailySchedule.BookCourt(email,court, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(email,court, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -492,7 +492,7 @@ public class CreateBookingAggregateTest
         _playerFinder.AddPlayer(player);
 
         // Act
-        var result = dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 2), new TimeOnly(11, 9),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 2), new TimeOnly(11, 9),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -518,7 +518,7 @@ public class CreateBookingAggregateTest
         _playerFinder.AddPlayer(player);
 
         // Act
-        var result = dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(10, 30),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(10, 30),_dateProvider, _playerFinder,_scheduleFinder);
 
         // Assert
         Assert.False(result.Success);
@@ -544,7 +544,7 @@ public class CreateBookingAggregateTest
         _playerFinder.AddPlayer(player);
 
         // Act
-        var result = dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(14, 30),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(14, 30),_dateProvider, _playerFinder,_scheduleFinder);
         
         // Assert
         Assert.False(result.Success);
@@ -569,11 +569,11 @@ public class CreateBookingAggregateTest
 
         _playerFinder.AddPlayer(player);
 
-        var firstBooking = dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider,_playerFinder, _scheduleFinder);
+        var firstBooking = await dailySchedule.BookCourt(player.email,court, new TimeOnly(10, 0), new TimeOnly(11, 0),_dateProvider,_playerFinder, _scheduleFinder);
         dailySchedule.listOfBookings.Add(firstBooking.Data);
         
         // Act
-        var result = dailySchedule.BookCourt(player.email,court, new TimeOnly(14, 0), new TimeOnly(15, 0),_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player.email,court, new TimeOnly(14, 0), new TimeOnly(15, 0),_dateProvider, _playerFinder,_scheduleFinder);
         
         // Assert
         Assert.False(result.Success);
@@ -602,7 +602,7 @@ public class CreateBookingAggregateTest
         var endTime = new TimeOnly(11, 0);
 
         // Act
-        var result = dailySchedule.BookCourt(player.email,court, startTime,endTime,_dateProvider, _playerFinder,_scheduleFinder);
+        var result = await dailySchedule.BookCourt(player.email,court, startTime,endTime,_dateProvider, _playerFinder,_scheduleFinder);
         
         // Assert
         Assert.True(result.Success);

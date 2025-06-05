@@ -6,7 +6,7 @@ using VIAPadelClub.Infrastructure.EfcQueries.GeneratedModels;
 
 namespace IntegrationTests.Helpers;
 
-public class MyDbContext(DbContextOptions options) : DomainModelContext(options)
+public class MyDbContext(DbContextOptions<DomainModelContext> options) : DomainModelContext(options)
 {
     public static MyDbContext SetupContext()
     {
