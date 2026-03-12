@@ -30,4 +30,9 @@ public class ScheduleFinder(IDailyScheduleRepository dailyScheduleRepository) : 
         
         _schedules.Add(schedule);
     }
+
+    public async Task<Result<List<DailySchedule>>> FindAllSchedules()
+    {
+        return await dailyScheduleRepository.GetAllAsync();
+    }
 }

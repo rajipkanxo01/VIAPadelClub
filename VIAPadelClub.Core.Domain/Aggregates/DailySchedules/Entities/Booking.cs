@@ -60,17 +60,18 @@ public class Booking : Entity
         if (!CourtExists(schedule, court))
             return Result<Booking>.Fail(DailyScheduleError.CourtDoesntExistInSchedule()._message);
 
-        if (!IsValidTimeRange(schedule, startTime, endTime))
-            return Result<Booking>.Fail(DailyScheduleError.BookingEndTimeAfterScheduleEndTime()._message);
+        var timeRangeResult = ValidateTimeRange(schedule, startTime, endTime);
+        if (!timeRangeResult.Success)
+            return Result<Booking>.Fail(timeRangeResult.ErrorMessage);
 
         var playerResult = playerFinder.FindPlayer(email);
         if (!playerResult.Success)
             return Result<Booking>.Fail(playerResult.ErrorMessage);
 
         var player = playerResult.Data;
-        if (!IsBookingAllowed(schedule, player, court, startTime, endTime))
-            return Result<Booking>.Fail(DailyScheduleError.BookingCannotBeOverlapped()
-                ._message);
+        var bookingAllowedResult = ValidateBookingAllowed(schedule, player, court, startTime, endTime);
+        if (!bookingAllowedResult.Success)
+            return Result<Booking>.Fail(bookingAllowedResult.ErrorMessage);
 
         var booking = new Booking(
             BookingId.Create(),
@@ -91,61 +92,65 @@ public class Booking : Entity
         schedule.listOfCourts.Any(c =>
             string.Equals(c.Name.Value.Trim(), court.Name.Value.Trim(), StringComparison.OrdinalIgnoreCase));
 
-    private static bool IsValidTimeRange(DailySchedule schedule, TimeOnly start, TimeOnly end)
+    private static Result ValidateTimeRange(DailySchedule schedule, TimeOnly start, TimeOnly end)
     {
         if (start < schedule.availableFrom)
-            return false;
-
-        if (end < schedule.availableFrom || end > schedule.availableUntil)
-            return false;
+            return Result.Fail(DailyScheduleError.BookingStartTimeBeforeScheduleStartTime()._message);
 
         if (start > schedule.availableUntil)
-            return false;
+            return Result.Fail(DailyScheduleError.BookingStartTimeAfterScheduleStartTime()._message);
+
+        if (end > schedule.availableUntil)
+            return Result.Fail(DailyScheduleError.BookingEndTimeAfterScheduleEndTime()._message);
 
         if ((start.Minute != 0 && start.Minute != 30) || (end.Minute != 0 && end.Minute != 30))
-            return false;
+            return Result.Fail(DailyScheduleError.InvalidBookingTimeSpan()._message);
 
         var duration = end - start;
         if (duration < TimeSpan.FromHours(1) || duration > TimeSpan.FromHours(3))
-            return false;
+            return Result.Fail(DailyScheduleError.BookingDurationError()._message);
 
         if ((start - schedule.availableFrom).TotalMinutes < 60 && start > schedule.availableFrom)
-            return false;
+            return Result.Fail(DailyScheduleError.OneHourGapBetweenScheduleStartTimeAndBookingStartTime()._message);
 
         if ((schedule.availableUntil - end).TotalMinutes < 60 && end < schedule.availableUntil)
-            return false;
+            return Result.Fail(DailyScheduleError.OneHourGapBetweenScheduleEndTimeAndBookingEndTime()._message);
 
-        return true;
+        return Result.Ok();
     }
 
-    private static bool IsBookingAllowed(DailySchedule schedule, Player player, Court court, TimeOnly start,
+    private static Result ValidateBookingAllowed(DailySchedule schedule, Player player, Court court, TimeOnly start,
         TimeOnly end)
     {
         if (player.isQuarantined && player.activeQuarantine?.EndDate >= schedule.scheduleDate)
-            return false;
+            return Result.Fail(DailyScheduleError.QuarantinePlayerCannotBookCourt()._message);
 
         if (player.isBlackListed)
-            return false;
+            return Result.Fail(DailyScheduleError.PlayerIsBlacklisted()._message);
 
         if (schedule.vipTimeRanges.Any(vip => start < vip.End && end > vip.Start) &&
             player.vipMemberShip == null)
-            return false;
-
-        if (schedule.listOfBookings.Count(b =>
-                b.BookedBy.Value == player.email.Value && b.BookedDate == schedule.scheduleDate) >= 1)
-            return false;
+            return Result.Fail(DailyScheduleError.NonVipMemberCannotBookInVipTimeSlot()._message);
 
         var bookings = schedule.listOfBookings.Where(b => b.Court.Name.Equals(court.Name));
 
         foreach (var b in bookings)
         {
-            if ((b.EndTime <= start && (start - b.EndTime).TotalMinutes < 60) ||
-                (b.StartTime >= end && (b.StartTime - end).TotalMinutes < 60) ||
-                (start < b.EndTime && end > b.StartTime))
-                return false;
+            if (b.EndTime <= start && (start - b.EndTime).TotalMinutes < 60)
+                return Result.Fail(DailyScheduleError.OneHourGapShouldBeBeforeNewBooking()._message);
+
+            if (b.StartTime >= end && (b.StartTime - end).TotalMinutes < 60)
+                return Result.Fail(DailyScheduleError.OneHourGapShouldBeAfterAnotherBooking()._message);
+
+            if (start < b.EndTime && end > b.StartTime)
+                return Result.Fail(DailyScheduleError.BookingCannotBeOverlapped()._message);
         }
 
-        return true;
+        if (schedule.listOfBookings.Count(b =>
+                b.BookedBy.Value == player.email.Value && b.BookedDate == schedule.scheduleDate) >= 1)
+            return Result.Fail(DailyScheduleError.BookingLimitExceeded()._message);
+
+        return Result.Ok();
     }
 
 
@@ -183,6 +188,16 @@ public class Booking : Entity
             BookingStatus = BookingStatus.Cancelled;
             Console.WriteLine(
                 $"**NOTIFICATION** Booking on {BookedDate} at {StartTime} was cancelled due to quarantine.");
+        }
+    }
+
+    internal void CancelDueToBlacklist()
+    {
+        if (BookingStatus == BookingStatus.Active)
+        {
+            BookingStatus = BookingStatus.Cancelled;
+            Console.WriteLine(
+                $"**NOTIFICATION** Booking on {BookedDate} at {StartTime} was cancelled due to blacklisting.");
         }
     }
 }

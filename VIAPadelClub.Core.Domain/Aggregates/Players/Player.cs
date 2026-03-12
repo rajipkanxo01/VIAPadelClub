@@ -73,14 +73,40 @@ public class Player : AggregateRoot
         }
     }
 
-    public Result Blacklist(IScheduleFinder scheduleFinder)
+    private void CancelBookingsDueToBlacklist(List<DailySchedule> schedules)
+    {
+        foreach (var schedule in schedules)
+        {
+            var bookingsToCancel = schedule.listOfBookings
+                .Where(b => b.BookedBy.Equals(email))
+                .ToList();
+
+            foreach (var booking in bookingsToCancel)
+            {
+                booking.CancelDueToBlacklist();
+            }
+        }
+    }
+
+    public async Task<Result> Blacklist(IScheduleFinder scheduleFinder)
     {
         if (isBlackListed) return Result.Fail(DailyScheduleError.PlayerAlreadyBlacklisted()._message);
         
         isBlackListed = true;
         if (activeQuarantine is not null) activeQuarantine = null;
 
-        // TODO: remove all bookings!!!
+        var schedulesResult = await scheduleFinder.FindAllSchedules();
+        if (schedulesResult.Success)
+        {
+            var futureSchedules = schedulesResult.Data
+                .Where(s => s.scheduleDate >= DateOnly.FromDateTime(DateTime.Today))
+                .ToList();
+            CancelBookingsDueToBlacklist(futureSchedules);
+        }
+        else
+        {
+            Console.WriteLine($"**WARNING** Could not cancel bookings for blacklisted player {email.Value}: {schedulesResult.ErrorMessage}");
+        }
         
         return Result.Ok();
     }

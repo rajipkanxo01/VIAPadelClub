@@ -25,7 +25,7 @@ public class PlayerBuilder
 
     private DateOnly _quarantineStartDate = DateOnly.FromDateTime(DateTime.Today);
     private List<DailySchedule> _quarantineSchedules = new();
-    private static FakeDailyScheduleRepository dailyScheduleRepository;
+    private static FakeDailyScheduleRepository dailyScheduleRepository = new FakeDailyScheduleRepository();
 
     private PlayerBuilder() { }
 
@@ -125,7 +125,7 @@ public class PlayerBuilder
 
         if (_blacklist)
         {
-            player.Blacklist(_scheduleFinder);
+            await player.Blacklist(_scheduleFinder);
         }
 
         return Result<Player>.Ok(player);
