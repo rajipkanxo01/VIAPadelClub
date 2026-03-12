@@ -27,6 +27,11 @@ public class FakeScheduleFinder : IScheduleFinder
         return result;
     }
 
+    public async Task<Result<List<DailySchedule>>> FindAllSchedules()
+    {
+        return await _dailyScheduleRepository.GetAllAsync();
+    }
+
     public void AddSchedule(DailySchedule schedule)
     {
         _dailyScheduleRepository.AddAsync(schedule);

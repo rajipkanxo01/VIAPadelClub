@@ -22,7 +22,7 @@ public class ManagerLiftsBlacklistAggregateTest
         var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
         var dailySchedules = new List<DailySchedule>();
 
-        player.Blacklist(fakeScheduleFinder);
+        await player.Blacklist(fakeScheduleFinder);
 
         // Act
         var result = player.LiftBlacklist();

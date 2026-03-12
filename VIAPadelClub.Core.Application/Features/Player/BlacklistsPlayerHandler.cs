@@ -23,7 +23,7 @@ public class BlacklistsPlayerHandler: ICommandHandler<BlacklistsPlayerCommand>
     {
         var player = (await _playerRepository.GetAsync(command.PlayerId)).Data;
 
-        var result = player.Blacklist(_scheduleFinder);
+        var result = await player.Blacklist(_scheduleFinder);
 
         if (!result.Success)
         {
