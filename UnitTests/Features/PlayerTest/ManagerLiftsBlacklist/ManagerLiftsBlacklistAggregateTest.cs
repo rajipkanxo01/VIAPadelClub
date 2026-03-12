@@ -1,9 +1,5 @@
-﻿using UnitTests.Features.Helpers;
-using UnitTests.Features.Helpers.Factory;
-using UnitTests.Features.Helpers.Repository;
+﻿using UnitTests.Features.Helpers.Factory;
 using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
-using VIAPadelClub.Core.Domain.Aggregates.Players;
-using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
 using VIAPadelClub.Core.Tools.OperationResult;
 using Xunit;
 
@@ -11,18 +7,15 @@ namespace UnitTests.Features.PlayerTest.ManagerLiftsBlacklist;
 
 public class ManagerLiftsBlacklistAggregateTest
 {
-    private readonly FakeDailyScheduleRepository dailyScheduleRepository = new FakeDailyScheduleRepository();
-    private readonly FakePlayerRepository playerRepository = new FakePlayerRepository();
     [Fact]
     public async Task Should_Lift_Blacklist_When_Selected()
     {
         // Arrange
         var player = (await PlayerBuilder.CreateValid().BuildAsync()).Data;
 
-        var fakeScheduleFinder = new FakeScheduleFinder(dailyScheduleRepository);
         var dailySchedules = new List<DailySchedule>();
 
-        player.Blacklist(fakeScheduleFinder);
+        player.Blacklist(dailySchedules);
 
         // Act
         var result = player.LiftBlacklist();
