@@ -19,15 +19,12 @@ public class BlacklistPlayerHandlerTests
         await playerRepo.AddAsync(player);
 
         var schedule = (DailyScheduleBuilder.CreateValid().BuildAsync()).Data;
-        var scheduleId = ScheduleId.FromGuid(schedule.ScheduleId.Value).Value;
         var scheduleRepo = new FakeDailyScheduleRepository();
         await scheduleRepo.AddAsync(schedule);
 
-        var fakeScheduleFinder = new FakeScheduleFinder(scheduleRepo);
+        var handler = new BlacklistsPlayerHandler(playerRepo, scheduleRepo);
 
-        var handler = new BlacklistsPlayerHandler(playerRepo, fakeScheduleFinder);
-
-        var command = BlacklistsPlayerCommand.Create(scheduleId.ToString(), player.email.Value).Data;
+        var command = BlacklistsPlayerCommand.Create(schedule.ScheduleId.Value.ToString(), player.email.Value).Data;
 
         // Act
         var result = await handler.HandleAsync(command);
@@ -46,15 +43,12 @@ public class BlacklistPlayerHandlerTests
         await playerRepo.AddAsync(player);
 
         var schedule = (DailyScheduleBuilder.CreateValid().BuildAsync()).Data;
-        var scheduleId = ScheduleId.FromGuid(schedule.ScheduleId.Value).Value;
         var scheduleRepo = new FakeDailyScheduleRepository();
         await scheduleRepo.AddAsync(schedule);
 
-        var fakeScheduleFinder = new FakeScheduleFinder(scheduleRepo);
+        var handler = new BlacklistsPlayerHandler(playerRepo, scheduleRepo);
 
-        var handler = new BlacklistsPlayerHandler(playerRepo, fakeScheduleFinder);
-
-        var command = BlacklistsPlayerCommand.Create(scheduleId.ToString(), player.email.Value).Data;
+        var command = BlacklistsPlayerCommand.Create(schedule.ScheduleId.Value.ToString(), player.email.Value).Data;
 
         // first blacklist
         await handler.HandleAsync(command);

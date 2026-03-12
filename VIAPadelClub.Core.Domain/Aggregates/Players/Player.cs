@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
-using VIAPadelClub.Core.Domain.Aggregates.DailySchedules.Contracts;
+﻿using VIAPadelClub.Core.Domain.Aggregates.DailySchedules;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Contracts;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Entities;
 using VIAPadelClub.Core.Domain.Aggregates.Players.Values;
@@ -73,16 +71,31 @@ public class Player : AggregateRoot
         }
     }
 
-    public Result Blacklist(IScheduleFinder scheduleFinder)
+    public Result Blacklist(List<DailySchedule> schedules)
     {
         if (isBlackListed) return Result.Fail(DailyScheduleError.PlayerAlreadyBlacklisted()._message);
         
         isBlackListed = true;
         if (activeQuarantine is not null) activeQuarantine = null;
 
-        // TODO: remove all bookings!!!
+        CancelBookingsDuringBlacklist(schedules);
         
         return Result.Ok();
+    }
+
+    private void CancelBookingsDuringBlacklist(List<DailySchedule> schedules)
+    {
+        foreach (var schedule in schedules)
+        {
+            var bookingsToCancel = schedule.listOfBookings
+                .Where(b => b.BookedBy.Equals(email))
+                .ToList();
+
+            foreach (var booking in bookingsToCancel)
+            {
+                booking.CancelDueToBlacklist();
+            }
+        }
     }
 
     public Result LiftBlacklist()

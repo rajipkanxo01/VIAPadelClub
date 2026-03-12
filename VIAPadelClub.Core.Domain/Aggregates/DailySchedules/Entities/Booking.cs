@@ -185,4 +185,14 @@ public class Booking : Entity
                 $"**NOTIFICATION** Booking on {BookedDate} at {StartTime} was cancelled due to quarantine.");
         }
     }
+
+    internal void CancelDueToBlacklist()
+    {
+        if (BookingStatus == BookingStatus.Active)
+        {
+            BookingStatus = BookingStatus.Cancelled;
+            Console.WriteLine(
+                $"**NOTIFICATION** Booking on {BookedDate} at {StartTime} was cancelled due to blacklist.");
+        }
+    }
 }
